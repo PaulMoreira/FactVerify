@@ -3,6 +3,7 @@ import './App.css';
 import PolicyComparison from './PolicyComparison';
 import FactCheckResources from './FactCheckResources';
 import VoterResources from './VoterResources';
+import { Analytics } from "@vercel/analytics/react"
 
 const CandidateIdea = ({ title, content, source }) => (
   <div className="idea">
@@ -158,6 +159,7 @@ const App = () => {
       <div className="resources-wrapper">
         <FactCheckResources />
         <VoterResources />
+        <Analytics />
       </div>
       <footer>
         <p>&copy; 2024 Election Facts. All rights reserved.</p>
