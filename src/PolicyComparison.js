@@ -23,7 +23,7 @@ const PolicyComparison = ({ bidenIdeas, trumpIdeas }) => {
   const generateScenario = async (candidateName, policyArea) => {
     setLoading(prev => ({ ...prev, [candidateName.toLowerCase()]: true }));
     try {
-      const response = await axios.post(`${process.env.REACT_APP_API_URL}/server/generate-example`, {
+      const response = await axios.post(`${process.env.REACT_APP_API_URL}/generate-example`, {
         idea: policyArea,
         candidateName: candidateName
       });
