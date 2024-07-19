@@ -14,7 +14,7 @@ const CandidateIdea = ({ title, content, source, candidateName }) => {
   const generateExample = async () => {
     setLoading(true);
     try {
-      const response = await axios.post(`${process.env.REACT_APP_API_URL}/generate-example`, { 
+      const response = await axios.post(`${process.env.REACT_APP_API_URL}/api/generate-example`, { 
         idea: title, 
         candidateName: candidateName 
       });
