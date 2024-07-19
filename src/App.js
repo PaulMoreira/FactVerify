@@ -1,22 +1,51 @@
-import React from 'react';
+import React, { useState } from 'react';
 import './App.css';
 import PolicyComparison from './PolicyComparison';
 import FactCheckResources from './FactCheckResources';
 import VoterResources from './VoterResources';
 import { Analytics } from "@vercel/analytics/react"
 import { SpeedInsights } from "@vercel/speed-insights/react"
+import axios from 'axios';
 
-const CandidateIdea = ({ title, content, source }) => (
-  <div className="idea">
-    <h3>{title}</h3>
-    <ul>
-      {content.map((item, index) => (
-        <li key={index}>{item}</li>
-      ))}
-    </ul>
-    <a href={source} target="_blank" rel="noopener noreferrer">Source</a>
-  </div>
-);
+const CandidateIdea = ({ title, content, source, candidateName }) => {
+  const [example, setExample] = useState('');
+  const [loading, setLoading] = useState(false);
+
+  const generateExample = async () => {
+    setLoading(true);
+    try {
+      const response = await axios.post('http://localhost:3001/api/generate-example', { 
+        idea: title, 
+        candidateName: candidateName 
+      });
+      setExample(response.data.example);
+    } catch (error) {
+      console.error('Error generating example:', error);
+    }
+    setLoading(false);
+  };
+
+  return (
+    <div className="idea">
+      <h3>{title}</h3>
+      <ul>
+        {content.map((item, index) => (
+          <li key={index}>{item}</li>
+        ))}
+      </ul>
+      <a href={source} target="_blank" rel="noopener noreferrer">Source</a>
+      <button onClick={generateExample} disabled={loading}>
+        {loading ? 'Generating...' : 'Explore Scenario'}
+      </button>
+      {example && (
+        <div className="ai-example">
+          <h4>Scenario Example:</h4>
+          <p>{example}</p>
+        </div>
+      )}
+    </div>
+  );
+};
 
 const Candidate = ({ name, image, ideas, party }) => (
   <div className={`candidate ${party}`}>
@@ -24,7 +53,7 @@ const Candidate = ({ name, image, ideas, party }) => (
     <img src={image} alt={name} className="candidate-image" />
     <div className="ideas">
       {ideas.map((idea, index) => (
-        <CandidateIdea key={index} {...idea} />
+        <CandidateIdea key={index} {...idea} candidateName={name} />
       ))}
     </div>
   </div>

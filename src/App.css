@@ -309,3 +309,94 @@ footer {
     padding: 10px;
   }
 }
+
+/* Styles for the AI example feature */
+
+.idea button {
+  margin-top: 10px;
+  margin-left: 10px;
+  padding: 8px 15px;
+  background-color: #1a365d;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 0.9em;
+  transition: background-color 0.3s;
+}
+
+.idea button:hover {
+  background-color: #2c4a7c;
+}
+
+.idea button:disabled {
+  background-color: #cccccc;
+  cursor: not-allowed;
+}
+
+.ai-example {
+  margin-top: 15px;
+  padding: 15px;
+  background-color: #e6f3ff;
+  border-radius: 5px;
+  border-left: 4px solid #1a365d;
+}
+
+.ai-example h4 {
+  margin-top: 0;
+  color: #1a365d;
+  font-size: 1em;
+}
+
+.ai-example p {
+  margin-bottom: 0;
+  font-style: italic;
+  color: #333;
+}
+
+@media (max-width: 768px) {
+  .idea button {
+    width: 100%;
+  }
+}
+
+.candidate-policy button {
+  margin-top: 10px;
+  padding: 8px 15px;
+  background-color: #1a365d;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 0.9em;
+  transition: background-color 0.3s;
+}
+
+.candidate-policy button:hover {
+  background-color: #2c4a7c;
+}
+
+.candidate-policy button:disabled {
+  background-color: #cccccc;
+  cursor: not-allowed;
+}
+
+.scenario-example {
+  margin-top: 15px;
+  padding: 15px;
+  background-color: #e6f3ff;
+  border-radius: 5px;
+  border-left: 4px solid #1a365d;
+}
+
+.scenario-example h4 {
+  margin-top: 0;
+  color: #1a365d;
+  font-size: 1em;
+}
+
+.scenario-example p {
+  margin-bottom: 0;
+  font-style: italic;
+  color: #333;
+}
