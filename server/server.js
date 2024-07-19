@@ -4,14 +4,16 @@ const cors = require('cors');
 const { OpenAI } = require("openai");
 
 const app = express();
-app.use(cors());
+app.use(cors({
+    origin: process.env.FRONTEND_URL // Set this to your frontend's URL in production
+  }));
 app.use(express.json());
 
 const openai = new OpenAI({
     apiKey: process.env.OPENAI_API_KEY,
   });
 
-app.post('/api/generate-example', async (req, res) => {
+app.post('/server/generate-example', async (req, res) => {
   try {
     const { idea, candidateName } = req.body;
     const completion = await openai.chat.completions.create({
