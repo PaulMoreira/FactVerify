@@ -21,27 +21,21 @@ const PolicyComparison = ({ bidenIdeas, trumpIdeas }) => {
   };
 
   const generateScenario = async (candidateName, policyArea) => {
-    const candidate = candidateName.toLowerCase();
-    setLoading(prev => ({ ...prev, [candidate]: true }));
+    setLoading(prev => ({ ...prev, [candidateName.toLowerCase()]: true }));
     try {
       const response = await axios.post(`/api/generate-example`, {
         idea: policyArea,
         candidateName: candidateName
       });
-      if (candidate === 'biden') {
+      if (candidateName === 'Joe Biden') {
         setBidenScenario(response.data.example);
       } else {
         setTrumpScenario(response.data.example);
       }
     } catch (error) {
       console.error('Error generating scenario:', error);
-      if (candidate === 'biden') {
-        setBidenScenario('Failed to generate scenario. Please try again.');
-      } else {
-        setTrumpScenario('Failed to generate scenario. Please try again.');
-      }
     }
-    setLoading(prev => ({ ...prev, [candidate]: false }));
+    setLoading(prev => ({ ...prev, [candidateName.toLowerCase()]: false }));
   };
 
   return (
@@ -75,12 +69,7 @@ const PolicyComparison = ({ bidenIdeas, trumpIdeas }) => {
             >
               {loading.biden ? 'Generating...' : 'Explore Scenario'}
             </button>
-            {loading.biden && (
-              <div className="scenario-example">
-                <h4>Generating scenario...</h4>
-              </div>
-            )}
-            {!loading.biden && bidenScenario && (
+            {bidenScenario && (
               <div className="scenario-example">
                 <h4>Scenario Example:</h4>
                 <p>{bidenScenario}</p>
@@ -100,12 +89,7 @@ const PolicyComparison = ({ bidenIdeas, trumpIdeas }) => {
             >
               {loading.trump ? 'Generating...' : 'Explore Scenario'}
             </button>
-            {loading.trump && (
-              <div className="scenario-example">
-                <h4>Generating scenario...</h4>
-              </div>
-            )}
-            {!loading.trump && trumpScenario && (
+            {trumpScenario && (
               <div className="scenario-example">
                 <h4>Scenario Example:</h4>
                 <p>{trumpScenario}</p>
