@@ -357,6 +357,7 @@ footer {
 @media (max-width: 768px) {
   .idea button {
     width: 100%;
+    margin-left: 0;
   }
 }
 
