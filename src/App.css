@@ -145,9 +145,11 @@ footer {
 }
 
 .policy-comparison {
-  display: flex;
-  flex-direction: column;
-  gap: 20px;
+  background-color: white;
+  border-radius: 8px;
+  padding: 20px;
+  margin-bottom: 30px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 .policy-comparison h2, .fact-check-resources h2, .voter-resources h2 {
@@ -159,18 +161,18 @@ footer {
   width: 100%;
   padding: 10px;
   margin-bottom: 20px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-size: 16px;
 }
 
 .comparison-content {
   display: flex;
-  flex-direction: column;
-  gap: 30px;
+  justify-content: space-between;
 }
 
 .candidate-policy {
-  border: 1px solid #ccc;
-  padding: 20px;
-  border-radius: 5px;
+  width: 48%;
 }
 
 .candidate-policy h3 {
@@ -380,10 +382,11 @@ footer {
 }
 
 .scenario-example {
-  margin-top: 20px;
-  background-color: #f0f0f0;
+  margin-top: 15px;
   padding: 15px;
+  background-color: #e6f3ff;
   border-radius: 5px;
+  border-left: 4px solid #1a365d;
 }
 
 .scenario-example h4 {
