@@ -3,8 +3,7 @@ import axios from 'axios';
 
 const PolicyComparison = ({ harrisIdeas, trumpIdeas }) => {
   const [selectedPolicy, setSelectedPolicy] = useState('');
-  const [harrisScenario, setHarrisScenario] = useState('');
-  const [trumpScenario, setTrumpScenario] = useState('');
+  const [scenarios, setScenarios] = useState({ harris: '', trump: '' });
   const [loading, setLoading] = useState({ harris: false, trump: false });
 
   const policyAreas = [
@@ -31,20 +30,49 @@ const PolicyComparison = ({ harrisIdeas, trumpIdeas }) => {
         idea: policyArea,
         candidateName: candidateName
       });
-      if (candidate === 'harris') {
-        setHarrisScenario(response.data.example);
-      } else {
-        setTrumpScenario(response.data.example);
-      }
+      setScenarios(prev => ({
+        ...prev,
+        [candidate]: response.data.example
+      }));
     } catch (error) {
       console.error('Error generating scenario:', error);
-      if (candidate === 'harris') {
-        setHarrisScenario('Failed to generate scenario. Please try again.');
-      } else {
-        setTrumpScenario('Failed to generate scenario. Please try again.');
-      }
+      setScenarios(prev => ({
+        ...prev,
+        [candidate]: 'Failed to generate scenario. Please try again.'
+      }));
     }
     setLoading(prev => ({ ...prev, [candidate]: false }));
+  };
+
+  const renderCandidatePolicy = (candidateName, ideas) => {
+    const candidate = candidateName.toLowerCase();
+    return (
+      <div className="candidate-policy">
+        <h3>{candidateName}</h3>
+        <ul>
+          {getIdeasForPolicy(ideas, selectedPolicy).content.map((point, index) => (
+            <li key={index}>{point}</li>
+          ))}
+        </ul>
+        <button 
+          onClick={() => generateScenario(candidateName, selectedPolicy)}
+          disabled={loading[candidate]}
+        >
+          {loading[candidate] ? 'Generating...' : 'Explore Scenario'}
+        </button>
+        {loading[candidate] && (
+          <div className="scenario-example">
+            <h4>Generating scenario...</h4>
+          </div>
+        )}
+        {!loading[candidate] && scenarios[candidate] && (
+          <div className="scenario-example">
+            <h4>Scenario Example:</h4>
+            <p>{scenarios[candidate]}</p>
+          </div>
+        )}
+      </div>
+    );
   };
 
   return (
@@ -54,8 +82,7 @@ const PolicyComparison = ({ harrisIdeas, trumpIdeas }) => {
         value={selectedPolicy} 
         onChange={(e) => {
           setSelectedPolicy(e.target.value);
-          setHarrisScenario('');
-          setTrumpScenario('');
+          setScenarios({ harris: '', trump: '' });
         }}
         className="policy-selector"
       >
@@ -65,56 +92,8 @@ const PolicyComparison = ({ harrisIdeas, trumpIdeas }) => {
       </select>
       {selectedPolicy && (
         <div className="comparison-content">
-          <div className="candidate-policy">
-            <h3>Kamala Harris</h3>
-            <ul>
-              {getIdeasForPolicy(harrisIdeas, selectedPolicy).content.map((point, index) => (
-                <li key={index}>{point}</li>
-              ))}
-            </ul>
-            <button 
-              onClick={() => generateScenario('Kamala Harris', selectedPolicy)}
-              disabled={loading.harris}
-            >
-              {loading.harris ? 'Generating...' : 'Explore Scenario'}
-            </button>
-            {loading.harris && (
-              <div className="scenario-example">
-                <h4>Generating scenario...</h4>
-              </div>
-            )}
-            {!loading.harris && harrisScenario && (
-              <div className="scenario-example">
-                <h4>Scenario Example:</h4>
-                <p>{harrisScenario}</p>
-              </div>
-            )}
-          </div>
-          <div className="candidate-policy">
-            <h3>Donald Trump</h3>
-            <ul>
-              {getIdeasForPolicy(trumpIdeas, selectedPolicy).content.map((point, index) => (
-                <li key={index}>{point}</li>
-              ))}
-            </ul>
-            <button 
-              onClick={() => generateScenario('Donald Trump', selectedPolicy)}
-              disabled={loading.trump}
-            >
-              {loading.trump ? 'Generating...' : 'Explore Scenario'}
-            </button>
-            {loading.trump && (
-              <div className="scenario-example">
-                <h4>Generating scenario...</h4>
-              </div>
-            )}
-            {!loading.trump && trumpScenario && (
-              <div className="scenario-example">
-                <h4>Scenario Example:</h4>
-                <p>{trumpScenario}</p>
-              </div>
-            )}
-          </div>
+          {renderCandidatePolicy('Kamala Harris', harrisIdeas)}
+          {renderCandidatePolicy('Donald Trump', trumpIdeas)}
         </div>
       )}
     </div>
