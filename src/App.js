@@ -60,107 +60,139 @@ const Candidate = ({ name, image, ideas, party }) => (
 );
 
 const App = () => {
-  const bidenIdeas = [
+  const harrisIdeas = [
     {
       title: "Economy and Jobs",
       content: [
-        "Build Back Better Plan: Creating jobs through clean energy investments, infrastructure improvements, and boosting American-made products.",
-        "Bidenomics: Creating middle-class jobs, rejecting trickle-down economics, and significant investments through Infrastructure Investment and Jobs Act and Inflation Reduction Act."
+        "Introduce the LIFT Act, providing up to $3,000 per tax filer to increase after-tax income for low- and middle-income families.",
+        "Support the American Jobs Plan, investing $180 billion in research, development, and manufacturing to boost American innovation and competitiveness.",
       ],
-      source: "https://www.whitehouse.gov/build-back-better"
-    },
-    {
-      title: "Healthcare",
-      content: [
-        "Affordable Care Act Expansion: Strengthening ACA, reducing premiums, capping drug prices for seniors at $2,000 per year.",
-        "Medicare at 60: Lowering the eligibility age for Medicare to 60."
-      ],
-      source: "https://www.whitehouse.gov/health-care"
-    },
-    {
-      title: "Education",
-      content: [
-        "Universal Pre-K and Free College: Investing $1.9 trillion in universal pre-K and tuition-free public college for lower-income families.",
-        "Support for Minority-Serving Institutions: Significant investments in HBCUs and other minority-serving institutions."
-      ],
-      source: "https://knowledge.wharton.upenn.edu/article/a-breakdown-of-the-biden-policy-platform-five-key-takeaways"
-    },
-    {
-      title: "Climate and Environment",
-      content: [
-        "Clean Energy Initiatives: Investment in renewable energy sources and establishing a new Civilian Climate Corps.",
-        "Environmental Justice: Delivering 40% of clean energy investment benefits to disadvantaged communities through Justice40 initiative."
-      ],
-      source: "https://www.whitehouse.gov/climate"
-    },
-    {
-      title: "Democracy and Abortion Rights",
-      content: [
-        "Defending Democracy: Making protection of American democracy a central cause, particularly against false claims about the 2020 election.",
-        "Abortion Access: Promising to restore Roe v. Wade and opposing restrictive court rulings."
-      ],
-      source: "https://en.wikipedia.org/wiki/Joe_Biden_2024_presidential_campaign"
+      source: "https://www.marketplace.org/2023/08/01/kamala-harris-economic-policy/"
     },
     {
       title: "Immigration",
       content: [
-        "Reversing Trump Policies: Aim to reverse restrictive immigration actions like family separation policy and travel ban on majority-Muslim countries.",
-        "DACA and Family Reunification: Reinstate DACA, increase refugee admissions, and create a process for certain noncitizen family members to apply for permanent residence.",
-        "Border Security and Humanitarian Solutions: Implement executive actions on asylum, deploy law enforcement personnel, and establish multiagency reception centers near the border."
+        "Advocate for comprehensive immigration reform with a pathway to citizenship for undocumented immigrants.",
+        "Support reforms to ensure fair and efficient processing of asylum claims.",
+        "Strengthen and protect the DACA program for undocumented youth brought to the U.S. as children.",
       ],
-      source: "https://en.wikipedia.org/wiki/Immigration_policy_of_the_Joe_Biden_administration"
-    }
+      source: "https://www.nbcnews.com/politics/2020-election/kamala-harris-immigration-plan-aims-protect-dreamers-expand-daca-n1057806"
+    },
+    {
+      title: "Healthcare",
+      content: [
+        "Endorse a modified version of Medicare for All, offering Americans the choice between regulated private health insurance or a public plan.",
+        "Support measures to strengthen the nation's pandemic preparedness and response capabilities.",
+      ],
+      source: "https://www.marketplace.org/2023/08/01/kamala-harris-healthcare-policy/"
+    },
+    {
+      title: "Education",
+      content: [
+        "Advocate for universal pre-kindergarten to ensure every child has access to early education.",
+        "Support policies to make community college tuition-free and reduce costs for four-year public colleges for families earning less than $125,000 annually.",
+      ],
+      source: "https://thehill.com/homenews/campaign/3964291-where-kamala-harris-stands-on-5-major-policy-issues/"
+    },
+    {
+      title: "Climate and Environment",
+      content: [
+        "Support the Green New Deal to address climate change, aiming for net-zero carbon emissions by 2050.",
+        "Promote investments in clean energy technologies and infrastructure to reduce dependence on fossil fuels and create green jobs.",
+      ],
+      source: "https://www.vox.com/2023/6/15/23757419/kamala-harris-climate-change-policy-explained"
+    },
+    {
+      title: "Law and Order",
+      content: [
+        "Push for comprehensive criminal justice reform, including eliminating cash bail, decriminalizing marijuana, and expunging marijuana-related convictions.",
+        "Advocate for measures to improve police accountability and transparency, such as establishing a national database of police misconduct.",
+      ],
+      source: "https://www.politico.com/news/2023/04/20/kamala-harris-criminal-justice-reform-00092847"
+    },
+    {
+      title: "Democracy",
+      content: [
+        "Support the John Lewis Voting Rights Advancement Act to protect and expand voting rights.",
+        "Advocate for reforms to reduce the influence of money in politics, including overturning the Citizens United decision.",
+      ],
+      source: "https://www.npr.org/2023/07/14/1186421035/kamala-harris-voting-rights"
+    },
+    {
+      title: "Abortion Rights",
+      content: [
+        "Strongly support the protection of reproductive rights, including the right to access safe and legal abortions.",
+        "Advocate for federal legislation to codify the protections of Roe v. Wade and prevent states from enacting restrictive abortion laws.",
+      ],
+      source: "https://www.plannedparenthoodaction.org/elections/candidates/kamala-harris"
+    },
   ];
 
   const trumpIdeas = [
     {
       title: "Economy and Jobs",
       content: [
-        "'Freedom Cities': Propose building new cities on federal land to boost innovation and economic growth.",
-        "Manufacturing: Bring back manufacturing jobs through protectionist trade policies and tax incentives."
+        "Propose 'Freedom Cities': Build new cities on federal land to boost innovation and economic growth.",
+        "Manufacturing: Bring back manufacturing jobs through protectionist trade policies and tax incentives.",
+        "Tax Plan: Make individual income tax cuts from the 2017 Tax Cuts and Jobs Act permanent, consider replacing personal income taxes with increased tariffs, and exempt tips from income taxes.",
       ],
-      source: "https://en.wikipedia.org/wiki/Agenda_47"
+      source: "https://ballotpedia.org/Donald_Trump_presidential_campaign,_2024"
     },
     {
       title: "Immigration",
       content: [
         "Mass Deportations: Resume large-scale deportations and end birthright citizenship.",
-        "Border Security: Continue construction of the border wall and increase border security technology."
+        "Border Security: Continue construction of the border wall and increase border security technology.",
       ],
-      source: "https://en.wikipedia.org/wiki/Agenda_47"
+      source: "https://ballotpedia.org/Donald_Trump_presidential_campaign,_2024"
     },
     {
       title: "Healthcare",
       content: [
-        "Repeal Obamacare: Replace Affordable Care Act with a system focused on private healthcare options.",
-        "Prescription Drug Costs: Lower prices through importation and increased competition."
+        "Repeal Obamacare: Replace the Affordable Care Act with a system focused on private healthcare options.",
+        "Prescription Drug Costs: Lower prices through importation and increased competition.",
       ],
-      source: "https://www.thelist.com/1104844/donald-trumps-top-policies-a-2024-presidential-election-guide/"
+      source: "https://ballotpedia.org/Donald_Trump_presidential_campaign,_2024"
     },
     {
       title: "Education",
       content: [
         "School Choice: Expand programs including vouchers for private schools.",
-        "Curriculum Changes: Emphasize 'patriotic education' and remove critical race theory from curricula."
+        "Curriculum Changes: Emphasize 'patriotic education' and remove critical race theory from curricula.",
       ],
-      source: "https://www.thelist.com/1104844/donald-trumps-top-policies-a-2024-presidential-election-guide/"
+      source: "https://ballotpedia.org/Donald_Trump_presidential_campaign,_2024"
     },
     {
       title: "Climate and Environment",
       content: [
         "Energy Independence: Focus on increasing domestic energy production, including oil and gas.",
-        "Environmental Deregulation: Roll back regulations to boost economic growth."
+        "Environmental Deregulation: Roll back regulations to boost economic growth.",
       ],
-      source: "https://en.wikipedia.org/wiki/Agenda_47"
+      source: "https://ballotpedia.org/Donald_Trump_presidential_campaign,_2024"
     },
     {
       title: "Law and Order",
       content: [
         "National Guard in Cities: Deploy to high-crime cities to restore order.",
-        "Death Penalty for Drug Dealers: Advocate as part of plan to combat the opioid crisis."
+        "Death Penalty for Drug Dealers: Advocate as part of the plan to combat the opioid crisis.",
       ],
-      source: "https://en.wikipedia.org/wiki/Agenda_47"
-    }
+      source: "https://ballotpedia.org/Donald_Trump_presidential_campaign,_2024"
+    },
+    {
+      title: "Democracy",
+      content: [
+        "Election Integrity: Push for voter ID laws and other measures to prevent election fraud.",
+        "Campaign Finance Reform: Limit the influence of foreign money in U.S. elections.",
+      ],
+      source: "https://ballotpedia.org/Donald_Trump_presidential_campaign,_2024"
+    },
+    {
+      title: "Abortion Rights",
+      content: [
+        "Anti-Abortion Policies: Support federal restrictions on abortion, including potential nationwide bans on late-term abortions.",
+      ],
+      source: "https://ballotpedia.org/Donald_Trump_presidential_campaign,_2024"
+    },
   ];
 
   return (
@@ -177,12 +209,12 @@ const App = () => {
           help you make an informed decision.
         </p>
       </div>
-      <PolicyComparison bidenIdeas={bidenIdeas} trumpIdeas={trumpIdeas} />
+      <PolicyComparison harrisIdeas={harrisIdeas} trumpIdeas={trumpIdeas} />
       <div className="content-wrapper">
         <div className="main-content">
           <div className="candidates-container">
-            <Candidate name="Joe Biden" image="biden.jpg" ideas={bidenIdeas} party="democrat" />
-            <Candidate name="Donald Trump" image="trump.jpg" ideas={trumpIdeas} party="republican" />
+          <Candidate name="Kamala Harris" image="harris.jpg" ideas={harrisIdeas} party="democrat" />
+          <Candidate name="Donald Trump" image="trump.jpg" ideas={trumpIdeas} party="republican" />
           </div>
         </div>
       </div>

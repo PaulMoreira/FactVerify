@@ -1,19 +1,22 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 
-const PolicyComparison = ({ bidenIdeas, trumpIdeas }) => {
+const PolicyComparison = ({ harrisIdeas, trumpIdeas }) => {
   const [selectedPolicy, setSelectedPolicy] = useState('');
-  const [bidenScenario, setBidenScenario] = useState('');
+  const [harrisScenario, setHarrisScenario] = useState('');
   const [trumpScenario, setTrumpScenario] = useState('');
-  const [loading, setLoading] = useState({ biden: false, trump: false });
+  const [loading, setLoading] = useState({ harris: false, trump: false });
 
   const policyAreas = [
     { value: '', label: 'Select a policy area' },
     { value: 'economy', label: 'Economy and Jobs' },
+    { value: 'immigration', label: 'Immigration' },
     { value: 'healthcare', label: 'Healthcare' },
     { value: 'education', label: 'Education' },
     { value: 'climate', label: 'Climate and Environment' },
-    { value: 'immigration', label: 'Immigration' },
+    { value: 'law_and_order', label: 'Law and Order' },
+    { value: 'democracy', label: 'Democracy' },
+    { value: 'abortion', label: 'Abortion Rights' },
   ];
 
   const getIdeasForPolicy = (ideas, policyArea) => {
@@ -21,21 +24,27 @@ const PolicyComparison = ({ bidenIdeas, trumpIdeas }) => {
   };
 
   const generateScenario = async (candidateName, policyArea) => {
-    setLoading(prev => ({ ...prev, [candidateName.toLowerCase()]: true }));
+    const candidate = candidateName.toLowerCase();
+    setLoading(prev => ({ ...prev, [candidate]: true }));
     try {
       const response = await axios.post(`/api/generate-example`, {
         idea: policyArea,
         candidateName: candidateName
       });
-      if (candidateName === 'Joe Biden') {
-        setBidenScenario(response.data.example);
+      if (candidate === 'harris') {
+        setHarrisScenario(response.data.example);
       } else {
         setTrumpScenario(response.data.example);
       }
     } catch (error) {
       console.error('Error generating scenario:', error);
+      if (candidate === 'harris') {
+        setHarrisScenario('Failed to generate scenario. Please try again.');
+      } else {
+        setTrumpScenario('Failed to generate scenario. Please try again.');
+      }
     }
-    setLoading(prev => ({ ...prev, [candidateName.toLowerCase()]: false }));
+    setLoading(prev => ({ ...prev, [candidate]: false }));
   };
 
   return (
@@ -45,7 +54,7 @@ const PolicyComparison = ({ bidenIdeas, trumpIdeas }) => {
         value={selectedPolicy} 
         onChange={(e) => {
           setSelectedPolicy(e.target.value);
-          setBidenScenario('');
+          setHarrisScenario('');
           setTrumpScenario('');
         }}
         className="policy-selector"
@@ -57,22 +66,27 @@ const PolicyComparison = ({ bidenIdeas, trumpIdeas }) => {
       {selectedPolicy && (
         <div className="comparison-content">
           <div className="candidate-policy">
-            <h3>Joe Biden</h3>
+            <h3>Kamala Harris</h3>
             <ul>
-              {getIdeasForPolicy(bidenIdeas, selectedPolicy).content.map((point, index) => (
+              {getIdeasForPolicy(harrisIdeas, selectedPolicy).content.map((point, index) => (
                 <li key={index}>{point}</li>
               ))}
             </ul>
             <button 
-              onClick={() => generateScenario('Joe Biden', selectedPolicy)}
-              disabled={loading.biden}
+              onClick={() => generateScenario('Kamala Harris', selectedPolicy)}
+              disabled={loading.harris}
             >
-              {loading.biden ? 'Generating...' : 'Explore Scenario'}
+              {loading.harris ? 'Generating...' : 'Explore Scenario'}
             </button>
-            {bidenScenario && (
+            {loading.harris && (
+              <div className="scenario-example">
+                <h4>Generating scenario...</h4>
+              </div>
+            )}
+            {!loading.harris && harrisScenario && (
               <div className="scenario-example">
                 <h4>Scenario Example:</h4>
-                <p>{bidenScenario}</p>
+                <p>{harrisScenario}</p>
               </div>
             )}
           </div>
@@ -89,7 +103,12 @@ const PolicyComparison = ({ bidenIdeas, trumpIdeas }) => {
             >
               {loading.trump ? 'Generating...' : 'Explore Scenario'}
             </button>
-            {trumpScenario && (
+            {loading.trump && (
+              <div className="scenario-example">
+                <h4>Generating scenario...</h4>
+              </div>
+            )}
+            {!loading.trump && trumpScenario && (
               <div className="scenario-example">
                 <h4>Scenario Example:</h4>
                 <p>{trumpScenario}</p>
