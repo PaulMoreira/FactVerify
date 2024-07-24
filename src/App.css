@@ -401,3 +401,50 @@ footer {
   font-style: italic;
   color: #333;
 }
+
+/* Social Media Buttons */
+.social-media-share {
+  margin: 20px 0;
+  text-align: center;
+}
+
+.share-buttons {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+}
+
+.share-button {
+  display: flex;
+  align-items: center;
+  padding: 10px 15px;
+  border-radius: 5px;
+  color: white;
+  text-decoration: none;
+  transition: opacity 0.2s;
+}
+
+.share-button:hover {
+  opacity: 0.8;
+}
+
+.share-button span {
+  margin-left: 5px;
+}
+
+.x-twitter {
+  background-color: #000000;
+  color: #ffffff;
+}
+
+.x-twitter svg {
+  fill: #ffffff;
+}
+
+.facebook {
+  background-color: #4267B2;
+}
+
+.linkedin {
+  background-color: #0077B5;
+}

@@ -6,6 +6,7 @@ import VoterResources from './VoterResources';
 import { Analytics } from "@vercel/analytics/react"
 import { SpeedInsights } from "@vercel/speed-insights/react"
 import axios from 'axios';
+import SocialMediaShare from './SocialMediaShare';
 
 const CandidateIdea = ({ title, content, source, candidateName }) => {
   const [example, setExample] = useState('');
@@ -208,6 +209,10 @@ const App = () => {
           truly offering. This comparison aims to provide a clear, fact-based overview of both candidates' platforms to 
           help you make an informed decision.
         </p>
+        <SocialMediaShare 
+          url="https://vote2024info.vercel.app/" 
+          title="Compare 2024 Presidential Candidates' Policies" 
+        />
       </div>
       <PolicyComparison harrisIdeas={harrisIdeas} trumpIdeas={trumpIdeas} />
       <div className="content-wrapper">
