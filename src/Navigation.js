@@ -1,14 +1,18 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
+import { articles } from './articleData';
 
 const Navigation = () => {
   const navItems = [
     { name: "Home", path: "/" },
     { name: "Voter Resources", path: "/resources" },
-    { name: "Election Insights", path: "/insights",
-      subItems: [
-        { name: "DEI and Politics", path: "/insights/DEI and Politics" }
-      ]
+    { 
+      name: "Election Insights", 
+      path: "/insights",
+      subItems: articles.map(article => ({
+        name: article.headline,
+        path: `/insights/${article.id}`
+      }))
     }
   ];
 

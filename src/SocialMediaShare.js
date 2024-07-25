@@ -6,7 +6,7 @@ const SocialMediaShare = ({ url, title }) => {
 
   return (
     <div className="social-media-share">
-      <h3>Share this page</h3>
+      <h3>Share this article</h3>
       <div className="share-buttons">
         <a
           href={`https://twitter.com/intent/tweet?url=${encodedUrl}&text=${encodedTitle}`}

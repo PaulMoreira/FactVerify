@@ -9,7 +9,6 @@ import ElectionInsightsPage from './ElectionInsightsPage';
 import { Analytics } from "@vercel/analytics/react";
 import { SpeedInsights } from "@vercel/speed-insights/react";
 import axios from 'axios';
-import SocialMediaShare from './SocialMediaShare';
 import CountdownTimer from './CountdownTimer';
 import WhatsNewSection from './WhatsNewSection';
 import FullArticle from './FullArticle';
@@ -89,10 +88,6 @@ const HomePage = ({ harrisIdeas, trumpIdeas }) => (
         <VoterResources />
       </main>
       <aside className="sidebar">
-        <SocialMediaShare 
-          url="https://vote2024info.vercel.app/" 
-          title="Compare 2024 Presidential Candidates' Policies" 
-        />
         <CountdownTimer />
         <WhatsNewSection />
       </aside>

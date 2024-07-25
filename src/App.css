@@ -293,6 +293,7 @@ footer {
   color: white;
   text-decoration: none;
   transition: opacity 0.2s;
+  margin-right: 10px;
 }
 
 .share-button:hover {
@@ -301,6 +302,11 @@ footer {
 
 .share-button span {
   margin-left: 5px;
+}
+
+.share-button svg {
+  width: 24px;
+  height: 24px;
 }
 
 .x-twitter {
@@ -313,11 +319,26 @@ footer {
 }
 
 .facebook {
-  background-color: #4267B2;
+  background-color: #1877F2;
 }
 
 .linkedin {
-  background-color: #0077B5;
+  background-color: #0A66C2;
+}
+
+.facebook svg, .linkedin svg {
+  stroke: #ffffff;
+}
+
+/* Override any inherited styles for links within share buttons */
+.full-article .social-media-share a.share-button {
+  color: white !important;
+  text-decoration: none;
+}
+
+.full-article .social-media-share a.share-button:hover {
+  color: white !important;
+  text-decoration: none;
 }
 
 /* Count Down Timer and What's New Section */

@@ -1,26 +1,22 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
+import { articles } from './articleData';
 
 const WhatsNewSection = () => {
-  const newFeatures = [
-    {
-      date: "July 24, 2024",
-      headline: "The Evolving Landscape of Diversity, Equity, and Inclusion (DEI) in 2024",
-      link: "/insights/dei-landscape-2024",
-      summary: "Explore the complex intersection of corporate commitments, political strategies, and societal implications of DEI initiatives in 2024."    },
-  ];
+  // Sort articles by date (newest first) and take the top 3
+  const sortedArticles = [...articles].sort((a, b) => new Date(b.date) - new Date(a.date)).slice(0, 3);
 
   return (
     <div className="whats-new-section">
       <h2>Latest Insights</h2>
       <ul>
-        {newFeatures.map((item, index) => (
+        {sortedArticles.map((article, index) => (
           <li key={index}>
-            <span className="date">{item.date}</span>
+            <span className="date">{article.date}</span>
             <h3>
-              <Link to={item.link}>{item.headline}</Link>
+              <Link to={`/insights/${article.id}`}>{article.headline}</Link>
             </h3>
-            <p>{item.summary}</p>
+            <p>{article.summary}</p>
           </li>
         ))}
       </ul>
