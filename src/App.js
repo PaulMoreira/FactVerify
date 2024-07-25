@@ -1,12 +1,18 @@
 import React, { useState } from 'react';
+import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import './App.css';
+import Navigation from './Navigation';
 import PolicyComparison from './PolicyComparison';
 import FactCheckResources from './FactCheckResources';
 import VoterResources from './VoterResources';
-import { Analytics } from "@vercel/analytics/react"
-import { SpeedInsights } from "@vercel/speed-insights/react"
+import ElectionInsightsPage from './ElectionInsightsPage';
+import { Analytics } from "@vercel/analytics/react";
+import { SpeedInsights } from "@vercel/speed-insights/react";
 import axios from 'axios';
 import SocialMediaShare from './SocialMediaShare';
+import CountdownTimer from './CountdownTimer';
+import WhatsNewSection from './WhatsNewSection';
+import FullArticle from './FullArticle';
 
 const CandidateIdea = ({ title, content, source, candidateName }) => {
   const [example, setExample] = useState('');
@@ -58,6 +64,40 @@ const Candidate = ({ name, image, ideas, party }) => (
       ))}
     </div>
   </div>
+);
+
+const HomePage = ({ harrisIdeas, trumpIdeas }) => (
+  <>
+    <div className="introduction">
+      <h2>Welcome to the 2024 Presidential Election Information Hub</h2>
+      <p>
+      Let's move beyond party rhetoric and focus on the candidates' concrete 
+      ideas and plans for after the election. Your vote should be based on substantive policies, 
+      not campaign slogans. Be cautious of information from social media, as it can often be inaccurate or misleading. 
+      Instead, take the time to understand what each candidate is truly offering. This comparison aims to provide a clear, 
+      fact-based overview of both candidates' platforms to help you make an informed decision.
+      </p>
+    </div>
+    <div className="content-wrapper">
+      <main className="main-content">
+        <PolicyComparison harrisIdeas={harrisIdeas} trumpIdeas={trumpIdeas} />
+        <div className="candidates-container">
+          <Candidate name="Kamala Harris" image="harris.jpg" ideas={harrisIdeas} party="democrat" />
+          <Candidate name="Donald Trump" image="trump.jpg" ideas={trumpIdeas} party="republican" />
+        </div>
+        <FactCheckResources />
+        <VoterResources />
+      </main>
+      <aside className="sidebar">
+        <SocialMediaShare 
+          url="https://vote2024info.vercel.app/" 
+          title="Compare 2024 Presidential Candidates' Policies" 
+        />
+        <CountdownTimer />
+        <WhatsNewSection />
+      </aside>
+    </div>
+  </>
 );
 
 const App = () => {
@@ -197,43 +237,26 @@ const App = () => {
   ];
 
   return (
-    <div className="app">
-      <header>
-        <h1>2024 Presidential Election: Ideas & Plans</h1>
-      </header>
-      <div className="introduction">
-        <p>
-          Let's move beyond party rhetoric and focus on the candidates' concrete ideas and plans for after the election. 
-          Your vote should be based on substantive policies, not campaign slogans. Be cautious of information from social 
-          media, as it can often be inaccurate or misleading. Instead, take the time to understand what each candidate is 
-          truly offering. This comparison aims to provide a clear, fact-based overview of both candidates' platforms to 
-          help you make an informed decision.
-        </p>
-        <SocialMediaShare 
-          url="https://vote2024info.vercel.app/" 
-          title="Compare 2024 Presidential Candidates' Policies" 
-        />
-      </div>
-      <PolicyComparison harrisIdeas={harrisIdeas} trumpIdeas={trumpIdeas} />
-      <div className="content-wrapper">
-        <div className="main-content">
-          <div className="candidates-container">
-          <Candidate name="Kamala Harris" image="harris.jpg" ideas={harrisIdeas} party="democrat" />
-          <Candidate name="Donald Trump" image="trump.jpg" ideas={trumpIdeas} party="republican" />
-          </div>
-        </div>
-      </div>
-      <div className="resources-wrapper">
-        <FactCheckResources />
-        <VoterResources />
+    <Router>
+      <div className="app">
+        <header>
+          <h1>2024 Presidential Election: Ideas & Plans</h1>
+        </header>
+        <Navigation />
+        <Routes>
+          <Route path="/" element={<HomePage harrisIdeas={harrisIdeas} trumpIdeas={trumpIdeas} />} />
+          <Route path="/resources" element={<VoterResources />} />
+          <Route path="/insights" element={<ElectionInsightsPage />} />
+          <Route path="/insights/:articleId" element={<FullArticle />} />
+        </Routes>
+        <footer>
+          <p>&copy; 2024 Election Facts. All rights reserved.</p>
+          <p>Sources: Various, as linked in each section</p>
+        </footer>
         <Analytics />
         <SpeedInsights/>
       </div>
-      <footer>
-        <p>&copy; 2024 Election Facts. All rights reserved.</p>
-        <p>Sources: Various, as linked in each section</p>
-      </footer>
-    </div>
+    </Router>
   );
 };
 
