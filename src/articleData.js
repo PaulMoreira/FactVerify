@@ -1,5 +1,62 @@
 // articleData.js
-export const articles = [
+export const articleData = [
+  {
+    id: "project-2025-explained",
+    date: "July 31, 2024",
+    headline: "Project 2025: A Comprehensive Guide to the Conservative Blueprint",
+    summary: "Explore the key components, policy recommendations, and implications of Project 2025, a conservative initiative aimed at reshaping American governance.",
+    shareUrl: "https://vote2024info.vercel.app/insights/project-2025-explained",
+    content: `
+      <h2>What is Project 2025?</h2>
+      <p>In an era marked by political polarization and rapid change, <em>Project 2025</em> stands out as a bold initiative aimed at reshaping the governance of the United States. Spearheaded by the <strong>Heritage Foundation</strong>, this comprehensive plan is designed to prepare for a potential return to power by Donald Trump or a similar Republican administration. Let's delve into the intricate details of Project 2025, exploring its key components, policy recommendations, and the broader implications for American politics.</p>
+
+      <h3>Key Components</h3>
+      <p>Project 2025 is structured around four pivotal elements that outline its vision for the future:</p>
+      <ol>
+        <li><strong>Policy Agenda</strong>: A nearly 900-page document titled <em>Mandate for Leadership 2025: The Conservative Promise</em> lays out an extensive policy guide addressing various governance aspects.</li>
+        <li><strong>Personnel Database</strong>: A curated list of potential candidates who align with conservative values, designed to fill key government positions efficiently.</li>
+        <li><strong>Training Programs</strong>: Initiatives aimed at educating and preparing selected personnel for their roles in government, known as the <em>Presidential Administration Academy</em>.</li>
+        <li><strong>180-Day Playbook</strong>: A strategic plan outlining actions to be taken within the first six months of a new administration to implement conservative policies swiftly.</li>
+      </ol>
+      <p>Source: CBS News</p>
+
+      <h3>Policy Recommendations</h3>
+      <p>The ambitious agenda of Project 2025 includes several controversial proposals:</p>
+      <ul>
+        <li><strong>Reversal of Abortion Pill Approval</strong>: Plans to reverse the approval of the abortion pill <em>mifepristone</em> and impose stricter regulations on its use.</li>
+        <li><strong>Immigration Overhaul</strong>: Recommendations for mass deportations, increased border security measures, and the completion of a border wall.</li>
+        <li><strong>Educational Reforms</strong>: Advocating for less federal intervention in education, promoting school choice over centralized oversight.</li>
+      </ul>
+      <p>These recommendations signal a significant shift in policy direction, aiming to implement conservative values across the board.</p>
+
+      <h3>Political Context and Reactions</h3>
+      <p>While Project 2025 has garnered support from various conservative factions, it has also faced substantial criticism:</p>
+      <ul>
+        <li><strong>Critics' Concerns</strong>: Many Democrats and some Republicans view the project as an extreme right-wing agenda that could dismantle federal structures and regress civil rights.</li>
+        <li><strong>Trump's Disavowal</strong>: Despite the initiative being closely associated with Trump, he has distanced himself from its specifics, labeling some proposals as "abysmal" while urging the public to view it independently of his campaign.</li>
+      </ul>
+      <p>Source: Democracy Docket</p>
+
+      <h3>Unique Insights</h3>
+      <ul>
+        <li><strong>Historical Echoes</strong>: Project 2025 echoes previous conservative initiatives, particularly the <em>Mandate for Leadership</em> documents from the Reagan era, indicating a long-standing strategy to prepare conservative governance.</li>
+        <li><strong>Mobilizing the Conservative Base</strong>: This initiative not only presents policy proposals but also serves as a rallying cry for conservatives to engage in governance, creating a "prepared army" ready to implement its agenda.</li>
+      </ul>
+
+      <h4>Did You Know?</h4>
+      <p>Project 2025's policy guide is reminiscent of the <em>Mandate for Leadership</em> first published in 1981, which served as a roadmap for Ronald Reagan's administration.</p>
+
+      <h3>Conclusion</h3>
+      <p>Project 2025 embodies a determined effort by conservative groups to prepare for a potential resurgence of Republican leadership. With its extensive policy proposals and organizational strategies, it highlights the ongoing ideological battles shaping American politics. As we move closer to the next election, one must ponder: <em>How will these proposed changes impact the landscape of American governance?</em></p>
+
+      <h3>Further Reading</h3>
+      <ul>
+        <li><a href="https://www.cbsnews.com/news/project-2025-conservative-blueprint-second-trump-administration/" target="_blank" rel="noopener noreferrer">What is Project 2025? What to know about the conservative blueprint for a second Trump administration - CBS News</a></li>
+        <li><a href="https://www.democracydocket.com/news/what-is-project-2025-and-why-is-it-alarming/" target="_blank" rel="noopener noreferrer">What is Project 2025 and why is it alarming? - Democracy Docket</a></li>
+        <li><a href="https://project2025.org/" target="_blank" rel="noopener noreferrer">Official Project 2025 Site</a></li>
+      </ul>
+    `
+  },
     {
       id: "biden-steps-aside",
       date: "July 25, 2024",
@@ -85,3 +142,5 @@ export const articles = [
     </div>`
     }
   ];
+
+  export default articleData;

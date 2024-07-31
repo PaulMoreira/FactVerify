@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { articles } from './articleData';
+import { articleData } from './articleData';
 
 const Navigation = () => {
   const navItems = [
@@ -9,7 +9,7 @@ const Navigation = () => {
     { 
       name: "Election Insights", 
       path: "/insights",
-      subItems: articles.map(article => ({
+      subItems: articleData.map(article => ({
         name: article.headline,
         path: `/insights/${article.id}`
       }))
