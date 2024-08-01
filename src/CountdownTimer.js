@@ -10,28 +10,28 @@ const CountdownTimer = () => {
 
       if (difference > 0) {
         timeLeft = {
-          days: Math.floor(difference / (1000 * 60 * 60 * 24)),
-          hours: Math.floor((difference / (1000 * 60 * 60)) % 24),
-          minutes: Math.floor((difference / 1000 / 60) % 60),
-          seconds: Math.floor((difference / 1000) % 60)
+          d: Math.floor(difference / (1000 * 60 * 60 * 24)),
+          h: Math.floor((difference / (1000 * 60 * 60)) % 24),
+          m: Math.floor((difference / 1000 / 60) % 60),
+          s: Math.floor((difference / 1000) % 60)
         };
       }
 
       return timeLeft;
     };
 
-    const timer = setTimeout(() => {
+    const timer = setInterval(() => {
       setTimeLeft(calculateTimeLeft());
     }, 1000);
 
-    return () => clearTimeout(timer);
-  }, [timeLeft]);
+    return () => clearInterval(timer);
+  }, []);
 
   return (
     <div className="countdown-timer">
       <h2>Election Day Countdown</h2>
       <div className="timer">
-        {Object.keys(timeLeft).length === 0 ? (
+        {Object.entries(timeLeft).length === 0 ? (
           <span>Election Day is here!</span>
         ) : (
           Object.entries(timeLeft).map(([unit, value]) => (

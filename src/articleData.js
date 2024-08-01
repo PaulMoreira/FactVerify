@@ -1,6 +1,59 @@
 // articleData.js
 export const articleData = [
   {
+    id: "trump-nabj-conference",
+    date: "August 1, 2024",
+    headline: "What Happened with Trump at the NABJ Conference?",
+    summary: "Explore the controversial appearance of Donald Trump at the National Association of Black Journalists conference, including contentious exchanges and fact-checking efforts.",
+    shareUrl: "https://vote2024info.vercel.app/insights/trump-nabj-conference",
+    content: `
+      <h2>What Happened with Trump at the NABJ Conference?</h2>
+      <p>Donald Trump's recent appearance at the National Association of Black Journalists (NABJ) conference on July 31, 2024, was not just another speaking engagement; it was a stage for controversy and confrontation, drawing intense media scrutiny. As the former president took to the podium, the air was thick with anticipation — and skepticism.</p>
+
+      <h3>A Contentious Reception</h3>
+      <p>Upon his arrival, Trump was greeted with a <strong>mixed reception</strong>. Attendees expressed their discontent through audible boos, while applause was sparse. The panel discussion, which started approximately <strong>15 minutes late</strong>, set a tense tone for what was to unfold.</p>
+      <p>Source: Variety</p>
+
+      <h3>Hostile Exchanges</h3>
+      <p>One of the most notable moments came during Trump's interaction with <strong>Rachel Scott</strong>, an ABC News correspondent. Trump labeled her introduction as "very rude," and further undermined her network's credibility by branding it as "fake news." This hostile exchange not only highlighted Trump's contentious relationship with the media but also set the stage for a fraught discussion.</p>
+      <p>Source: MSNBC</p>
+
+      <h3>Controversial Remarks</h3>
+      <p>During the panel, Trump made headlines with his <strong>racial comments</strong> regarding Vice President Kamala Harris. He stated he "didn't know she was Black" until a few years ago, questioning her racial identity. Trump inaccurately claimed that Harris had previously only promoted her Indian heritage, which sparked outrage among attendees.</p>
+      <p>Source: PBS News</p>
+
+      <h3>Claims of Accomplishments</h3>
+      <p>In a surprising turn, Trump claimed he had done "so much" for the Black population in America. This assertion was met with skepticism, given his past remarks often viewed as racially insensitive. Many in the audience seemed unconvinced by his self-proclaimed accolades.</p>
+      <p>Source: MSNBC</p>
+
+      <h3>Real-Time Fact-Checking</h3>
+      <p>In a bid to maintain integrity, NABJ partnered with <strong>PolitiFact</strong> to provide real-time fact-checking during the discussion. However, numerous attendees criticized the organization for not adequately addressing many of Trump's misleading statements, further complicating the event's atmosphere.</p>
+      <p>Source: Variety</p>
+
+      <h3>Protests and Resignations</h3>
+      <p>The decision to host Trump ignited <strong>protests</strong> outside the venue, and several resignations occurred within NABJ's leadership, revealing deep divisions among members about the appropriateness of giving a platform to Trump, who has been criticized for his treatment of the media and racial issues.</p>
+      <p>Source: MSNBC</p>
+
+      <h3>Vice President Harris's Response</h3>
+      <p>In the aftermath, Vice President Harris responded to Trump's comments, labeling them as divisive and disrespectful. She emphasized that the American people deserved <strong>better leadership</strong> that is truthful and unifying.</p>
+      <p>Source: PBS News</p>
+
+      <h4>Did You Know?</h4>
+      <p>The NABJ is dedicated to advocating for diversity in journalism, yet hosting Trump, a figure often criticized for his divisive rhetoric, sparked significant backlash and internal conflict within the organization.</p>
+
+      <h3>Conclusion</h3>
+      <p>Donald Trump's appearance at the NABJ conference was characterized by <strong>controversy</strong>, <strong>hostility</strong>, and a notable lack of accountability for misleading statements. The event not only illuminated existing tensions within the NABJ but also raised critical questions about the implications of allowing such figures a platform in discussions concerning race and media.</p>
+      <p>As we reflect on this event, one question remains: <strong>What does this tell us about the future of dialogue in journalism, especially regarding race?</strong></p>
+
+      <h3>Further Reading</h3>
+      <ul>
+        <li><a href="https://www.msnbc.com/trump-nabj-interview" target="_blank" rel="noopener noreferrer">MSNBC - Trump's Hostile NABJ Interview</a></li>
+        <li><a href="https://www.pbs.org/news/harris-responds-to-trump" target="_blank" rel="noopener noreferrer">PBS News - Harris Responds to Trump</a></li>
+        <li><a href="https://variety.com/trump-nabj-conference" target="_blank" rel="noopener noreferrer">Variety - Trump at NABJ Conference</a></li>
+      </ul>
+    `
+  },
+  {
     id: "project-2025-explained",
     date: "July 31, 2024",
     headline: "Project 2025: A Comprehensive Guide to the Conservative Blueprint",
