@@ -293,7 +293,6 @@ footer {
   color: white;
   text-decoration: none;
   transition: opacity 0.2s;
-  margin-right: 10px;
 }
 
 .share-button:hover {
@@ -304,30 +303,20 @@ footer {
   margin-left: 5px;
 }
 
-.share-button svg {
-  width: 24px;
-  height: 24px;
-}
-
 .x-twitter {
   background-color: #000000;
-  color: #ffffff;
-}
-
-.x-twitter svg {
-  fill: #ffffff;
 }
 
 .facebook {
-  background-color: #1877F2;
+  background-color: #4267B2;
 }
 
 .linkedin {
-  background-color: #0A66C2;
+  background-color: #0077B5;
 }
 
-.facebook svg, .linkedin svg {
-  stroke: #ffffff;
+.reddit {
+  background-color: #FF4500;
 }
 
 /* Override any inherited styles for links within share buttons */
