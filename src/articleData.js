@@ -1,6 +1,62 @@
 // articleData.js
 export const articleData = [
   {
+    id: "kamala-harris-background",
+    date: "August 2, 2024",
+    headline: "Who is Kamala Harris and What is Her Nationality?",
+    summary: "Explore the background, political career, and multicultural heritage of Kamala Harris, the first female Vice President of the United States.",
+    content: `
+      <h2>Who is Kamala Harris?</h2>
+      <p>Kamala Harris has emerged as one of the most significant political figures in modern American history. As the first female Vice President of the United States, she carries a legacy that intertwines both her heritage and her political ambitions. In this article, we will explore her background, her journey into politics, and address the question of her nationality.</p>
+
+      <h3>Early Life and Background</h3>
+      <p>Kamala Devi Harris was born on <strong>October 20, 1964</strong>, in <strong>Oakland, California</strong>. She is the daughter of immigrants: her mother, <strong>Shyamala Gopalan</strong>, emigrated from India, and her father, <strong>Donald Harris</strong>, is from Jamaica. This multicultural background significantly influences her identity and political perspective.</p>
+      <ul>
+        <li><strong>Childhood</strong>: Growing up in a diverse community, Kamala often participated in civil rights marches with her parents. This early exposure to social justice issues shaped her commitment to civil rights and equality.</li>
+        <li><strong>Education</strong>: She graduated from <strong>Howard University</strong> with a degree in political science and economics and earned her law degree from the <strong>University of California, Hastings College of the Law</strong>.</li>
+      </ul>
+
+      <h3>Political Career</h3>
+      <p>Kamala Harris's political career is marked by significant milestones:</p>
+      <ol>
+        <li><strong>District Attorney</strong>: Elected as the District Attorney of San Francisco in 2004, she initiated progressive policies, such as the "Back on Track" program for first-time drug offenders.</li>
+        <li><strong>Attorney General of California</strong>: Serving from 2011 to 2017, she became the <strong>first woman</strong> and the <strong>first African American</strong> to hold the position. Her advocacy focused on criminal justice reform and consumer protection.</li>
+        <li><strong>U.S. Senate</strong>: In 2017, she became the <strong>first Indian American</strong> and the <strong>second African American woman</strong> to serve in the U.S. Senate, where she championed healthcare, immigration reform, and civil rights.</li>
+      </ol>
+
+      <h3>Vice Presidency</h3>
+      <p>Kamala Harris was sworn in as Vice President on <strong>January 20, 2021</strong>. In this role, she has focused on several key issues:</p>
+      <ul>
+        <li><strong>Women's Rights</strong>: A vocal advocate for women's reproductive rights, Harris has worked on legislation to protect access to healthcare.</li>
+        <li><strong>Gun Control</strong>: She supports measures to curb gun violence and has been involved in passing significant gun safety legislation.</li>
+        <li><strong>Climate Change</strong>: Harris played a crucial role in the passage of the <strong>Inflation Reduction Act</strong>, representing a landmark investment in climate policy.</li>
+      </ul>
+
+      <h3>Unique Insights</h3>
+      <ul>
+        <li><strong>Cultural Influence</strong>: Kamala Harris's multicultural background—being of Indian and Jamaican descent—positions her uniquely in American politics, allowing her to connect with diverse communities.</li>
+        <li><strong>Historic Role</strong>: Her election as Vice President marked a significant moment in U.S. history, as she is the first woman and first person of South Asian descent to hold the office, inspiring many young girls and women, especially from minority backgrounds, to aspire for leadership roles.</li>
+      </ul>
+
+      <h4>Did You Know?</h4>
+      <ul>
+        <li>Kamala Harris's mother, Shyamala, was a prominent cancer researcher and an activist, which deeply influenced Kamala's values around social justice and public service.</li>
+        <li>Harris is not just the first female Vice President, but she also broke barriers as the first African American and first Asian American Vice President in U.S. history.</li>
+      </ul>
+
+      <h3>Conclusion</h3>
+      <p>Kamala Harris's journey from her diverse upbringing to becoming Vice President exemplifies her commitment to public service and social justice. Her unique heritage and experiences continue to shape her policies and advocacy in office, making her a pivotal figure in modern American politics.</p>
+      <p>What does Kamala Harris's rise to power mean for the future of representation in American politics?</p>
+
+      <h3>Further Reading</h3>
+      <ul>
+        <li><a href="https://www.britannica.com/biography/Kamala-Harris" target="_blank" rel="noopener noreferrer">Britannica - Kamala Harris</a></li>
+        <li><a href="https://www.biography.com/political-figure/kamala-harris" target="_blank" rel="noopener noreferrer">Biography.com - Kamala Harris</a></li>
+        <li><a href="https://www.whitehouse.gov/administration/vice-president-harris/" target="_blank" rel="noopener noreferrer">The White House - Kamala Harris</a></li>
+      </ul>
+    `
+  },
+  {
     id: "trump-nabj-conference",
     date: "August 1, 2024",
     headline: "What Happened with Trump at the NABJ Conference?",
