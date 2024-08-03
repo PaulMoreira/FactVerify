@@ -1,6 +1,59 @@
 // articleData.js
 export const articleData = [
   {
+    id: "trump-fox-debate-proposal",
+    date: "August 3, 2024",
+    headline: "Donald Trump Declines Debate but Offers to Debate on FOX",
+    summary: "Former President Donald Trump proposes a debate with Vice President Kamala Harris on Fox News, declining the previously scheduled ABC News debate.",
+    content: `
+      <p>On August 3, 2024, <em>former President Donald Trump</em> made a significant move in the political arena by proposing to debate <em>Vice President Kamala Harris</em> on <strong>Fox News</strong> instead of participating in the previously scheduled debate on <strong>ABC News</strong>. This unexpected shift has triggered a flurry of commentary and analysis regarding Trump's debate strategy, the implications for his campaign, and the dynamics of the upcoming election.</p>
+
+      <h3>Key Facts</h3>
+      <ol>
+        <li><p><strong>Debate Schedule Change</strong>: Trump announced his willingness to engage in a debate on <strong>September 4, 2024</strong>, hosted by <strong>Fox News</strong>. He referred to the earlier arrangements for a debate with Harris on ABC News, scheduled for <strong>September 10</strong>, as "terminated."<br>Source: <a rel="noopener noreferrer" target="_blank" href="https://deadline.com/2024/08/donald-trump-says-he-will-debate-kamala-harris-us-election-fox-news-1236030778/">Deadline</a></p></li>
+        <li><p><strong>Location and Format</strong>: The proposed Fox News debate is set to take place in <strong>Pennsylvania</strong>, a crucial swing state for the upcoming election. Trump emphasized that the debate would feature a full arena audience, similar to his previous format against Joe Biden.<br>Source: <a rel="noopener noreferrer" target="_blank" href="https://deadline.com/2024/08/donald-trump-says-he-will-debate-kamala-harris-us-election-fox-news-1236030778/">Deadline</a></p></li>
+        <li><p><strong>Strategic Motives</strong>: By shifting to Fox News, Trump aims to leverage the network's audience, which aligns closely with his support base. His campaign has previously criticized ABC News for alleged bias, indicating that Trump seeks a more favorable platform for his messaging.<br>Source: <a rel="noopener noreferrer" target="_blank" href="https://www.pbs.org/newshour/politics/trump-says-he-probably-will-debate-harris-but-refuses-to-commit-her-team-calls-him-scared">PBS</a></p></li>
+        <li><p><strong>Pressure from Harris's Campaign</strong>: Harris's campaign responded to Trump's indecision by labeling him "too scared" to face her in a debate, asserting that she is prepared to engage regardless of Trump's commitments.<br>Source: <a rel="noopener noreferrer" target="_blank" href="https://thehill.com/homenews/campaign/4807828-donald-trump-kamala-harris-debate/">The Hill</a></p></li>
+        <li><p><strong>Polling Context</strong>: Trump has expressed a lack of urgency in debating Harris, citing his lead in current polls as a justification for his reluctance. This reflects a broader strategy to avoid potential risks associated with a debate performance.<br>Source: <a rel="noopener noreferrer" target="_blank" href="https://www.bloomberg.com/news/articles/2024-08-02/trump-pushes-back-on-debate-with-harris-saying-he-s-up-in-polls">Bloomberg</a></p></li>
+        <li><p><strong>Legal Context</strong>: Trump cited a "conflict of interest" regarding ABC News due to ongoing litigation involving comments made by <em>George Stephanopoulos</em>, a host at the network. This legal backdrop complicates his decision-making regarding debate venues.<br>Source: <a rel="noopener noreferrer" target="_blank" href="https://deadline.com/2024/08/donald-trump-says-he-will-debate-kamala-harris-us-election-fox-news-1236030778/">Deadline</a></p></li>
+      </ol>
+
+      <h3>Unique Insights</h3>
+      <ul>
+        <li><p><strong>Debate Negotiation Tactics</strong>: Trump's maneuvering around the debate schedule exemplifies a broader tactic seen in political negotiations, where candidates control the terms and environment of public confrontations to enhance their image and messaging.</p></li>
+        <li><p><strong>Impact on Voter Perceptions</strong>: The portrayal of Trump as 'scared' to debate could sway undecided voters, particularly those who value direct engagement and transparency from candidates.</p></li>
+        <li><p><strong>Media Dynamics</strong>: Choosing Fox News as a debate platform underscores the significant role media outlets play in shaping electoral narratives and public perceptions.</p></li>
+      </ul>
+
+      <h3>Did You Know?</h3>
+      <p>Trump's strategic choice of debate platform not only aims to bolster his image among his base but also reflects a deeper understanding of the media landscape, where candidate narratives are often shaped by the outlets they choose to engage with.</p>
+
+      <div class="image-gallery">
+        <div class="image-container">
+          <img class="article-image" alt="Image of Donald Trump declines debate but offer to debate on FOX" src="https://static01.nyt.com/images/2023/08/18/multimedia/18pol-trumptucker-gjbk/18pol-trumptucker-gjbk-superJumbo.jpg">
+        </div>
+        <div class="image-container">
+          <img class="article-image" alt="Image related to the debate situation" src="https://d3i6fh83elv35t.cloudfront.net/static/2024/07/trump-harris-01-1024x558.png">
+        </div>
+        <div class="image-container">
+          <img class="article-image" alt="Trump on Fox News" src="https://assets3.cbsnewsstatic.com/hub/i/r/2024/07/21/1d3b1403-8443-4010-bdee-2a125e7c22dd/thumbnail/1280x720/f741d334c25996efea201641f83fb145/cbsn-fusion-trump-says-next-debate-should-be-on-fox-news-after-biden-drops-out-thumbnail.jpg?v=d7dedd293aad546f97f947149642d369">
+        </div>
+      </div>
+
+      <h3>Conclusion</h3>
+      <p>Trump's decision to propose a debate on Fox News instead of ABC highlights strategic considerations that could have significant implications for his campaign and the electoral landscape leading up to the 2024 election. The ongoing dialogue between Trump and Harris's campaigns transcends mere debates; it encapsulates the broader political battle ahead.</p>
+      <p>As the political landscape evolves, one must ponder: <strong>Will Trump's strategic moves resonate with voters, or will they perceive him as evading tough questions?</strong></p>
+
+      <h3>Further Reading</h3>
+      <ul>
+        <li><a rel="noopener noreferrer" target="_blank" href="https://deadline.com/2024/08/donald-trump-says-he-will-debate-kamala-harris-us-election-fox-news-1236030778/">Donald Trump Says He Will Debate Kamala Harris on Fox News</a></li>
+        <li><a rel="noopener noreferrer" target="_blank" href="https://www.pbs.org/newshour/politics/trump-says-he-probably-will-debate-harris-but-refuses-to-commit-her-team-calls-him-scared">Trump's Debate Strategy: A Political Maneuver</a></li>
+        <li><a rel="noopener noreferrer" target="_blank" href="https://thehill.com/homenews/campaign/4807828-donald-trump-kamala-harris-debate/">Harris Campaign's Response to Trump's Indecision</a></li>
+        <li><a rel="noopener noreferrer" target="_blank" href="https://www.bloomberg.com/news/articles/2024-08-02/trump-pushes-back-on-debate-with-harris-saying-he-s-up-in-polls">Polling Insights on Trump's Debate Readiness</a></li>
+      </ul>
+    `
+  },
+  {
     id: "us-election-law-changes-2024",
     date: "August 2, 2024",
     headline: "Recent Changes in US Election Laws and Their Impact on Voters",

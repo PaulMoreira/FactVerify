@@ -718,3 +718,52 @@ footer {
 .full-article a:hover {
   text-decoration: underline;
 }
+
+.full-article .image-gallery {
+  display: flex;
+  flex-wrap: nowrap;
+  gap: 10px;
+  margin: 20px 0;
+  overflow-x: auto;
+  padding-bottom: 10px; /* Space for potential scrollbar */
+}
+
+.full-article .image-container {
+  flex: 0 0 auto;
+  width: 250px; /* Fixed width for each image container */
+  height: 200px; /* Fixed height for each image container */
+  overflow: hidden;
+  border-radius: 8px;
+}
+
+.full-article .article-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+}
+
+/* Hide scrollbar for Chrome, Safari and Opera */
+.full-article .image-gallery::-webkit-scrollbar {
+  display: none;
+}
+
+/* Hide scrollbar for IE, Edge and Firefox */
+.full-article .image-gallery {
+  -ms-overflow-style: none;  /* IE and Edge */
+  scrollbar-width: none;  /* Firefox */
+}
+
+@media (max-width: 768px) {
+  .full-article .image-container {
+    width: 200px; /* Slightly smaller on tablets */
+    height: 160px;
+  }
+}
+
+@media (max-width: 480px) {
+  .full-article .image-container {
+    width: 150px; /* Even smaller on phones */
+    height: 120px;
+  }
+}
