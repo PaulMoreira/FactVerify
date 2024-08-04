@@ -51,7 +51,9 @@ export const articleData = [
         <li><a rel="noopener noreferrer" target="_blank" href="https://thehill.com/homenews/campaign/4807828-donald-trump-kamala-harris-debate/">Harris Campaign's Response to Trump's Indecision</a></li>
         <li><a rel="noopener noreferrer" target="_blank" href="https://www.bloomberg.com/news/articles/2024-08-02/trump-pushes-back-on-debate-with-harris-saying-he-s-up-in-polls">Polling Insights on Trump's Debate Readiness</a></li>
       </ul>
-    `
+    `,
+    ogImage: "https://static01.nyt.com/images/2023/08/18/multimedia/18pol-trumptucker-gjbk/18pol-trumptucker-gjbk-superJumbo.jpg",
+    ogDescription: "Trump's strategic move to propose a debate on Fox News instead of ABC highlights significant implications for his campaign and the electoral landscape leading up to the 2024 election."
   },
   {
     id: "us-election-law-changes-2024",

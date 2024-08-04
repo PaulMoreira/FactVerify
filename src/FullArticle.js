@@ -1,5 +1,6 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useParams } from 'react-router-dom';
+import { Helmet } from 'react-helmet';
 import articleData from './articleData';
 import SocialMediaShare from './SocialMediaShare';
 
@@ -7,20 +8,35 @@ const FullArticle = () => {
   const { articleId } = useParams();
   const article = articleData.find(a => a.id === articleId);
 
+  useEffect(() => {
+    // Scroll to top when component mounts
+    window.scrollTo(0, 0);
+  }, []);
+
   if (!article) {
     return <div>Article not found</div>;
   }
 
-  // Construct the full URL for sharing
   const currentUrl = window.location.href;
 
   return (
-    <div className="full-article">
-      <h2>{article.headline}</h2>
-      <p className="article-date">{article.date}</p>
-      <SocialMediaShare url={currentUrl} title={article.headline} />
-      <div dangerouslySetInnerHTML={{ __html: article.content }} />
-    </div>
+    <>
+      <Helmet>
+        <title>{article.headline}</title>
+        <meta property="og:title" content={article.headline} />
+        <meta property="og:description" content={article.ogDescription || article.summary} />
+        <meta property="og:image" content={article.ogImage} />
+        <meta property="og:url" content={currentUrl} />
+        <meta property="og:type" content="article" />
+        <meta name="twitter:card" content="summary_large_image" />
+      </Helmet>
+      <div className="full-article">
+        <h2>{article.headline}</h2>
+        <p className="article-date">{article.date}</p>
+        <SocialMediaShare url={currentUrl} title={article.headline} />
+        <div dangerouslySetInnerHTML={{ __html: article.content }} />
+      </div>
+    </>
   );
 };
 
