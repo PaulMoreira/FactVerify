@@ -1,6 +1,93 @@
 // articleData.js
 export const articleData = [
   {
+    id: "harris-vp-pick-2024",
+    date: "August 5, 2024",
+    headline: "Who Will Be Kamala Harris's VP Pick?",
+    summary: "Explore the potential candidates for Kamala Harris's vice presidential pick and the implications for the 2024 election.",
+    ogImage: "https://bloximages.newyork1.vip.townnews.com/thecheyennepost.com/content/tncms/assets/v3/editorial/e/9e/e9e39922-3b25-5def-8a3c-1146b3a6200e/66ac08ec3d532.image.jpg",
+    ogDescription: "As the 2024 election approaches, Vice President Kamala Harris is set to choose her running mate. Discover the top contenders and how this choice could shape the electoral landscape.",
+    content: `
+      <h1>Kamala Harris's Running Mate: The Top Contenders for 2024</h1>
+      <p>As the 2024 presidential election looms on the horizon, all eyes are on Vice President <strong>Kamala Harris</strong> as she prepares to select her running mate. With speculation reaching a fever pitch, the choice she makes could significantly shape the electoral landscape. Let's dive into the potential candidates, their strengths, and what this means for Harris and the Democratic party.</p>
+
+      <div class="image-gallery">
+        <div class="image-container">
+          <img class="article-image" alt="Image of Kamala Harris" src="https://bloximages.newyork1.vip.townnews.com/thecheyennepost.com/content/tncms/assets/v3/editorial/e/9e/e9e39922-3b25-5def-8a3c-1146b3a6200e/66ac08ec3d532.image.jpg">
+        </div>
+      </div>
+
+      <h2>Key Contenders</h2>
+      <ol>
+        <li><p><strong>Josh Shapiro (Governor of Pennsylvania)</strong></p>
+        <ul>
+          <li><strong>Background</strong>: Governor since 2023, previously served as Attorney General.</li>
+          <li><strong>Strengths</strong>: Popular in a crucial swing state; endorsed by notable figures like Chris Christie.</li>
+          <li><strong>Quote</strong>: "Extraordinarily popular" and "very talented politician" (Source: <a rel="noopener noreferrer" target="_blank" href="https://www.politico.com/news/2024/08/04/harris-vp-pick-sunday-clues-00172578">Politico</a>).</li>
+        </ul>
+        </li>
+        <li><p><strong>Mark Kelly (Senator from Arizona)</strong></p>
+        <ul>
+          <li><strong>Background</strong>: Former astronaut, advocate for gun control.</li>
+          <li><strong>Strengths</strong>: Represents another pivotal swing state; high favorability ratings.</li>
+          <li><strong>Poll Performance</strong>: Ranked highest among potential VP picks with a net rating of +10 (Source: <a rel="noopener noreferrer" target="_blank" href="https://www.forbes.com/sites/saradorn/2024/08/04/kamala-harris-vp-shortlist-three-running-mate-contenders-meeting-with-harris-today-as-decision-looms/">Forbes</a>).</li>
+        </ul>
+        </li>
+        <li><p><strong>Tim Walz (Governor of Minnesota)</strong></p>
+        <ul>
+          <li><strong>Background</strong>: Progressive leader with a growing national profile.</li>
+          <li><strong>Strengths</strong>: Strong leadership in a competitive state.</li>
+          <li><strong>Concerns</strong>: Viewed as too progressive by some critics (Source: <a rel="noopener noreferrer" target="_blank" href="https://www.cbsnews.com/news/kamala-harris-vice-president-candidates/">CBS News</a>).</li>
+        </ul>
+        </li>
+        <li><p><strong>Andy Beshear (Governor of Kentucky)</strong></p>
+        <ul>
+          <li><strong>Background</strong>: Focuses on local issues, re-elected in a traditionally Republican state.</li>
+          <li><strong>Strengths</strong>: Moderate appeal, resonates with swing voters.</li>
+          <li><strong>Quote</strong>: Hesitant to leave office unless it significantly benefits Kentucky (Source: <a rel="noopener noreferrer" target="_blank" href="https://www.forbes.com/sites/saradorn/2024/08/04/kamala-harris-vp-shortlist-three-running-mate-contenders-meeting-with-harris-today-as-decision-looms/">Forbes</a>).</li>
+        </ul>
+        </li>
+        <li><p><strong>Pete Buttigieg (Transportation Secretary)</strong></p>
+        <ul>
+          <li><strong>Background</strong>: Former mayor and recognized figure in the Biden administration.</li>
+          <li><strong>Strengths</strong>: National visibility and experience within the Democratic Party.</li>
+          <li><strong>Challenges</strong>: Scrutiny over past performance in the 2020 primaries (Source: <a rel="noopener noreferrer" target="_blank" href="https://www.cbsnews.com/news/kamala-harris-vice-president-candidates/">CBS News</a>).</li>
+        </ul>
+        </li>
+      </ol>
+
+      <h2>Unique Insights and Statistics</h2>
+      <ul>
+        <li><strong>Electoral Strategy</strong>: Harris is focusing on candidates who can secure pivotal states like Pennsylvania and Arizona for the Democrats (Source: <a rel="noopener noreferrer" target="_blank" href="https://apnews.com/article/kamala-harris-shapiro-kelly-walz-beshear-vp-3b792c18b033b330ae59b45570ca56c1">AP News</a>).</li>
+        <li><strong>Polling Dynamics</strong>: Picking Shapiro could swing Pennsylvania, a state Biden narrowly won in 2020 (Source: <a rel="noopener noreferrer" target="_blank" href="https://www.politico.com/news/2024/08/04/harris-vp-pick-sunday-clues-00172578">Politico</a>).</li>
+        <li><strong>Diversity and Representation</strong>: Each candidate brings unique demographics that can enhance Harris's appeal among key voter segments.</li>
+      </ul>
+
+      <h2>Did You Know?</h2>
+      <p>Harris is not just looking for a running mate but a strong governing partner. Her choice could reflect a balance between electoral strategy and collaborative governance. The last VP pick to have a substantial impact on an election was <strong>Joe Biden</strong> in 2008, who brought significant experience to the ticket.</p>
+
+      <h2>Conclusion</h2>
+      <p>Harris's selection for a vice presidential candidate is a pivotal moment that could define the 2024 election. With strong contenders vying for the position, her decision will likely hinge on balancing electoral strategy with the need for effective governance. Who do you think will ultimately join her on the ticket, and what impact will they have?</p>
+
+      <h2>Further Reading</h2>
+      <ul>
+        <li><a rel="noopener noreferrer" target="_blank" href="https://apnews.com/article/kamala-harris-shapiro-kelly-walz-beshear-vp-3b792c18b033b330ae59b45570ca56c1">AP News</a></li>
+        <li><a rel="noopener noreferrer" target="_blank" href="https://www.politico.com/news/2024/08/04/harris-vp-pick-sunday-clues-00172578">Politico</a></li>
+        <li><a rel="noopener noreferrer" target="_blank" href="https://www.forbes.com/sites/saradorn/2024/08/04/kamala-harris-vp-shortlist-three-running-mate-contenders-meeting-with-harris-today-as-decision-looms/">Forbes</a></li>
+        <li><a rel="noopener noreferrer" target="_blank" href="https://www.cbsnews.com/news/kamala-harris-vice-president-candidates/">CBS News</a></li>
+      </ul>
+
+      <div class="image-gallery">
+        <div class="image-container">
+          <img class="article-image" alt="Image of Kamala Harris" src="https://media-cldnry.s-nbcnews.com/image/upload/t_fit-1500w,f_auto,q_auto:best/rockcms/2024-08/240801-Kamala-Harris-Atlanta-aa-213p-52aee4.jpg">
+        </div>
+        <div class="image-container">
+          <img class="article-image" alt="Image of Kamala Harris" src="https://www.aljazeera.com/wp-content/uploads/2024/07/AFP__20240727__366F6R3__v2__HighRes__UsVotePoliticsHarris-1722180586.jpg?resize=770%2C513&amp;quality=80">
+        </div>
+      </div>
+    `
+  },
+  {
     id: "trump-fox-debate-proposal",
     date: "August 3, 2024",
     headline: "Donald Trump Declines Debate but Offers to Debate on FOX",
