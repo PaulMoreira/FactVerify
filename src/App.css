@@ -767,3 +767,10 @@ footer {
     height: 120px;
   }
 }
+
+blockquote {
+  padding: 0 1em;
+  color: #333;
+  background-color: #f0f4f8;
+  border-left: 0.25em solid #4a90e2;
+}
