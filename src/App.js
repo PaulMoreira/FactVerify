@@ -235,7 +235,10 @@ const App = () => {
     <Router>
       <div className="app">
         <header>
-          <h1>2024 Presidential Election: Ideas & Plans</h1>
+          <div className="header-content">
+            <img src="/og-image.jpg" alt="2024 Election Logo" className="logo" />
+            <h1>2024 Presidential Election: Ideas & Plans</h1>
+          </div>
         </header>
         <Navigation />
         <Routes>
