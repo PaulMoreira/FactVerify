@@ -1,6 +1,101 @@
 // articleData.js
 export const articleData = [
   {
+    id: "trump-vance-negative-rhetoric",
+    date: "August 8, 2024",
+    headline: "Why Are Donald Trump and JD Vance Pushing Negative Rhetoric?",
+    summary: "Explore the motivations behind the negative rhetoric employed by Donald Trump and JD Vance, and its implications for the political landscape.",
+    shareUrl: "https://vote2024info.vercel.app/insights/trump-vance-negative-rhetoric",
+    content: `
+      <h1>Why Are Donald Trump and JD Vance Pushing Negative Rhetoric?</h1>
+      <p>In recent years, political discourse has reached unprecedented levels of intensity, particularly with figures like Donald Trump and JD Vance leading the charge. This article explores the motivations behind their negative rhetoric and its implications for the political landscape.</p>
+      
+      <div class="image-gallery">
+        <div class="image-container">
+          <img class="article-image" alt="Image of Donald Trump" src="https://m.media-amazon.com/images/I/81f3le+X+iL._AC_UF1000,1000_QL80_.jpg">
+        </div>
+      </div>
+
+      <h2>The Current Political Climate</h2>
+      <h3>The Rise of Negative Rhetoric</h3>
+      <p>Negative rhetoric has become a hallmark of modern politics, influenced by many factors:</p>
+      <ul>
+        <li><strong>Social Media:</strong> Platforms like Twitter and Facebook amplify inflammatory statements.</li>
+        <li><strong>Partisan Divides:</strong> Polarization in politics encourages aggressive messaging.</li>
+        <li><strong>Feedback Loops:</strong> Supporters often reward leaders for bold, controversial statements.</li>
+      </ul>
+      
+      <h3>Trump's Mastery of Communication</h3>
+      <p>Donald Trump has proven to be a master of using negative rhetoric as a political tool:</p>
+      <ul>
+        <li><strong>Branding Opponents:</strong> He's known for coining nicknames such as "Crooked Hillary" and "Sleepy Joe."</li>
+        <li><strong>Eliciting Emotional Responses:</strong> Negative messaging can rally supporters by tapping into fear and outrage.</li>
+      </ul>
+      
+      <div class="image-gallery">
+        <div class="image-container">
+          <img class="article-image" alt="Image of JD Vance" src="https://images.theconversation.com/files/108772/original/image-20160120-26129-4axom6.jpg?ixlib=rb-4.1.0&amp;rect=0%2C269%2C1500%2C727&amp;q=45&amp;auto=format&amp;w=1356&amp;h=668&amp;fit=crop">
+        </div>
+      </div>
+
+      <h2>JD Vance and the New Wave of Politics</h2>
+      <h3>Vance's Position in Politics</h3>
+      <p>As a rising star in the Republican Party, JD Vance employs similar techniques:</p>
+      <ul>
+        <li><strong>Anti-Establishment Sentiment:</strong> Vance's rhetoric often targets both the Democratic Party and certain elements within the Republican establishment.</li>
+        <li><strong>Cultural Commentary:</strong> He uses negative rhetoric to frame issues around identity politics and elitism.</li>
+      </ul>
+      
+      <h3>Key Themes in Their Messaging</h3>
+      <p>Both Trump and Vance share common themes in their rhetoric:</p>
+      <ol>
+        <li><strong>Us vs. Them Mentality:</strong> They create a clear divide between 'true' Americans and perceived outsiders.</li>
+        <li><strong>Economic Anxiety:</strong> They often portray opponents as out-of-touch elites harming regular Americans.</li>
+        <li><strong>Fear of Change:</strong> Highlighting the dangers of progressive policies resonates with more conservative bases.</li>
+      </ol>
+      
+      <div class="image-gallery">
+        <div class="image-container">
+          <img class="article-image" alt="Image of Political Rally" src="https://s.abcnews.com/images/US/IpsosPoll_Q1_WorseBetter_090320_v02_KS_1599175465936_hpEmbed_1x1_992.jpg">
+        </div>
+      </div>
+
+      <h2><strong>Did You Know?</strong></h2>
+      <ul>
+        <li>A 2020 study found that political negativity can lead to increased voter turnout, as people are more likely to mobilize against a candidate rather than for one.</li>
+        <li><strong>Polls indicate:</strong> Over 70% of voters claimed to be more motivated by negative campaigning than positive messages.</li>
+      </ul>
+      
+      <h2>Implications of Negative Rhetoric</h2>
+      <h3>Influence on Voter Perception</h3>
+      <p>Negative rhetoric impacts how voters perceive issues and candidates:</p>
+      <ul>
+        <li><strong>Desensitization to Attacks:</strong> Continuous exposure makes voters more accepting of aggressive messaging.</li>
+        <li><strong>Skepticism toward Opponents:</strong> Voters who align with Trump or Vance may view dissenting opinions as hostile or illegitimate.</li>
+      </ul>
+      
+      <h3>Potential Risks</h3>
+      <p>The strategy is not without its risks:</p>
+      <ul>
+        <li><strong>Alienating Moderate Voters:</strong> Extreme negativity may push moderate voters away.</li>
+        <li><strong>Sustaining Division:</strong> It entrenches a cycle of division, making bipartisan solutions more difficult.</li>
+      </ul>
+      
+      <h2>Conclusion</h2>
+      <p>The push by Donald Trump and JD Vance for negative rhetoric raises important questions about the future of political discourse. <strong>As society grapples with increasing polarization, can genuine dialogue replace the noise?</strong></p>
+      
+      <h2>Further Reading</h2>
+      <p>Here are some sources for those seeking to understand more about this topic:</p>
+      <ul>
+        <li><a href="https://www.researchgate.net/publication/343576123_the_impact_of_negative_political_campaigning_on_voter_turnout" target="_blank" rel="noopener noreferrer">The Impact of Negative Political Campaigning</a> – ResearchGate</li>
+        <li><a href="https://www.psychologytoday.com/us/blog/the-future-ourselves/202002/the-psychology-political-negativity" target="_blank" rel="noopener noreferrer">The Psychology of Political Negativity</a> – Psychology Today</li>
+        <li><a href="https://www.politico.com/news/2020/03/03/trump-american-politics-rhetoric-123422" target="_blank" rel="noopener noreferrer">Trump's Rhetoric and Its Impact on American Politics</a> – Politico</li>
+      </ul>
+    `,
+    ogImage: "https://m.media-amazon.com/images/I/81f3le+X+iL._AC_UF1000,1000_QL80_.jpg",
+    ogDescription: "Explore the motivations and implications of negative rhetoric in politics, focusing on the strategies employed by Donald Trump and JD Vance."
+  },
+  {
     id: "minnesota-voters-on-tim-walz",
     date: "August 8, 2024",
     headline: "What Do Minnesota Voters Say About Tim Walz?",
