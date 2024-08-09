@@ -9,13 +9,6 @@ export const articleData = [
     content: `
       <h1>What Happened at the Trump Press Conference?</h1>
       <p>On <strong>August 8, 2024</strong>, former President Donald Trump held a press conference at his Mar-a-Lago estate in Palm Beach, Florida. This event was filled with contentious claims and sharp criticisms, particularly directed towards his opponent, Democratic nominee Kamala Harris. As the 2024 election approaches, Trump's rhetoric and strategies are becoming increasingly significant in shaping the political landscape.</p>
-      
-      <div class="image-gallery">
-        <div class="image-container">
-          <img class="article-image" alt="Image of Trump press conference" src="https://ximage.c-spanvideo.org/eyJidWNrZXQiOiJwaWN0dXJlcy5jLXNwYW52aWRlby5vcmciLCJrZXkiOiJGaWxlc1wvNzQ0XC8wMDFcLzE3MjMxNDA1NTJfMDAxLmpwZyIsImVkaXRzIjp7InJlc2l6ZSI6eyJmaXQiOiJjb3ZlciIsImhlaWdodCI6NTc2LCJ3aWR0aCI6MTAyNH19fQ==">
-        </div>
-      </div>
-
       <h2>Key Highlights of the Conference</h2>
       <h3>1. <strong>Claims About Crowd Sizes</strong></h3>
       <p>Trump controversially asserted that the crowd at his January 6, 2021 rally was comparable to that of Dr. Martin Luther King Jr.'s iconic "I Have a Dream" speech. He stated, "If you look at Martin Luther King, when he did his speech... we actually had more people." However, historical estimates indicate that King's speech attracted around <strong>250,000 attendees</strong>, while Trump's rally had approximately <strong>53,000</strong>.</p>
