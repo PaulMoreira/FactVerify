@@ -1,6 +1,82 @@
 // articleData.js
 export const articleData = [
   {
+    id: "kamala-harris-media-strategy",
+    date: "August 9, 2024",
+    headline: "Is Kamala Harris Really Dodging Media Interviews?",
+    summary: "Explore the controversy surrounding Kamala Harris's media engagement strategy, including criticisms of interview avoidance and her campaign's focus on alternative communication methods.",
+    shareUrl: "https://vote2024info.vercel.app/insights/kamala-harris-media-strategy",
+    content: `
+      <h1>Is Kamala Harris Really Dodging Media Interviews?</h1>
+      <p>Kamala Harris, the Vice President of the United States, has recently found herself at the center of controversy regarding her engagement with the media. Critics claim she is avoiding interviews and press conferences, while her supporters argue that this strategy is intentional and calculated. In this article, we will explore the facts, insights, and opinions surrounding this topic.</p>
+      
+      <h2>Key Insights</h2>
+      <ol>
+        <li>
+          <p><strong>Lack of Media Engagement</strong></p>
+          <ul>
+            <li>Since President Biden endorsed her for the presidency, Harris has not granted a single interview or held a press conference. The first time she addressed questions from the press in an unscripted format was a brief "gaggle" lasting only 70 seconds after a rally in Michigan.</li>
+            <li><strong>Source:</strong> <a href="https://www.nytimes.com/2024/08/08/business/media/kamala-harris-press-interviews.html" target="_blank" rel="noopener noreferrer">The New York Times</a></li>
+          </ul>
+        </li>
+        <li>
+          <p><strong>Strategic Messaging</strong></p>
+          <ul>
+            <li>Harris's campaign strategy focuses on tightly controlled communications, relying heavily on pre-prepared statements and televised rallies rather than spontaneous interactions with reporters.</li>
+            <li>Her campaign argues this approach is about being strategic and creative, aiming to connect with crucial voters in battleground states through alternative platforms like TikTok and social media, rather than traditional media outlets.</li>
+            <li><strong>Source:</strong> <a href="https://www.nytimes.com/2024/08/08/business/media/kamala-harris-press-interviews.html" target="_blank" rel="noopener noreferrer">The New York Times</a></li>
+          </ul>
+        </li>
+        <li>
+          <p><strong>Political Criticism and Support</strong></p>
+          <ul>
+            <li>Critics, including Republican figures, have accused Harris of ducking scrutiny, suggesting that her avoidance of media interactions indicates a lack of confidence. Former President Trump remarked on her ability to handle press conferences, asserting she is not capable of managing them.</li>
+            <li>Conversely, some political strategists, such as David Axelrod and James Carville, support her cautious approach, arguing that it allows her to maintain a strong public presence without risking poorly managed interviews. They suggest that big interview opportunities carry inherent risks, especially early in a campaign.</li>
+            <li><strong>Source:</strong> <a href="https://www.nytimes.com/2024/08/08/business/media/kamala-harris-press-interviews.html" target="_blank" rel="noopener noreferrer">The New York Times</a></li>
+          </ul>
+        </li>
+        <li>
+          <p><strong>Public Perception</strong></p>
+          <ul>
+            <li>Media critic Steve Krakauer noted that undecided voters might not be as concerned about Harris's media avoidance as critics suggest, implying that her strategy could be effective in the long run.</li>
+            <li><strong>Source:</strong> <a href="https://www.newsnationnow.com/newsnation-live/undecided-voters-may-not-care-about-harris-avoiding-media-media-critic-newsnation-live/" target="_blank" rel="noopener noreferrer">News Nation</a></li>
+          </ul>
+        </li>
+        <li>
+          <p><strong>Historical Context</strong></p>
+          <ul>
+            <li>Historically, Harris has had mixed results with interviews, with notable instances raising concerns within the Biden administration. Her previous interview with NBC's Lester Holt in 2021 did not go well, contributing to the hesitance around her media engagements.</li>
+            <li><strong>Source:</strong> <a href="https://www.nytimes.com/2024/08/08/business/media/kamala-harris-press-interviews.html" target="_blank" rel="noopener noreferrer">The New York Times</a></li>
+          </ul>
+        </li>
+      </ol>
+      
+      <h3>Did You Know?</h3>
+      <ul>
+        <li>Despite her low visibility in traditional media, Kamala Harris has garnered significant attention on social media platforms, particularly TikTok, where she engages younger voters in innovative ways.</li>
+      </ul>
+      
+      <div class="image-gallery">
+        <div class="image-container">
+          <img class="article-image" alt="Image of Kamala Harris dodging media interviews" src="https://static01.nyt.com/images/2024/08/08/multimedia/08HARRIS-PRESS-jvzh/08HARRIS-PRESS-jvzh-articleLarge.jpg?quality=75&amp;auto=webp&amp;disable=upscale">
+        </div>
+      </div>
+
+      <h2>Conclusion</h2>
+      <p>Kamala Harris's media strategy is a complex interplay of cautious planning and political maneuvering. While critics argue she is avoiding necessary scrutiny, supporters believe her approach is a smart tactic to bolster her candidacy as she navigates a challenging political landscape. Her campaign continues to emphasize the importance of connecting with voters through various channels, balancing the risks associated with traditional media interviews.</p>
+      <p>For further details and ongoing updates about Kamala Harris's media strategy, you can explore the articles linked above.</p>
+      
+      <h2>Further Reading</h2>
+      <ul>
+        <li><a href="https://www.nytimes.com/2024/08/08/business/media/kamala-harris-press-interviews.html" target="_blank" rel="noopener noreferrer">Kamala Harris and the Media: A Complicated Relationship</a></li>
+        <li><a href="https://www.newsnationnow.com/newsnation-live/undecided-voters-may-not-care-about-harris-avoiding-media-media-critic-newsnation-live/" target="_blank" rel="noopener noreferrer">Undecided Voters May Not Care About Harris Avoiding Media</a></li>
+        <li><a href="https://www.nytimes.com/2024/08/08/business/media/kamala-harris-press-interviews.html" target="_blank" rel="noopener noreferrer">Analyzing Harris's Approach to Media Engagement</a></li>
+      </ul>
+    `,
+    ogImage: "https://static01.nyt.com/images/2024/08/08/multimedia/08HARRIS-PRESS-jvzh/08HARRIS-PRESS-jvzh-articleLarge.jpg?quality=75&auto=webp&disable=upscale",
+    ogDescription: "Explore the controversy surrounding Kamala Harris's media engagement strategy, including criticisms of interview avoidance and her campaign's focus on alternative communication methods."
+  },
+  {
     id: "trump-vance-negative-rhetoric",
     date: "August 8, 2024",
     headline: "Why Are Donald Trump and JD Vance Pushing Negative Rhetoric?",

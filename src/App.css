@@ -753,8 +753,8 @@ footer {
 
 .full-article .image-container {
   flex: 0 0 auto;
-  width: 250px; /* Fixed width for each image container */
-  height: 200px; /* Fixed height for each image container */
+  width: 300px; /* Fixed width for each image container */
+  height:300px; /* Fixed height for each image container */
   overflow: hidden;
   border-radius: 8px;
 }
@@ -780,14 +780,14 @@ footer {
 @media (max-width: 768px) {
   .full-article .image-container {
     width: 200px; /* Slightly smaller on tablets */
-    height: 160px;
+    height: 200px;
   }
 }
 
 @media (max-width: 480px) {
   .full-article .image-container {
-    width: 150px; /* Even smaller on phones */
-    height: 120px;
+    width: 200px; /* Even smaller on phones */
+    height: 200px;
   }
 }
 
