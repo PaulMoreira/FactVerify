@@ -1,6 +1,82 @@
 // articleData.js
 export const articleData = [
   {
+    id: "trump-press-conference-aug-2024",
+    date: "August 9, 2024",
+    headline: "What Happened at the Trump Press Conference?",
+    summary: "Explore the key highlights and implications of Donald Trump's recent press conference at Mar-a-Lago, including controversial claims and attacks on Kamala Harris.",
+    shareUrl: "https://vote2024info.vercel.app/insights/trump-press-conference-aug-2024",
+    content: `
+      <h1>What Happened at the Trump Press Conference?</h1>
+      <p>On <strong>August 8, 2024</strong>, former President Donald Trump held a press conference at his Mar-a-Lago estate in Palm Beach, Florida. This event was filled with contentious claims and sharp criticisms, particularly directed towards his opponent, Democratic nominee Kamala Harris. As the 2024 election approaches, Trump's rhetoric and strategies are becoming increasingly significant in shaping the political landscape.</p>
+      
+      <div class="image-gallery">
+        <div class="image-container">
+          <img class="article-image" alt="Image of Trump press conference" src="https://ximage.c-spanvideo.org/eyJidWNrZXQiOiJwaWN0dXJlcy5jLXNwYW52aWRlby5vcmciLCJrZXkiOiJGaWxlc1wvNzQ0XC8wMDFcLzE3MjMxNDA1NTJfMDAxLmpwZyIsImVkaXRzIjp7InJlc2l6ZSI6eyJmaXQiOiJjb3ZlciIsImhlaWdodCI6NTc2LCJ3aWR0aCI6MTAyNH19fQ==">
+        </div>
+      </div>
+
+      <h2>Key Highlights of the Conference</h2>
+      <h3>1. <strong>Claims About Crowd Sizes</strong></h3>
+      <p>Trump controversially asserted that the crowd at his January 6, 2021 rally was comparable to that of Dr. Martin Luther King Jr.'s iconic "I Have a Dream" speech. He stated, "If you look at Martin Luther King, when he did his speech... we actually had more people." However, historical estimates indicate that King's speech attracted around <strong>250,000 attendees</strong>, while Trump's rally had approximately <strong>53,000</strong>.</p>
+      <ul>
+        <li><strong>Source:</strong> <a href="https://www.nytimes.com/live/2024/08/08/us/trump-press-conference-fact-check" target="_blank" rel="noopener noreferrer">New York Times</a></li>
+      </ul>
+
+      <h3>2. <strong>Attacks on Kamala Harris</strong></h3>
+      <p>Trump did not hold back on his critiques of Harris, labeling her as "barely competent" and questioning her intelligence, implying that she couldn't pass her bar exam, despite the fact she did so on her second attempt. He branded her a "radical leftist," attributing California's issues to her leadership.</p>
+      <ul>
+        <li><strong>Source:</strong> <a href="https://www.latimes.com/politics/story/2024-08-08/2024-election-trump-news-conference-harris-september-debate" target="_blank" rel="noopener noreferrer">Los Angeles Times</a></li>
+      </ul>
+
+      <h3>3. <strong>Debate Confirmation</strong></h3>
+      <p>Trump confirmed his intention to participate in debates against Harris, noting his agreement to a debate scheduled for <strong>September 10</strong>. He expressed openness to additional debates with major networks, a prospect that Harris welcomed as well.</p>
+      <ul>
+        <li><strong>Source:</strong> <a href="https://www.c-span.org/video/?537632-1/president-trump-speaks-press-mar-lago" target="_blank" rel="noopener noreferrer">C-SPAN</a></li>
+      </ul>
+
+      <h3>4. <strong>Economic and Political Climate</strong></h3>
+      <p>In a stark warning, Trump described the current state of the U.S. as potentially heading towards a <strong>Depression</strong>, even suggesting a risk of <strong>World War III</strong>. This rhetoric appears aimed at rallying his base by invoking fears surrounding national security and economic instability.</p>
+      <ul>
+        <li><strong>Source:</strong> <a href="https://www.latimes.com/politics/story/2024-08-08/2024-election-trump-news-conference-harris-september-debate" target="_blank" rel="noopener noreferrer">Los Angeles Times</a></li>
+      </ul>
+
+      <h3>5. <strong>Fact-Checking Trump's Statements</strong></h3>
+      <p>The New York Times fact-checked several of Trump's statements, revealing inaccuracies:</p>
+      <ul>
+        <li><strong>Social Security:</strong> Trump claimed Democrats would destroy it, which is false as Biden and Harris have pledged to protect it.</li>
+        <li><strong>Gas Prices:</strong> He exaggerated the impact of Biden's policies, despite current averages showing a decrease.</li>
+        <li><strong>Source:</strong> <a href="https://www.nytimes.com/live/2024/08/08/us/trump-press-conference-fact-check" target="_blank" rel="noopener noreferrer">New York Times Fact Check</a></li>
+      </ul>
+
+      <h2>Implications of the Press Conference</h2>
+      <p>Trump's statements at the press conference reflect a larger strategy of reshaping narratives as the election approaches. By directly attacking Harris and making grandiose claims about crowd sizes and national issues, he seeks to galvanize his supporters. The conference also illustrates the intense polarization in American politics, where media narratives and fact-checking are often contested.</p>
+
+      <h3>Did You Know?</h3>
+      <ul>
+        <li>The January 6 rally, which Trump referenced, was later investigated by a House Select Committee, which concluded the crowd was substantially smaller than what Trump claimed.</li>
+      </ul>
+
+      <div class="image-gallery">
+        <div class="image-container">
+          <img class="article-image" alt="Image of Trump speaking" src="https://dims.apnews.com/dims4/default/fd2799e/2147483647/strip/true/crop/3000x2000+0+0/resize/599x399!/quality/90/?url=https%3A%2F%2Fassets.apnews.com%2Ff4%2F66%2Fd98c3f103a475fb19aa69565ba87%2F7430a2059c344148b9cf1ae35c48b359">
+        </div>
+      </div>
+
+      <h2>Conclusion</h2>
+      <p>The press conference served as a blend of campaign strategy, personal attacks, and controversial claims, signaling Trump's intent to position himself against Harris as the election nears. Given the current political climate, how will Trump's rhetoric influence voter sentiment in the upcoming election?</p>
+
+      <h2>Further Reading</h2>
+      <ul>
+        <li><a href="https://www.c-span.org/video/?537632-1/president-trump-speaks-press-mar-lago" target="_blank" rel="noopener noreferrer">C-SPAN</a></li>
+        <li><a href="https://www.nytimes.com/live/2024/08/08/us/trump-press-conference-fact-check" target="_blank" rel="noopener noreferrer">New York Times Fact Check</a></li>
+        <li><a href="https://www.latimes.com/politics/story/2024-08-08/2024-election-trump-news-conference-harris-september-debate" target="_blank" rel="noopener noreferrer">Los Angeles Times</a></li>
+      </ul>
+    `,
+    ogImage: "https://ximage.c-spanvideo.org/eyJidWNrZXQiOiJwaWN0dXJlcy5jLXNwYW52aWRlby5vcmciLCJrZXkiOiJGaWxlc1wvNzQ0XC8wMDFcLzE3MjMxNDA1NTJfMDAxLmpwZyIsImVkaXRzIjp7InJlc2l6ZSI6eyJmaXQiOiJjb3ZlciIsImhlaWdodCI6NTc2LCJ3aWR0aCI6MTAyNH19fQ==",
+    ogDescription: "Explore the key highlights and implications of Donald Trump's recent press conference at Mar-a-Lago, including controversial claims and attacks on Kamala Harris."
+  },
+  {
     id: "kamala-harris-media-strategy",
     date: "August 9, 2024",
     headline: "Is Kamala Harris Really Dodging Media Interviews?",
