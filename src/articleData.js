@@ -1,6 +1,62 @@
 // articleData.js
 export const articleData = [
   {
+    id: "trump-harris-comments-2024",
+    date: "August 10, 2024",
+    headline: "Did Donald Trump Call Kamala Harris a Bitch?",
+    summary: "Explore the controversy surrounding reports of Donald Trump using derogatory language towards Vice President Kamala Harris in private conversations.",
+    shareUrl: "https://vote2024info.vercel.app/insights/trump-harris-comments-2024",
+    content: `
+      <h1>Did Donald Trump Call Kamala Harris a "Bitch"?</h1>
+      <p>Recent reports have emerged indicating that former President Donald Trump has referred to Vice President Kamala Harris as a "bitch" in private conversations. This revelation has stirred significant attention and debate across various media platforms. Let's delve into the details surrounding this controversial remark.</p>
+
+      <h2>Key Facts</h2>
+      <ul>
+        <li><p><strong>Multiple Reports</strong>: Several credible sources, including major news outlets, confirm that Trump has used this derogatory term for Harris on multiple occasions in private settings. Notable reports from <em>The New York Times</em> and <em>Axios</em> have highlighted this behavior.</p></li>
+        <li><p><strong>Context of Remarks</strong>: These comments come amid a particularly tumultuous period for Trump as he campaigns for the 2024 Presidential election, suggesting underlying frustration during his public and private interactions.</p></li>
+        <li><p><strong>Denial from Trump's Campaign</strong>: Although Trump's campaign has denied these specific remarks, the consistency across multiple sources lends credibility to the claims.</p></li>
+      </ul>
+
+      <h2>Insights</h2>
+      <ul>
+        <li><p><strong>Public vs. Private Persona</strong>: Trump's use of such language in private starkly contrasts his public persona, where he often employs more politically palatable language, especially when addressing women in politics.</p></li>
+        <li><p><strong>Impact on Political Discourse</strong>: This incident reflects broader issues of misogyny in political discourse and raises critical questions about the treatment of female politicians, particularly women of color, in the current political climate.</p></li>
+        <li><p><strong>Public Reaction</strong>: Reactions to Trump's remarks have varied; some supporters dismiss it as typical political banter, while critics view it as indicative of ongoing gender biases in politics.</p></li>
+      </ul>
+
+      <h2>Did You Know?</h2>
+      <ul>
+        <li><strong>Historical Context</strong>: The use of derogatory terms towards female politicians is not new. Such language has historically been used to undermine women's credibility and authority in the political arena.</li>
+      </ul>
+
+      <h2>Conclusion</h2>
+      <p>The remark attributed to Donald Trump about Kamala Harris not only opens a window into the former president's private sentiments but also highlights ongoing issues of misogyny and gender bias in politics. As we approach the 2024 election, how will such comments shape the discourse around female political leaders?</p>
+
+      <div class="image-gallery">
+        <div class="image-container">
+          <img class="article-image" alt="Image of Donald Trump and Kamala Harris" src="https://npr.brightspotcdn.com/dims3/default/strip/false/crop/4639x3081+0+0/resize/1100/quality/50/format/jpeg/?url=http%3A%2F%2Fnpr-brightspot.s3.amazonaws.com%2F48%2F70%2F70e669264fb49e27bfbf2ca5f88d%2Fap24216604258749.jpg">
+        </div>
+        <div class="image-container">
+          <img class="article-image" alt="Image of Donald Trump and Kamala Harris 2" src="https://media.cnn.com/api/v1/images/stellar/prod/e0a1e186-4931-46b8-ba09-324fa87f7242.jpg?c=original&amp;q=w_1280,c_fill">
+        </div>
+        <div class="image-container">
+          <img class="article-image" alt="Image of Donald Trump and Kamala Harris 3" src="https://media-cldnry.s-nbcnews.com/image/upload/t_fit-760w,f_auto,q_auto:best/rockcms/2024-08/240802-split-harri-trump-ch-1034-6eee29.jpg">
+        </div>
+      </div>
+
+      <h2>Further Reading</h2>
+      <ul>
+        <li><a href="https://www.axios.com/2024/08/10/trump-calls-harris-bitch-report" target="_blank" rel="noopener noreferrer">Trump calls Harris a "bitch"</a> - Axios</li>
+        <li><a href="https://www.motherjones.com/politics/2024/08/kamala-harris-donald-trump-v/" target="_blank" rel="noopener noreferrer">As Harris Leans into Good Vibes, Trump Keeps Pitching Doom</a> - Mother Jones</li>
+        <li><a href="https://www.nytimes.com/2024/08/10/us/politics/trump-campaign-election.html" target="_blank" rel="noopener noreferrer">Inside the Worst Three Weeks of Donald Trump's 2024 Campaign</a> - The New York Times</li>
+        <li><a href="https://timesofindia.indiatimes.com/world/us/donald-trump-and-kamala-harris-poll-vault-over-polls-apart/articleshow/112430408.cms" target="_blank" rel="noopener noreferrer">Donald Trump and Kamala Harris poll vault over polls apart</a> - Times of India</li>
+        <li><a href="https://politicalwire.com/2024/08/10/trump-calls-harris-a-bitch/" target="_blank" rel="noopener noreferrer">Trump Calls Harris a 'Bitch'</a> - Political Wire</li>
+      </ul>
+    `,
+    ogImage: "https://npr.brightspotcdn.com/dims3/default/strip/false/crop/4639x3081+0+0/resize/1100/quality/50/format/jpeg/?url=http%3A%2F%2Fnpr-brightspot.s3.amazonaws.com%2F48%2F70%2F70e669264fb49e27bfbf2ca5f88d%2Fap24216604258749.jpg",
+    ogDescription: "Explore the controversy surrounding reports of Donald Trump using derogatory language towards Vice President Kamala Harris in private conversations, and its implications for the 2024 election."
+  },
+  {
     id: "harris-trump-polls-2024",
     date: "August 10, 2024",
     headline: "Kamala Harris Outpaces Donald Trump in Recent Polls: A Shift in Campaign Dynamics",
