@@ -482,8 +482,23 @@ footer {
   margin: 0;
 }
 
+.main-navigation .sub-menu li:hover > a {
+  background-color: #3a5a8f;
+  transition: background-color 0.3s ease;
+}
+
+.main-navigation .sub-menu .read-more:hover {
+  background-color: #4a6a9f;
+}
+
+
 .main-navigation .sub-menu a {
   padding: 10px 15px;
+}
+
+.main-navigation .sub-menu .read-more {
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  font-style: italic;
 }
 
 /* Responsive Design */

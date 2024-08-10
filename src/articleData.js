@@ -3,11 +3,11 @@ export const articleData = [
   {
     id: "trump-harris-comments-2024",
     date: "August 10, 2024",
-    headline: "Did Donald Trump Call Kamala Harris a Bitch?",
+    headline: "Did Donald Trump Call Kamala Harris a B***h?",
     summary: "Explore the controversy surrounding reports of Donald Trump using derogatory language towards Vice President Kamala Harris in private conversations.",
     shareUrl: "https://vote2024info.vercel.app/insights/trump-harris-comments-2024",
     content: `
-      <h1>Did Donald Trump Call Kamala Harris a "Bitch"?</h1>
+      <h1>Did Donald Trump Call Kamala Harris a "B***h"?</h1>
       <p>Recent reports have emerged indicating that former President Donald Trump has referred to Vice President Kamala Harris as a "bitch" in private conversations. This revelation has stirred significant attention and debate across various media platforms. Let's delve into the details surrounding this controversial remark.</p>
 
       <h2>Key Facts</h2>
