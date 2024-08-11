@@ -4,11 +4,11 @@ export const articleData = [
     id: "biden-exit-2024-race",
     date: "August 11, 2024",
     headline: "Biden's Bold Exit: A New Chapter in American Politics",
-    summary: "Explore former President Joe Biden's decision to withdraw from the 2024 presidential race, its implications for the Democratic Party, and his reflections on democracy and personal legacy.",
+    summary: "Explore President Joe Biden's decision to withdraw from the 2024 presidential race, its implications for the Democratic Party, and his reflections on democracy and personal legacy.",
     shareUrl: "https://vote2024info.vercel.app/insights/biden-exit-2024-race",
     content: `
       <h1>Biden's Bold Exit: A New Chapter in American Politics</h1>
-      <p>In a political landscape fraught with tension, former President Joe Biden's recent interview on August 11, 2024, marked a significant pivot point not only for himself but potentially for the entire Democratic Party. His decision to withdraw from the 2024 presidential race—an announcement made just weeks earlier—was not merely a personal choice but a strategic maneuver aimed at preserving democracy and uniting his party against the formidable challenge posed by Donald Trump. </p>
+      <p>In a political landscape fraught with tension, President Joe Biden's recent interview on August 11, 2024, marked a significant pivot point not only for himself but potentially for the entire Democratic Party. His decision to withdraw from the 2024 presidential race—an announcement made just weeks earlier—was not merely a personal choice but a strategic maneuver aimed at preserving democracy and uniting his party against the formidable challenge posed by Donald Trump. </p>
       <p>Biden's reflections during this interview reveal both a deep sense of duty and a personal journey marked by loss and commitment.</p>
       
       <blockquote>
@@ -74,7 +74,7 @@ export const articleData = [
       <p>In closing, Biden's narrative of sacrifice and duty invites reflection on the nature of leadership in turbulent times, reminding us that the path to democracy is often fraught with challenges that require resilience and unity in the face of division.</p>
     `,
     ogImage: "https://cdn.cnn.com/cnnnext/dam/assets/220508164316-04-joe-biden-2022-super-tease.jpg",
-    ogDescription: "Former President Joe Biden's decision to withdraw from the 2024 presidential race marks a pivotal moment in American politics, emphasizing the importance of democracy and party unity."
+    ogDescription: "President Joe Biden's decision to withdraw from the 2024 presidential race marks a pivotal moment in American politics, emphasizing the importance of democracy and party unity."
   },
   {
     id: "kamala-harris-2024-impact",
