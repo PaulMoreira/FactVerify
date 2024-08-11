@@ -29,6 +29,7 @@ const FullArticle = () => {
         <meta property="og:url" content={currentUrl} />
         <meta property="og:type" content="article" />
         <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:image" content={article.ogImage} />
       </Helmet>
       <div className="full-article">
         <h2>{article.headline}</h2>
