@@ -1,6 +1,77 @@
 // articleData.js
 export const articleData = [
   {
+    id: "trump-harris-policy-comparison",
+    date: "August 14, 2024",
+    headline: "A Tale of Two Candidates: Comparing Policies Between Donald Trump and Kamala Harris",
+    summary: "Explore the stark policy differences between Donald Trump and Kamala Harris as they compete for the presidency in 2024, covering economic, healthcare, immigration, and climate change policies.",
+    shareUrl: "https://vote2024info.vercel.app/insights/trump-harris-policy-comparison",
+    content: `
+      <h1>A Tale of Two Candidates: Comparing Policies Between Donald Trump and Kamala Harris</h1>
+      <h2>Introduction</h2>
+      <p>As the 2024 presidential election approaches, the stage is set for a battle of ideologies. At the forefront are Vice President Kamala Harris and former President Donald Trump, two political figures with starkly contrasting visions for America's future. This article delves into their policies, providing context and insight into what their potential leadership could mean for the nation.</p>
+      
+      <h2>A Historic Context</h2>
+      <p>The 2020 presidential election saw Kamala Harris make history as the first female Vice President of the United States, alongside President Joe Biden. Her election was not just a political milestone; it represented a shift towards greater diversity in U.S. leadership. On the other hand, Donald Trump, the 45th President, is vying to reclaim his position after losing to Biden in a contentious election marked by significant polarization, particularly around issues like the COVID-19 pandemic and racial justice.</p>
+      
+      <h2>Key Policy Differences</h2>
+      <h3>Economic Policies</h3>
+      <p>In a recent poll by the <a rel="noopener noreferrer" target="_blank" href="https://m.economictimes.com/news/international/us/don-going-down-americans-trust-kamala-harris-more-than-donald-trump-on-u-s-economy-poll/articleshow/112471920.cms">Economic Times</a>, 42% of Americans trust Harris over Trump when it comes to managing the economy, reflecting concerns over Trump's past policies that some voters feel favored the wealthy. Meanwhile, Trump's supporters argue that his "America First" approach, emphasizing deregulation and tax cuts, stimulates economic growth. Trump's policies are particularly favored among rural voters, who feel overlooked by urban-centric Democratic policies.</p>
+      
+      <h3>Healthcare and Immigration</h3>
+      <p>Harris advocates for a progressive healthcare system and comprehensive immigration reform, focusing on pathways to citizenship for undocumented immigrants. Trump, however, emphasizes stricter immigration controls and is known for his controversial border policies, promoting a nationalistic approach that resonates with many of his supporters.</p>
+      
+      <blockquote>
+      <p>"We need to protect our borders and ensure that our laws are enforced," Trump has stated, encapsulating his stance on immigration.</p>
+      </blockquote>
+      
+      <p>In contrast, Harris has expressed that immigration reform is vital for addressing systemic inequalities. Her approach seeks to balance border security with compassion and inclusivity.</p>
+      
+      <h2>Climate Change</h2>
+      <p>Issues of climate change also illustrate the candidates' divergent paths. Harris supports aggressive policies to combat climate change, aligning with a broader Democratic agenda that prioritizes renewable energy. Trump, on the other hand, has been criticized for rolling back environmental regulations during his presidency, favoring fossil fuel industries.</p>
+      
+      <h2>Public Sentiment and Polling</h2>
+      <p>Current polling indicates a competitive race, with Harris and Trump closely matched in key battleground states. An <a rel="noopener noreferrer" target="_blank" href="https://www.nbcnews.com/politics/2024-election/harris-trump-stance-issues-policies-president-race-rcna150570">NBC News poll</a> highlights that voter preference remains finely divided, emphasizing the contentious nature of this election.</p>
+      
+      <h2>Future Implications</h2>
+      <p>Should Harris win, it could signify a shift towards more progressive policies in healthcare and immigration. Conversely, a Trump victory may lead to a reinstatement of his previous policies, emphasizing nationalism and economic deregulation.</p>
+      
+      <h2>Anecdotes and Human Stories</h2>
+      <p>Harris's rise in politics has inspired many young women and people of color, illustrating the potential for change in a system often perceived as rigid. Her campaign frequently shares personal stories from constituents, emphasizing how policy decisions affect everyday lives. For instance, a single mother from California shared how healthcare access under the Affordable Care Act transformed her family's life, a testament to Harris's advocacy for accessible healthcare.</p>
+      
+      <h2>Did You Know?</h2>
+      <p>Despite losing the 2020 election, Donald Trump continues to maintain a robust support base, particularly among rural voters who often feel marginalized in political discourse. Meanwhile, many Democrats express skepticism about Harris's progressive credentials, showing that intra-party dynamics could also play a crucial role in the upcoming election.</p>
+      
+      <h2>Conclusion</h2>
+      <p>As we approach the 2024 election, the policies of Kamala Harris and Donald Trump offer voters a stark choice. Each candidate embodies a different vision for America's future—one that could either embrace progressive change or revert to a more nationalistic approach. The implications of these choices will resonate for years to come, shaping not just policies but the very fabric of American society.</p>
+      
+      <h2>Sources and Further Reading</h2>
+      <ul>
+      <li><a rel="noopener noreferrer" target="_blank" href="https://www.nbcnews.com/politics/2024-election/harris-trump-stance-issues-policies-president-race-rcna150570">NBC News</a> - Overview of Harris and Trump's stances on key issues.</li>
+      <li><a rel="noopener noreferrer" target="_blank" href="https://www.economictimes.com/news/international/us/don-going-down-americans-trust-kamala-harris-more-than-donald-trump-on-u-s-economy-poll/articleshow/112471920.cms">Economic Times</a> - Poll results on Americans' trust in Harris and Trump regarding the economy.</li>
+      <li><a rel="noopener noreferrer" target="_blank" href="https://www.washingtonpost.com/politics/2024/07/22/harris-trump-differences-presidential-election/">Washington Post</a> - Analysis of the differences between Harris and Trump.</li>
+      <li><a rel="noopener noreferrer" target="_blank" href="https://www.newsnationnow.com/politics/2024-election/kamala-harris-donald-trump-rfk-jr-policies/">NewsNation</a> - Insights into the candidates' policies and public perceptions.</li>
+      </ul>
+      
+      <div class="image-gallery">
+        <div class="image-container">
+          <img class="article-image" alt="Trump vs Harris" src="https://www.livemint.com/lm-img/img/2024/08/14/600x338/US_election_2024_Donald_Trump_Kamala_Harris_desper_1723611278546_1723611278718.jpg">
+        </div>
+        <div class="image-container">
+          <img class="article-image" alt="Harris Leads Trump" src="https://www.livemint.com/lm-img/img/2024/08/09/1600x900/US_elections_2024_Kamala_Harris_leads_Donald_Trump_1723178452680_1723178452883.jpg">
+        </div>
+        <div class="image-container">
+          <img class="article-image" alt="Election Dynamics" src="https://www.aljazeera.com/wp-content/uploads/2024/08/2024-08-10T020231Z_887983717_RC2LC9AY2HB5_RTRMADP_3_USA-ELECTION-HARRIS-1723312022.jpg?resize=770%2C513&amp;quality=80">
+        </div>
+        <div class="image-container">
+          <img class="article-image" alt="Political Landscape" src="https://static.timesofisrael.com/www/uploads/2024/07/AFP__20240722__364N89K__v1__HighRes__ComboUsPoliticsVoteTrumpHarris-e1721757166267.jpg">
+        </div>
+      </div>
+    `,
+    ogImage: "https://www.livemint.com/lm-img/img/2024/08/14/600x338/US_election_2024_Donald_Trump_Kamala_Harris_desper_1723611278546_1723611278718.jpg",
+    ogDescription: "Explore the stark policy differences between Donald Trump and Kamala Harris as they compete for the presidency in 2024, covering economic, healthcare, immigration, and climate change policies."
+  },
+  {
     id: "trump-education-interview",
     date: "August 13, 2024",
     headline: "Trump's Vision: Dismantling the Department of Education",
