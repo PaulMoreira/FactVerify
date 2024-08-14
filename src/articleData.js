@@ -8,7 +8,6 @@ export const articleData = [
     shareUrl: "https://vote2024info.vercel.app/insights/trump-harris-policy-comparison",
     content: `
       <h1>A Tale of Two Candidates: Comparing Policies Between Donald Trump and Kamala Harris</h1>
-      <h2>Introduction</h2>
       <p>As the 2024 presidential election approaches, the stage is set for a battle of ideologies. At the forefront are Vice President Kamala Harris and former President Donald Trump, two political figures with starkly contrasting visions for America's future. This article delves into their policies, providing context and insight into what their potential leadership could mean for the nation.</p>
       
       <h2>A Historic Context</h2>
@@ -42,7 +41,6 @@ export const articleData = [
       <h2>Did You Know?</h2>
       <p>Despite losing the 2020 election, Donald Trump continues to maintain a robust support base, particularly among rural voters who often feel marginalized in political discourse. Meanwhile, many Democrats express skepticism about Harris's progressive credentials, showing that intra-party dynamics could also play a crucial role in the upcoming election.</p>
       
-      <h2>Conclusion</h2>
       <p>As we approach the 2024 election, the policies of Kamala Harris and Donald Trump offer voters a stark choice. Each candidate embodies a different vision for America's future—one that could either embrace progressive change or revert to a more nationalistic approach. The implications of these choices will resonate for years to come, shaping not just policies but the very fabric of American society.</p>
       
       <h2>Sources and Further Reading</h2>
