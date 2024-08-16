@@ -703,6 +703,12 @@ footer {
   margin-bottom: 10px;
 }
 
+.article-by {
+  color: #666;
+  font-size: 0.9em;
+  margin-bottom: 10px;
+}
+
 .article-summary {
   color: #333;
   line-height: 1.6;

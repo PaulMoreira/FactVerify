@@ -1,6 +1,47 @@
 // articleData.js
 export const articleData = [
   {
+    id: "harris-economic-plan",
+    date: "August 16, 2024",
+    by: "By: Vote Information",
+    headline: "Kamala Harris Unveils Ambitious Economic Plan: A Comprehensive Strategy for Resilient Recovery",
+    summary: "Vice President Kamala Harris introduces a sweeping economic plan focusing on housing affordability, combating price gouging, and addressing systemic inequities in the U.S. economy.",
+    shareUrl: "https://vote2024info.vercel.app/insights/harris-economic-plan",
+    content: `
+      <h1>Kamala Harris Unveils Ambitious Economic Plan: A Comprehensive Strategy for Resilient Recovery</h1>
+      <p>In an era marked by unprecedented economic challenges, Vice President Kamala Harris has introduced a sweeping economic plan aimed at revitalizing the U.S. economy and addressing systemic inequities. The unveiling took place during a major policy speech in Raleigh, North Carolina, where Harris emphasized the urgent need to combat price gouging in groceries and tackle the critical issue of housing affordability.</p>
+      <h2>A Vision for Growth</h2>
+      <p>"Today, we are not just talking about recovery; we are talking about a recovery that builds a stronger foundation for all," Harris proclaimed, framing her strategy as one that moves beyond traditional economic metrics to integrate equity and inclusivity into the fabric of American economic policy. The plan includes ambitious proposals such as constructing <strong>three million new housing units</strong> over the next four years and providing <strong>$25,000 in down-payment assistance</strong> for first-time homebuyers, potentially aiding over <strong>four million individuals</strong>.</p>
+      <blockquote>
+      <p>"We must ensure that every American has access to affordable housing and that no family struggles to put food on the table due to corporate greed," Harris added, highlighting the personal stories of constituents who have been impacted by rising living costs.</p>
+      </blockquote>
+      <h2>Context and Challenges</h2>
+      <p>Harris's proposals are framed within the ongoing economic recovery post-COVID-19, a period that has seen fluctuations in inflation and consumer prices. The average home price has significantly outpaced wage growth, contributing to the affordability crisis that many Americans face today. In this context, her plan is not merely a response to the current climate but also an attempt to reshape perceptions of economic management among voters.</p>
+      <h3>Support and Criticism</h3>
+      <p>Supporters of Harris's plan argue that her focus on corporate accountability and housing affordability directly addresses the urgent economic concerns of average Americans. Recent polls indicate that <strong>more Americans trust Harris over Trump</strong> regarding economic management, a notable shift given Trump's previous stronghold on these issues. </p>
+      <p>However, critics, particularly from the Republican side, have labeled her proposals as overly liberal, likening them to socialist policies that could lead to increased government spending and economic inefficiencies. As noted in a <strong>New York Times</strong> article, such perspectives frame Harris's economic vision as a potential risk for fiscal responsibility.</p>
+      <h2>Implications for the Future</h2>
+      <p>If implemented, Harris's economic strategies could significantly reshape housing policy and consumer protection laws in the U.S., particularly concerning corporate pricing strategies. The success of her initiatives may hinge on congressional support and public perception in the lead-up to the elections. "This isn't just about policy; it's about people," Harris stated, underlining the need for economic policies that resonate on a human level.</p>
+      <h2>Anecdotes That Connect</h2>
+      <p>During her speech, Harris recounted poignant stories of families struggling with housing costs, creating a relatable connection with her audience. One constituent, a single mother from North Carolina, shared how rising rents have forced her to choose between essential needs and housing stability. Such narratives serve to personalize the economic issues at stake, emphasizing that these policies are not just abstract concepts but real-life solutions for Americans.</p>
+      <h2>Did You Know?</h2>
+      <p>Recent statistics reveal that Harris's proposed <strong>three million housing units</strong> exceed President Biden's two million units, signaling a bold departure in ambition that may resonate with voters seeking significant change. </p>
+      <p>As the political landscape grows increasingly polarized, Harris's economic plan stands as a declaration of her commitment to addressing the pressing challenges faced by many Americans. While the road ahead is fraught with obstacles, her vision for an equitable economy may very well shape the discourse leading into the upcoming election. </p>
+      <p>As voters assess these proposals, the critical question remains: Can this ambitious plan translate into tangible change for the American public? </p>
+      <hr>
+      <h3>Sources and Further Reading</h3>
+      <ol>
+      <li><a rel="noopener noreferrer" target="_blank" href="https://www.npr.org/2024/08/15/nx-s1-5077776/kamala-harris-housing-grocery-prices">Harris unveils an economic plan focused on housing and grocery prices</a> - NPR provides coverage of Harris's economic plan and its implications for housing and grocery prices.</li>
+      <li><a rel="noopener noreferrer" target="_blank" href="https://m.economictimes.com/news/international/world-news/kamala-harris-to-unveil-plan-for-us-economy-in-major-policy-rollout/articleshow/112559315.cms">Kamala Harris to unveil plan for US economy in major policy rollout</a> - Economic Times discusses the major elements of Harris's economic strategy.</li>
+      <li><a rel="noopener noreferrer" target="_blank" href="https://www.nytimes.com/2024/08/16/us/politics/kamala-harris-economy.html">Harris to Lay Out Economic Message Focused on High Cost of Living</a> - New York Times offers insights into Harris's economic message and the context behind it.</li>
+      <li><a rel="noopener noreferrer" target="_blank" href="https://www.washingtonpost.com/business/2024/08/15/food-inflation-groceries-price-gouging/">Grocery prices cool as Harris unveils plan to tackle 'price gouging'</a> - Washington Post details the impact of price gouging and its relevance to Harris's proposals.</li>
+      <li><a rel="noopener noreferrer" target="_blank" href="https://uk.news.yahoo.com/kamala-harris-unveil-economic-plan-095723004.html">Kamala Harris to unveil economic plan to ban price gouging</a> - Yahoo News reviews Harris's plan and its potential effects on consumer protection.</li>
+      </ol>
+    `,
+    ogImage: "https://s.abcnews.com/images/Politics/kamala-harris-economy-gty-thg-230830_1693418438236_hpMain_16x9_992.jpg",
+    ogDescription: "Vice President Kamala Harris introduces a sweeping economic plan focusing on housing affordability, combating price gouging, and addressing systemic inequities in the U.S. economy."
+  },
+  {
     id: "trump-early-voting-paradox",
     date: "August 15, 2024",
     headline: "The Paradox of Voting: Donald Trump's Early Vote and His Call to Eliminate Early Voting",

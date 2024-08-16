@@ -34,6 +34,7 @@ const FullArticle = () => {
       <div className="full-article">
         <h2>{article.headline}</h2>
         <p className="article-date">{article.date}</p>
+        <p className="article-by">{article.by}</p>
         <SocialMediaShare url={currentUrl} title={article.headline} />
         <div dangerouslySetInnerHTML={{ __html: article.content }} />
       </div>
