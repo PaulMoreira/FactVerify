@@ -6,7 +6,7 @@ export const articleData = [
     by: "By: Vote Information",
     headline: "Kamala Harris Unveils Ambitious Economic Plan: A Comprehensive Strategy for Resilient Recovery",
     summary: "Vice President Kamala Harris introduces a sweeping economic plan focusing on housing affordability, combating price gouging, and addressing systemic inequities in the U.S. economy.",
-    shareUrl: "https://vote2024info.vercel.app/insights/harris-economic-plan",
+    shareUrl: "https://voteinfo.vercel.app/insights/harris-economic-plan",
     content: `
       <h1>Kamala Harris Unveils Ambitious Economic Plan: A Comprehensive Strategy for Resilient Recovery</h1>
       <p>In an era marked by unprecedented economic challenges, Vice President Kamala Harris has introduced a sweeping economic plan aimed at revitalizing the U.S. economy and addressing systemic inequities. The unveiling took place during a major policy speech in Raleigh, North Carolina, where Harris emphasized the urgent need to combat price gouging in groceries and tackle the critical issue of housing affordability.</p>
@@ -46,7 +46,7 @@ export const articleData = [
     date: "August 15, 2024",
     headline: "The Paradox of Voting: Donald Trump's Early Vote and His Call to Eliminate Early Voting",
     summary: "Explore the contradiction between Donald Trump's recent early vote in the Florida Republican primary and his long-standing criticism of early and mail-in voting, examining the implications for the Republican Party and future elections.",
-    shareUrl: "https://vote2024info.vercel.app/insights/trump-early-voting-paradox",
+    shareUrl: "https://voteinfo.vercel.app/insights/trump-early-voting-paradox",
     content: `
       <h1>The Paradox of Voting: Donald Trump's Early Vote and His Call to Eliminate Early Voting</h1>
       <p>In a striking display of political contradiction, former President Donald Trump recently voted early in the Florida Republican primary, a sharp departure from his long-standing criticisms of early and mail-in voting. This act, described by Trump as a "great honor," raises questions about the evolving landscape of voting practices within the Republican Party and the implications of his contradictory messages. As Trump publicly praises the election process, he simultaneously calls for the elimination of early voting, leaving supporters and critics alike grappling with the implications of this dissonance.</p>
@@ -82,7 +82,7 @@ export const articleData = [
     date: "August 14, 2024",
     headline: "A Tale of Two Candidates: Comparing Policies Between Donald Trump and Kamala Harris",
     summary: "Explore the stark policy differences between Donald Trump and Kamala Harris as they compete for the presidency in 2024, covering economic, healthcare, immigration, and climate change policies.",
-    shareUrl: "https://vote2024info.vercel.app/insights/trump-harris-policy-comparison",
+    shareUrl: "https://voteinfo.vercel.app/insights/trump-harris-policy-comparison",
     content: `
       <h1>A Tale of Two Candidates: Comparing Policies Between Donald Trump and Kamala Harris</h1>
       <p>As the 2024 presidential election approaches, the stage is set for a battle of ideologies. At the forefront are Vice President Kamala Harris and former President Donald Trump, two political figures with starkly contrasting visions for America's future. This article delves into their policies, providing context and insight into what their potential leadership could mean for the nation.</p>
@@ -151,7 +151,7 @@ export const articleData = [
     date: "August 13, 2024",
     headline: "Trump's Vision: Dismantling the Department of Education",
     summary: "Explore former President Donald Trump's recent interview with Elon Musk, where he announced plans to dismantle the Department of Education if re-elected, sparking debate on the future of American education.",
-    shareUrl: "https://vote2024info.vercel.app/insights/trump-elon-interview",
+    shareUrl: "https://voteinfo.vercel.app/insights/trump-elon-interview",
     content: `
       <h1>Trump's Vision: Dismantling the Department of Education</h1>
       <p>In a recent interview with Elon Musk, former President Donald Trump made a striking announcement that has stirred the political pot yet again: he plans to dismantle the Department of Education if he secures a second term in the White House. This declaration, made during a live session on X (formerly Twitter) on August 12, 2024, ignited a wave of reactions across the political spectrum, raising essential questions about the future of education in America.</p>
@@ -208,7 +208,7 @@ export const articleData = [
     date: "August 13, 2024",
     headline: "Elon Musk Interviews Donald Trump: A Night of Technical Glitches and Political Drama",
     summary: "Explore the highly anticipated yet technically troubled interview between Elon Musk and Donald Trump, its political implications, and the reactions it sparked.",
-    shareUrl: "https://vote2024info.vercel.app/insights/musk-trump-interview-2024",
+    shareUrl: "https://voteinfo.vercel.app/insights/musk-trump-interview-2024",
     content: `
       <h1>Elon Musk Interviews Donald Trump: A Night of Technical Glitches and Political Drama</h1>
       <p>On August 12, 2024, the political world held its breath as Elon Musk, the billionaire entrepreneur and owner of X (formerly Twitter), interviewed former President Donald Trump. The stakes were high, with Trump seeking to reclaim his narrative as he campaigns for the 2024 Republican nomination, while Musk aimed to assert his influence in political discourse. However, the highly anticipated event was marred by significant technical difficulties, resulting in a chaotic yet revealing exchange.</p>
@@ -254,7 +254,7 @@ export const articleData = [
     date: "August 12, 2024",
     headline: "The Power of the Crowd: Do Campaign Rally Numbers Really Matter?",
     summary: "Explore the significance of campaign rally attendance in the 2024 election, examining its impact on voter sentiment and electoral outcomes.",
-    shareUrl: "https://vote2024info.vercel.app/insights/campaign-rally-numbers-2024",
+    shareUrl: "https://voteinfo.vercel.app/insights/campaign-rally-numbers-2024",
     content: `
       <h1>The Power of the Crowd: Do Campaign Rally Numbers Really Matter?</h1>
       <p>In the high-stakes arena of political campaigning, the energy and enthusiasm displayed at campaign rallies can sometimes feel electric—drawing thousands of supporters chanting slogans and waving banners. Yet, beneath the surface fervor lies a deeper question: do these crowds truly matter? As the 2024 election looms, the significance of rally attendance reveals nuances that go beyond sheer numbers.</p>
@@ -307,7 +307,7 @@ export const articleData = [
     date: "August 11, 2024",
     headline: "Biden's Bold Exit: A New Chapter in American Politics",
     summary: "Explore President Joe Biden's decision to withdraw from the 2024 presidential race, its implications for the Democratic Party, and his reflections on democracy and personal legacy.",
-    shareUrl: "https://vote2024info.vercel.app/insights/biden-exit-2024-race",
+    shareUrl: "https://voteinfo.vercel.app/insights/biden-exit-2024-race",
     content: `
       <h1>Biden's Bold Exit: A New Chapter in American Politics</h1>
       <p>In a political landscape fraught with tension, President Joe Biden's recent interview on August 11, 2024, marked a significant pivot point not only for himself but potentially for the entire Democratic Party. His decision to withdraw from the 2024 presidential race—an announcement made just weeks earlier—was not merely a personal choice but a strategic maneuver aimed at preserving democracy and uniting his party against the formidable challenge posed by Donald Trump. </p>
@@ -383,7 +383,7 @@ export const articleData = [
     date: "August 11, 2024",
     headline: "Kamala Harris: Transforming the 2024 Presidential Election Landscape",
     summary: "Explore how Kamala Harris's candidacy is reshaping the 2024 Presidential Election, energizing Latino voters, and changing the electoral map.",
-    shareUrl: "https://vote2024info.vercel.app/insights/kamala-harris-2024-impact",
+    shareUrl: "https://voteinfo.vercel.app/insights/kamala-harris-2024-impact",
     content: `
       <h1>Kamala Harris: Transforming the 2024 Presidential Election Landscape</h1>
       <p>In the ever-evolving tapestry of American politics, few events have the power to shift the narrative as dramatically as a new candidate entering the race. As of August 2024, Kamala Harris, the first female Vice President of the United States, has stepped into the spotlight as the Democratic nominee following Joe Biden's decision not to seek re-election. This pivotal moment has not only reshaped the electoral landscape but has also rejuvenated hopes among key voter demographics, particularly among Latino voters, as she rallies support in battleground states.</p>
@@ -450,7 +450,7 @@ export const articleData = [
     date: "August 10, 2024",
     headline: "Did Donald Trump Call Kamala Harris a B***h?",
     summary: "Explore the controversy surrounding reports of Donald Trump using derogatory language towards Vice President Kamala Harris in private conversations.",
-    shareUrl: "https://vote2024info.vercel.app/insights/trump-harris-comments-2024",
+    shareUrl: "https://voteinfo.vercel.app/insights/trump-harris-comments-2024",
     content: `
       <h1>Did Donald Trump Call Kamala Harris a "B***h"?</h1>
       <p>Recent reports have emerged indicating that former President Donald Trump has referred to Vice President Kamala Harris as a "bitch" in private conversations. This revelation has stirred significant attention and debate across various media platforms. Let's delve into the details surrounding this controversial remark.</p>
@@ -506,7 +506,7 @@ export const articleData = [
     date: "August 10, 2024",
     headline: "Kamala Harris Outpaces Donald Trump in Recent Polls: A Shift in Campaign Dynamics",
     summary: "Explore the recent polling data showing Vice President Kamala Harris leading former President Donald Trump, and the implications for the 2024 presidential election.",
-    shareUrl: "https://vote2024info.vercel.app/insights/harris-trump-polls-2024",
+    shareUrl: "https://voteinfo.vercel.app/insights/harris-trump-polls-2024",
     content: `
       <h1>Kamala Harris Outpaces Donald Trump in Recent Polls: A Shift in Campaign Dynamics</h1>
       <p>In a political landscape often defined by polarized opinions and fierce rivalries, recent polling data suggests a notable shift: Vice President Kamala Harris is now leading former President Donald Trump in several key national surveys. As the race for the 2024 presidential election heats up, analysts and political enthusiasts alike are grappling with the implications of this unexpected turn.</p>
@@ -565,7 +565,7 @@ export const articleData = [
     date: "August 9, 2024",
     headline: "What Happened at the Trump Press Conference?",
     summary: "Explore the key highlights and implications of Donald Trump's recent press conference at Mar-a-Lago, including controversial claims and attacks on Kamala Harris.",
-    shareUrl: "https://vote2024info.vercel.app/insights/trump-press-conference-aug-2024",
+    shareUrl: "https://voteinfo.vercel.app/insights/trump-press-conference-aug-2024",
     content: `
       <h1>What Happened at the Trump Press Conference?</h1>
       <p>On <strong>August 8, 2024</strong>, former President Donald Trump held a press conference at his Mar-a-Lago estate in Palm Beach, Florida. This event was filled with contentious claims and sharp criticisms, particularly directed towards his opponent, Democratic nominee Kamala Harris. As the 2024 election approaches, Trump's rhetoric and strategies are becoming increasingly significant in shaping the political landscape.</p>
@@ -634,7 +634,7 @@ export const articleData = [
     date: "August 9, 2024",
     headline: "Is Kamala Harris Really Dodging Media Interviews?",
     summary: "Explore the controversy surrounding Kamala Harris's media engagement strategy, including criticisms of interview avoidance and her campaign's focus on alternative communication methods.",
-    shareUrl: "https://vote2024info.vercel.app/insights/kamala-harris-media-strategy",
+    shareUrl: "https://voteinfo.vercel.app/insights/kamala-harris-media-strategy",
     content: `
       <h1>Is Kamala Harris Really Dodging Media Interviews?</h1>
       <p>Kamala Harris, the Vice President of the United States, has recently found herself at the center of controversy regarding her engagement with the media. Critics claim she is avoiding interviews and press conferences, while her supporters argue that this strategy is intentional and calculated. In this article, we will explore the facts, insights, and opinions surrounding this topic.</p>
@@ -710,7 +710,7 @@ export const articleData = [
     date: "August 8, 2024",
     headline: "Why Are Donald Trump and JD Vance Pushing Negative Rhetoric?",
     summary: "Explore the motivations behind the negative rhetoric employed by Donald Trump and JD Vance, and its implications for the political landscape.",
-    shareUrl: "https://vote2024info.vercel.app/insights/trump-vance-negative-rhetoric",
+    shareUrl: "https://voteinfo.vercel.app/insights/trump-vance-negative-rhetoric",
     content: `
       <h1>Why Are Donald Trump and JD Vance Pushing Negative Rhetoric?</h1>
       <p>In recent years, political discourse has reached unprecedented levels of intensity, particularly with figures like Donald Trump and JD Vance leading the charge. This article explores the motivations behind their negative rhetoric and its implications for the political landscape.</p>
@@ -805,7 +805,7 @@ export const articleData = [
     date: "August 8, 2024",
     headline: "What Do Minnesota Voters Say About Tim Walz?",
     summary: "Explore the complex perceptions of Minnesota voters towards Governor Tim Walz as he steps into the national spotlight as Kamala Harris's running mate.",
-    shareUrl: "https://vote2024info.vercel.app/insights/minnesota-voters-on-tim-walz",
+    shareUrl: "https://voteinfo.vercel.app/insights/minnesota-voters-on-tim-walz",
     content: `
       <h2>A Governor in the Spotlight</h2>
       <p>As Tim Walz, the Governor of Minnesota, steps into the national spotlight as Vice President Kamala Harris's running mate, the complexities of his leadership are coming to the forefront. The reactions from Minnesota voters underscore the duality of his public persona: a relatable, "normal" figure to many, yet a polarizing leader to others. This article delves into the nuanced opinions surrounding Walz, weaving together personal anecdotes and broader statistical insights to paint a comprehensive picture of his standing among the electorate.</p>
@@ -851,7 +851,7 @@ export const articleData = [
     date: "August 7, 2024",
     headline: "Kamala Harris Campaigns with Tim Walz: A Political Partnership",
     summary: "Explore the dynamic campaign partnership between Vice President Kamala Harris and Minnesota Governor Tim Walz as they rally support in Minnesota, a key state for the upcoming elections.",
-    shareUrl: "https://vote2024info.vercel.app/insights/harris-walz-rally",
+    shareUrl: "https://voteinfo.vercel.app/insights/harris-walz-rally",
     content: `
       <h1>Kamala Harris and Tim Walz Rally</h1>
       <p>As the sun set over the vibrant streets of Minneapolis, the air buzzed with anticipation. Vice President Kamala Harris and Minnesota Governor Tim Walz stood shoulder to shoulder at a raucous rally, a testament to their commitment to progressive policies and community engagement. Their partnership reflects not only a strategic alliance but a deeper narrative about the evolving landscape of American politics, especially as the nation gears up for the upcoming elections.</p>
@@ -897,7 +897,7 @@ export const articleData = [
     date: "August 6, 2024",
     headline: "Who is Tim Walz? The New VP Pick Shaping the Future of American Politics",
     summary: "Explore the background, implications, and varied perspectives surrounding Kamala Harris's selection of Minnesota Governor Tim Walz as her running mate for the 2024 presidential election.",
-    shareUrl: "https://vote2024info.vercel.app/insights/tim-walz-vp-pick",
+    shareUrl: "https://voteinfo.vercel.app/insights/tim-walz-vp-pick",
     content: `
       <h1>Governor Tim Walz</h1>
       <p>In a surprise announcement that sent ripples through the political landscape, Kamala Harris has officially selected Minnesota Governor Tim Walz as her running mate for the upcoming 2024 presidential election. This pivotal choice comes at a crucial juncture for the Democratic Party, which aims to consolidate support ahead of a challenging campaign season. This article explores who Tim Walz is, his political background, the implications of his selection, and the varied perspectives surrounding this significant appointment.</p>
@@ -962,7 +962,7 @@ export const articleData = [
     date: "August 6, 2024",
     headline: "Misinformation in the Context of the 2024 U.S. Elections",
     summary: "Explore the challenges posed by misinformation in the upcoming 2024 U.S. elections, including key events, stakeholder perspectives, and potential implications for democracy.",
-    shareUrl: "https://vote2024info.vercel.app/insights/misinformation-2024-elections",
+    shareUrl: "https://voteinfo.vercel.app/insights/misinformation-2024-elections",
     content: `
       <h1>Misinformation and the 2024 U.S. Elections</h1>
       <p>As the 2024 U.S. elections approach, concerns about misinformation have become more pronounced than ever. The rapid proliferation of false information, especially through social media platforms, is reshaping voter perceptions and influencing electoral outcomes. This article explores the key events, figures, and contexts surrounding misinformation in the upcoming elections, the roles of various stakeholders, and the potential implications for democracy.</p>
@@ -1310,7 +1310,7 @@ export const articleData = [
     date: "August 1, 2024",
     headline: "What Happened with Trump at the NABJ Conference?",
     summary: "Explore the controversial appearance of Donald Trump at the National Association of Black Journalists conference, including contentious exchanges and fact-checking efforts.",
-    shareUrl: "https://vote2024info.vercel.app/insights/trump-nabj-conference",
+    shareUrl: "https://voteinfo.vercel.app/insights/trump-nabj-conference",
     content: `
       <h2>What Happened with Trump at the NABJ Conference?</h2>
       <p>Donald Trump's recent appearance at the National Association of Black Journalists (NABJ) conference on July 31, 2024, was not just another speaking engagement; it was a stage for controversy and confrontation, drawing intense media scrutiny. As the former president took to the podium, the air was thick with anticipation — and skepticism.</p>
@@ -1363,7 +1363,7 @@ export const articleData = [
     date: "July 31, 2024",
     headline: "Project 2025: A Comprehensive Guide to the Conservative Blueprint",
     summary: "Explore the key components, policy recommendations, and implications of Project 2025, a conservative initiative aimed at reshaping American governance.",
-    shareUrl: "https://vote2024info.vercel.app/insights/project-2025-explained",
+    shareUrl: "https://voteinfo.vercel.app/insights/project-2025-explained",
     content: `
       <h2>What is Project 2025?</h2>
       <p>In an era marked by political polarization and rapid change, <em>Project 2025</em> stands out as a bold initiative aimed at reshaping the governance of the United States. Spearheaded by the <strong>Heritage Foundation</strong>, this comprehensive plan is designed to prepare for a potential return to power by Donald Trump or a similar Republican administration. Let's delve into the intricate details of Project 2025, exploring its key components, policy recommendations, and the broader implications for American politics.</p>
@@ -1420,7 +1420,7 @@ export const articleData = [
       date: "July 25, 2024",
       headline: "The Torch is Passed: Biden's Decision to Step Aside",
       summary: "President Joe Biden announces the end of his 2024 presidential campaign, emphasizing the importance of unity and democracy while endorsing Vice President Kamala Harris.",
-      shareUrl: "https://vote2024info.vercel.app/insights/biden-steps-aside",
+      shareUrl: "https://voteinfo.vercel.app/insights/biden-steps-aside",
       content: `
       <p>In a moment that resonated deeply across the political landscape, President Joe Biden recently announced the end of his 2024 presidential campaign. This decision, he explained, was not merely a personal choice but a necessary step to "save our democracy." His words echoed with a sense of urgency, highlighting the stakes involved not just for his party, but for the nation as a whole. As he stated, "Nothing, nothing can come in the way of saving our democracy. That includes personal ambition" (PBS News).</p>
 
@@ -1462,7 +1462,7 @@ export const articleData = [
       date: "July 24, 2024",
       headline: "The Evolving Landscape of Diversity, Equity, and Inclusion (DEI) in 2024",
       summary: "Explore the complex intersection of corporate commitments, political strategies, and societal implications of DEI initiatives in 2024.",
-      shareUrl: "https://vote2024info.vercel.app/insights/biden-steps-aside",
+      shareUrl: "https://voteinfo.vercel.app/insights/biden-steps-aside",
       content: `
       <p>In recent years, the conversation surrounding Diversity, Equity, and Inclusion (DEI) has grown increasingly complex. As 2024 unfolds, we find ourselves at a crossroads where corporate commitments, political strategies, and societal implications intersect. The backlash against DEI initiatives is not just a localized phenomenon; it is sweeping across states, reshaping the discourse around equality and representation.</p>
       
