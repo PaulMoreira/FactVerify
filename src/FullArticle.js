@@ -9,7 +9,6 @@ const FullArticle = () => {
   const article = articleData.find(a => a.id === articleId);
 
   useEffect(() => {
-    // Scroll to top when component mounts
     window.scrollTo(0, 0);
   }, []);
 
