@@ -1,6 +1,69 @@
 // articleData.js
 export const articleData = [
   {
+    id: "august-17-harris-trump-rallies",
+    date: "August 18, 2024",
+    by: "By: Vote Information",
+    headline: "Rhetoric and Rivalry: Rallies of Kamala Harris and Donald Trump",
+    summary: "Explore the contrasting campaign strategies and rhetoric employed by Kamala Harris and Donald Trump during their simultaneous rallies in Pennsylvania, a key battleground state.",
+    shareUrl: "https://voteinfo.vercel.app/insights/august-17-harris-trump-rallies",
+    content: `
+      <h1>Rhetoric and Rivalry: Rallies of Kamala Harris and Donald Trump</h1>
+  
+      <p>On August 17, 2024, the political stage was set for a dramatic showdown in Pennsylvania, a key battleground state that could sway the upcoming presidential election. As former President Donald Trump took the stage in Wilkes-Barre, he unleashed a torrent of personal attacks against Vice President Kamala Harris, framing his rhetoric around economic discontent and the rising cost of living. From accusations of communism to bizarre remarks about her laughter, Trump's rally revealed not just his strategy, but also the intense polarization shaping American politics today.</p>
+  
+      <h2>The Setting: A Divided Arena</h2>
+  
+      <p>In a packed indoor arena, Trump sought to regain momentum in a campaign that had seen him trailing in some polls. The atmosphere was electric, with nearly 8,000 supporters filling the seats, many donning T-shirts emblazoned with slogans like <em>"I'm voting for a convicted felon"</em>, a nod to Trump's legal troubles. As he stepped to the microphone, the audience chanted "Fight, fight, fight!"—a rallying cry that underscored their loyalty even amidst controversy.</p>
+  
+      <blockquote>
+        <p>"Joe Biden hates her. This was an overthrow of a president," Trump declared, demonstrating a recurring theme of undermining Harris's legitimacy as a candidate.</p>
+      </blockquote>
+  
+      <h2>Trump's Attack: Expanding the Battlefield</h2>
+  
+      <p>While Trump initially intended to discuss economic policies, he quickly veered off-script, dedicating significant time to personal attacks on Harris. Accusing her of having the "laugh of a crazy person," he sought to undermine her appeal, particularly among younger voters who resonate with her relatable demeanor. This tactic, however, could backfire, alienating moderates who prefer substantive discussions over ad hominem attacks.</p>
+  
+      <p>Trump did not shy away from framing Harris's policies as detrimental to American households. He referred to rising prices as the "<em>Kamala Harris inflation tax</em>" and dismissed her proposals to combat grocery costs as reminiscent of the Soviet Union's economic system. He claimed,</p>
+  
+      <blockquote>
+        <p>"In her speech yesterday, Kamala went full communist... It will cause rationing, hunger, and skyrocketing prices."</p>
+      </blockquote>
+  
+      <p>Such statements illustrate Trump's strategy of leveraging economic anxiety while simultaneously aiming to distract from his own administration's legacy.</p>
+  
+      <h2>Harris's Response: The Other Side of the Coin</h2>
+  
+      <p>While Trump was rallying in Wilkes-Barre, Harris was also campaigning, though details of her rally were less highlighted. Her campaign focused on economic revitalization and policies aimed at reducing living costs for American families. Harris's narrative stands in stark contrast to Trump's, as she emphasizes a vision of economic equity, where the wealthiest pay their fair share.</p>
+  
+      <p>Harris's proposals include targeting corporate profit margins to lower grocery prices and addressing prescription drug costs—an agenda that resonates with voters feeling the pinch of inflation. In a climate where many Americans are struggling financially, her message could strike a chord.</p>
+  
+      <h2>The Implications: A Polarized Landscape</h2>
+  
+      <p>The contrasting approaches of Trump and Harris signal a deepening divide in American political discourse. Trump's heavy reliance on personal attacks may energize his base but risks alienating moderate voters who prioritize policy over personality. Conversely, Harris's focus on economic issues could bolster her appeal among those adversely affected by inflation.</p>
+  
+      <p>As both candidates navigate this charged landscape, the implications for the upcoming election are profound. The outcome may hinge not only on policy preferences but also on the candidates' abilities to connect with voters on a personal level.</p>
+  
+      <h2>Did You Know?</h2>
+  
+      <p>Despite Trump's aggressive rhetoric, recent polls suggest that Harris has been gaining traction in swing states, challenging the former president's narrative that he holds the upper hand.</p>
+  
+      <h2>The Road Ahead</h2>
+  
+      <p>As the political arena continues to heat up, the rallies of August 17 serve as a microcosm of the larger battle for the soul of America. With both candidates poised to appeal to their bases while seeking to sway undecided voters, the stakes could not be higher. Whether through economic policy debates or personal attacks, the direction of American politics remains uncertain.</p>  
+      <h2>Sources and Further Reading</h2>
+  
+      <ol>
+        <li><a href="https://www.theguardian.com/us-news/article/2024/aug/17/trump-pennsylvania-rally" target="_blank" rel="noopener noreferrer">The Guardian</a> - Detailed coverage of Trump's rally and his statements against Harris.</li>
+        <li><a href="https://www.nbcnews.com/politics/2024-election/live-blog/trump-harris-election-live-updates-rcna166771" target="_blank" rel="noopener noreferrer">NBC News</a> - Live updates and reactions from both rallies.</li>
+        <li><a href="https://www.cnn.com/politics/live-news/trump-harris-election-08-17-24/index.html" target="_blank" rel="noopener noreferrer">CNN Politics</a> - Insights on the implications of the rallies for the upcoming election.</li>
+        <li><a href="https://www.hindustantimes.com/world-news/us-news/donald-trump-says-he-is-much-better-looking-than-kamala-harris-but-acknowledges-that-she-s-a-very-101723968464811.html" target="_blank" rel="noopener noreferrer">Hindustan Times</a> - Coverage of Trump's comments on Harris and their significance.</li>
+      </ol>
+    `,
+    ogImage: "https://media.theguardian.com/img/media/2024/aug/17/trump-rally.jpg",
+    ogDescription: "Explore the contrasting campaign strategies and rhetoric employed by Kamala Harris and Donald Trump during their simultaneous rallies in Pennsylvania, a key battleground state."
+  },
+  {
     id: "maga-swing-state-election-rules",
     date: "August 17, 2024",
     by: "Vote Information",
