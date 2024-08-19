@@ -1,6 +1,88 @@
 // articleData.js
 export const articleData = [
   {
+    id: "democratic-national-convention-2024",
+    date: "August 19, 2024",
+    by: "By: Vote Information",
+    headline: "What to Expect at the Democratic National Convention: A Historic Turn of Events",
+    summary: "Explore the key events, implications, and historical significance of the 2024 Democratic National Convention as Kamala Harris prepares to accept the presidential nomination.",
+    shareUrl: "https://voteinfo.vercel.app/insights/democratic-national-convention-2024",
+    content: `
+      <h1>What to Expect at the Democratic National Convention: A Historic Turn of Events</h1>
+  
+      <p>As the sun rises over Chicago on August 19, 2024, the United Center will transform into a hub of political fervor, anticipation, and historic significance for the Democratic National Convention. This year's event is not just a gathering; it symbolizes a profound shift in the political landscape—a moment where Vice President Kamala Harris will make history as the first woman of color to accept a major party's presidential nomination. The air is thick with excitement, reminiscent of a sporting event, as Democrats prepare to rally around a new leader.</p>
+  
+      <h2>A Timeline of Key Events</h2>
+  
+      <p>The convention runs from <strong>August 19-22</strong>, with pivotal moments marking each day:</p>
+  
+      <ul>
+        <li><strong>August 19</strong>: President Biden will deliver a "pass-the-torch" speech, officially endorsing Harris and signaling a new chapter for the Democratic Party.</li>
+        <li><strong>August 21</strong>: Tim Walz, the Governor of Minnesota, will accept the vice presidential nomination.</li>
+        <li><strong>August 22</strong>: Kamala Harris will take the stage to deliver her acceptance speech, culminating in a historic moment for the party.</li>
+      </ul>
+  
+      <p>This year's convention follows a remarkable political pivot, where Biden, after a shocking assassination attempt on Donald Trump, chose to step aside for Harris. The political dynamics have shifted, with a resurgent enthusiasm coursing through the party, particularly among younger voters and people of color.</p>
+  
+      <blockquote>
+        <p>"It's a remarkable turn of events," reflects Howard Dean, former DNC chairman. "The Democrats have now been resurrected."</p>
+      </blockquote>
+  
+      <h2>Energized and United: The Harris Effect</h2>
+  
+      <p>The atmosphere surrounding the convention is electric, with Democratic enthusiasm seeing a meteoric rise from 46% in February to a staggering 85% by August. This surge is particularly pronounced among young voters and minorities, who feel more represented than ever.</p>
+  
+      <blockquote>
+        <p>"The story here is simple and it's one that will resonate with Americans across the country: Kamala Harris and Tim Walz are fighting for the American people and America's future," states Minyon Moore, chair of the convention.</p>
+      </blockquote>
+  
+      <p>In contrast to past conventions marred by division, this year's gathering aims for unity and renewed hope. Yet, not all is harmonious; protests are anticipated outside the venue, particularly focused on Harris's foreign policy stances, especially regarding the ongoing crisis in Gaza.</p>
+  
+      <h2>A Look Back: Historical Context</h2>
+  
+      <p>This year's convention will inevitably draw comparisons to the tumultuous 1968 DNC, a gathering marred by protests and violence. However, the current mood reflects a significant contrast—a desire for unity rather than discontent. The Democrats are aiming to project a message of solidarity in stark contrast to the Republican Party's more divisive messaging.</p>
+  
+      <h2>The Stakes: Implications for the Future</h2>
+  
+      <p>Kamala Harris's candidacy is seen as pivotal in shaping the future of the Democratic Party. By appealing to younger demographics and addressing pressing issues such as economic equity and reproductive rights, Harris is positioning herself as a candidate for change. Analysts suggest that her success could redefine party dynamics and voter outreach strategies moving forward.</p>
+  
+      <blockquote>
+        <p>"What you're seeing is Gen X rising," notes Jane Kleeb, chair of the Nebraska Democratic Party, emphasizing a generational shift in leadership.</p>
+      </blockquote>
+  
+      <h2>Personal Connections: Engaging the Crowd</h2>
+  
+      <p>Attendees can expect more than just speeches; interactive experiences await. From making friendship bracelets to getting a "Kamala Harris" manicure, the convention is designed to engage attendees in a personal way, reflecting a shift towards a more inclusive and participatory political culture.</p>
+  
+      <h2>Surprising Insights</h2>
+  
+      <p>Despite the initial resignation within the party following Biden's withdrawal, Harris's nomination has sparked unexpected joy and renewed hope among Democrats. Many see her as a refreshing change, contrasting sharply with the despair that has characterized American politics in recent years.</p>
+  
+      <blockquote>
+        <p>"All of the doomscrolling, the fear mongering... has really worn us out," says Jennifer Mercieca, a communication professor. "We don't want to be afraid all the time."</p>
+      </blockquote>
+  
+      <h2>A Call for Reflection</h2>
+  
+      <p>As the Democratic National Convention unfolds, it serves not only as a platform for Harris and Walz but also as a reflection of the party's evolution. The stakes are high, and the implications of this convention will resonate far beyond Chicago.</p>
+  
+      <p>In a political climate fraught with uncertainty, the Democratic Party aims to project a message of hope and unity. Whether this vision translates into electoral success in November remains to be seen, but one thing is clear: the political narrative is shifting, and Kamala Harris is at the forefront of this change.</p>
+  
+      <h3>Did You Know?</h3>
+  
+      <p>Kamala Harris is not only the first woman of color to accept a major party's presidential nomination but also has a background as a prosecutor, which she leverages to contrast her candidacy with Donald Trump's legal troubles.</p>
+  
+      <h2>Sources and Further Reading</h2>
+      <ol>
+        <li><a href="https://demconvention.com/" target="_blank" rel="noopener noreferrer">Democratic National Convention Official Site</a> - Official information about the convention.</li>
+        <li><a href="https://www.theguardian.com/us-news/article/2024/aug/18/democratic-national-convention-chicago" target="_blank" rel="noopener noreferrer">'Resurrected' Democrats look toward 2024 convention with renewed hope</a> - Coverage of the political landscape leading to the convention.</li>
+        <li><a href="https://news.uchicago.edu/story/uchicago-political-scholars-reflect-dnc-2024-election" target="_blank" rel="noopener noreferrer">UChicago Political Scholars Reflect on DNC 2024 Election</a> - Insights from political scholars on the implications of the convention.</li>
+        <li><a href="https://edition.cnn.com/2024/08/19/us/5-things-to-know-for-19-dnc-middle-east-severe-weather-covid-19-vaccines-yacht-disaster/index.html" target="_blank" rel="noopener noreferrer">5 Things to Know for Aug. 19: DNC, Middle East, Severe Weather</a> - A brief overview of key issues surrounding the convention.</li>
+      </ol>
+    `,
+    ogDescription: "Explore the key events, implications, and historical significance of the 2024 Democratic National Convention as Kamala Harris prepares to accept the presidential nomination."
+  },
+  {
     id: "august-17-harris-trump-rallies",
     date: "August 18, 2024",
     by: "By: Vote Information",
