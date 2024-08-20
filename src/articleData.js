@@ -3,7 +3,7 @@ export const articleData = [
   {
     id: "dnc-2024-highlights",
     date: "August 20, 2024",
-    by: "By Voter Information",
+    by: "By Vote Information",
     headline: "A New Dawn for Democrats: Highlights from the 2024 Democratic National Convention",
     summary: "Explore key moments, speeches, and implications from the opening day of the 2024 Democratic National Convention in Chicago, marking a historic shift in party leadership.",
     shareUrl: "https://voteinfo.vercel.app/insights/dnc-2024-highlights",
