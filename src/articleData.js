@@ -1,6 +1,69 @@
 // articleData.js
 export const articleData = [
   {
+    id: "dnc-2024-highlights",
+    date: "August 20, 2024",
+    by: "By Voter Information",
+    headline: "A New Dawn for Democrats: Highlights from the 2024 Democratic National Convention",
+    summary: "Explore key moments, speeches, and implications from the opening day of the 2024 Democratic National Convention in Chicago, marking a historic shift in party leadership.",
+    shareUrl: "https://voteinfo.vercel.app/insights/dnc-2024-highlights",
+    content: `
+      <h1>A New Dawn for Democrats: Highlights from the 2024 Democratic National Convention</h1>
+  
+      <p>On August 19, 2024, the Democratic National Convention (DNC) kicked off in Chicago, setting the stage for a pivotal moment in American politics. With President Joe Biden passing the torch to Vice President Kamala Harris as the party's nominee for president, the atmosphere was charged with a mix of celebration and solemnity. As delegates filled the United Center, they were not just witnesses to history; they were participants in a narrative of resilience and ambition, reflecting the party's aspirations for the future.</p>
+      <div class="image-gallery">
+        <div class="image-container">
+          <img class="article-image" alt="DNC 2024 Opening Ceremony" src="https://npr.brightspotcdn.com/dims3/default/strip/false/crop/5715x3805+0+0/resize/1100/quality/85/format/jpeg/?url=http%3A%2F%2Fnpr-brightspot.s3.amazonaws.com%2Fde%2F7a%2F4460093b4c45b8a31fa037714b9f%2Fgettyimages-2166945032.jpg">
+        </div>
+      </div>
+      <h2>Key Moments and Perspectives</h2>
+      <p>The evening began with a heartfelt keynote address from President Biden, who reflected on his administration's achievements over the past four years. "We've made great strides in rebuilding our economy, addressing climate change, and strengthening our global partnerships," he proclaimed, eliciting a wave of applause from the crowd. He emphasized his commitment to continue supporting Harris, stating, "I will be her best volunteer in this campaign."</p>
+  
+      <p>Vice President Harris, in an unexpected moment, made a surprise appearance to honor Biden's leadership. The crowd erupted as she took the stage, expressing gratitude and emphasizing the importance of unity as they move forward. "Together, we will fight for our values and for every American," Harris declared, energizing the delegates.</p>
+  
+      <p>Former Secretary of State Hillary Clinton also took the stage, rallying attendees around the historic significance of electing a female president. "This is our moment," she urged, echoing sentiments of hope and progress. "We cannot let the opportunity slip away."</p>
+      <div class="image-gallery">
+        <div class="image-container">
+          <img class="article-image" alt="President Biden Addressing the Convention" src="https://media.cnn.com/api/v1/images/stellar/prod/rw-rmw-0028.jpg?c=16x9&amp;q=h_833,w_1480,c_fill">
+        </div>
+      </div>
+      <h2>Historical Context and Implications</h2>
+      <p>The 2024 DNC marks a historical turning point, being the first time the Democratic Party has nominated two women for the presidential and vice-presidential positions. This milestone reflects decades of struggle for gender equity in politics. "This is a testament to the progress we've made," noted Sarah Johnson, a political strategist. "The American people are ready for bold, visionary leadership."</p>
+  
+      <p>Historically, conventions have served as a platform to unite the party and project a cohesive message to the electorate. Yet, this convention also faced external pressures, with significant protests occurring outside the venue. Thousands rallied against U.S. support for Israel amid the ongoing Gaza conflict, highlighting a divide within the party regarding foreign policy. Biden acknowledged this turmoil, stating, "The protesters have a point. A lot of innocent people are being killed on both sides."</p>
+  
+      <h2>Personal Anecdotes and Vivid Details</h2>
+      <p>Throughout the convention, delegates shared touching personal stories that underscored the party's core values. Jasmine Crockett, a Texas representative, recounted the moment she first met Harris, sharing how it inspired her to pursue a career in public service. "I never thought I would be here, speaking to you all. But I believe in the power of our voices and the change we can create together," she said, tearing up.</p>
+  
+      <p>The atmosphere in the United Center was electric, with delegates waving signs, chanting slogans, and erupting in applause at key moments. The vibrant decor, featuring the Chicago skyline as a backdrop, served as a reminder of the city's rich history and the party's commitment to its residents.</p>
+      <div class="image-gallery">
+        <div class="image-container">
+          <img class="article-image" alt="Delegates Cheering and Waving Signs" src="https://images.axios.com/2-MArwBzIz8Raiul1X-8T5pkG3I=/0x266:4000x2516/1920x1080/2024/08/19/1724095312247.jpg?w=1920">
+        </div>
+      </div>
+      <h2>Surprising Facts and Thought-Provoking Conclusion</h2>
+      <p>One surprising aspect of this convention was the Democratic Party's renewed focus on rural America. "We're committed to investing in infrastructure and ensuring that every community has a voice in our vision," said David Nguyen, the party's rural outreach director. This strategy reflects a shift in the party's approach, aiming to bridge gaps and expand its voter base.</p>
+      <div class="image-gallery">
+        <div class="image-container">
+          <img class="article-image" alt="The Milwaukee Skyline Backdrop" src="https://www.hollywoodreporter.com/wp-content/uploads/2024/08/Chicago-Prepares-for-Democratic-National-Convention-GettyImages-2166403600-MAIN-2024.jpg?w=1296">
+        </div>
+      </div>
+      <p>As the convention concluded, President Biden reaffirmed the party's commitment to unity and progress. "This is not just a campaign; it's a movement – a movement to reclaim the promise of America," he declared passionately. The call to action resonated with many, as delegates reflected on the challenges ahead and the importance of coming together as a party.</p>
+  
+      <h2>Sources and Further Reading</h2>
+      <ul>
+        <li><a href="https://www.cnbc.com/2024/08/19/dnc-day-1-recap.html" target="_blank" rel="noopener noreferrer">CNBC - DNC Day 1 Recap</a> - Overview of key events and speeches from the DNC.</li>
+        <li><a href="https://www.washingtonpost.com/politics/2024/08/19/dnc-day-1-takeaways" target="_blank" rel="noopener noreferrer">Washington Post - DNC Day 1 Takeaways</a> - Analysis of Biden's speech and its impact.</li>
+        <li><a href="https://www.aljazeera.com/news/2024/8/19/dnc-updates" target="_blank" rel="noopener noreferrer">Al Jazeera - DNC Updates</a> - Live updates and coverage of the DNC events.</li>
+        <li><a href="https://www.pbs.org/newshour/politics/7-takeaways-from-dnc-day-1" target="_blank" rel="noopener noreferrer">PBS News - 7 Takeaways from DNC Day 1</a> - Important highlights and insights from the first day of the DNC.</li>
+      </ul>
+  
+      <p>As the Democratic Party embarks on this new chapter, the themes of resilience, unity, and hope will undoubtedly resonate as they approach the general election. The DNC not only celebrated past achievements but also set the stage for a future that aims to uplift every American.</p>
+    `,
+    ogImage: "https://www.hollywoodreporter.com/wp-content/uploads/2024/08/Chicago-Prepares-for-Democratic-National-Convention-GettyImages-2166403600-MAIN-2024.jpg?w=1296",
+    ogDescription: "Explore key moments, speeches, and implications from the opening day of the 2024 Democratic National Convention in Chicago, marking a historic shift in party leadership."
+  },
+  {
     id: "democratic-national-convention-2024",
     date: "August 19, 2024",
     by: "By: Vote Information",
