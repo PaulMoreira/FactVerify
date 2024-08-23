@@ -1,6 +1,89 @@
 // articleData.js
 export const articleData = [
   {
+    id: "harris-dnc-2024-speech",
+    date: "August 23, 2024",
+    by: "By: Vote Information",
+    headline: "Kamala Harris Makes History at the 2024 DNC: A Call for Unity and Progress",
+    summary: "Vice President Kamala Harris delivers a historic speech at the 2024 Democratic National Convention, accepting the presidential nomination and calling for unity and progress in America.",
+    shareUrl: "https://voteinfo.vercel.app/insights/harris-dnc-2024-speech",
+    content: `
+      <h1>Kamala Harris Makes History at the 2024 DNC: A Call for Unity and Progress</h1>
+  
+      <h2>A Historic Moment for America</h2>
+      <p>On August 22, 2024, Vice President Kamala Harris delivered a powerful and historic speech at the Democratic National Convention (DNC) in Chicago, marking a significant moment in American political history. As the first woman of color and the first person of South Asian descent to accept a major party's presidential nomination, Harris's address was not just a formality but a call to action for a nation at a crossroads. With the weight of her heritage and the hopes of many resting on her shoulders, she addressed a packed arena filled with cheering delegates, emphasizing a vision for a united America.</p>
+  
+      <blockquote>
+        <p>"With this election, our nation has a precious, fleeting opportunity to move past the bitterness, cynicism, and divisive battles of the past. A chance to chart a new way forward — not as members of any one party or faction, but as Americans," Harris proclaimed.</p>
+      </blockquote>
+  
+      <h2>Personal Stories and Shared Values</h2>
+      <p>Harris's speech was notably personal, as she shared anecdotes from her upbringing that shaped her values. Recalling her mother, Shyamala Gopalan, who immigrated from India with dreams of becoming a scientist, Harris painted a vivid picture of her childhood. She spoke of a working-class neighborhood in the East Bay, where values of community and resilience were instilled in her from an early age.</p>
+  
+      <blockquote>
+        <p>"My mother taught us to never complain about injustice, but to do something about it," she said, embodying the spirit of activism that characterized her own journey.</p>
+      </blockquote>
+  
+      <p>This connection to her roots served to ground her political aspirations in empathy and understanding, appealing to a diverse audience that extends beyond traditional party lines.</p>
+  
+      <h2>A Sharp Critique of Donald Trump</h2>
+      <p>As she laid out her vision for America, Harris did not shy away from critiquing former President Donald Trump. She described him as an "unserious man" whose return to the White House would pose significant threats to democracy and basic freedoms. Harris referenced the January 6 Capitol riots, suggesting that Trump's presidency could lead to further chaos and division.</p>
+  
+      <blockquote>
+        <p>"Just imagine Donald Trump with no guardrails. He would use the immense powers of the presidency not to improve your life, but to serve himself," Harris warned.</p>
+      </blockquote>
+  
+      <p>Her speech resonated with many Democrats, who felt a renewed sense of urgency to mobilize against Trump's potential return.</p>
+  
+      <h2>Mixed Reactions: A Divided Landscape</h2>
+      <p>Reactions to Harris's address were mixed. While many Democrats praised her for inspiring unity and addressing critical issues such as reproductive rights, climate change, and economic opportunity, critics from the Republican side dismissed her speech as lacking substance.</p>
+  
+      <p>"The American people want leaders who will focus on the real issues facing our country, not engage in divisive identity politics," said Republican strategist Sarah Huckabee Sanders, reflecting a common critique among conservative commentators.</p>
+  
+      <p>Nevertheless, the speech ignited enthusiasm among party members, with reports of increased donations and volunteer sign-ups flowing in shortly after her address.</p>
+  
+      <h2>The Road Ahead: Implications for the Future</h2>
+      <p>Looking ahead, Harris's nomination represents a pivotal moment for representation in American politics. If elected, she would not only be the first female president but also the first Black and South Asian president, potentially inspiring a new generation of leaders from diverse backgrounds.</p>
+  
+      <p>Her call for an "opportunity economy," aimed at creating middle-class tax cuts and job creation, resonated with many who feel left behind in the current economic climate. Harris emphasized the importance of unity and collective action, stating, "In unity, there is strength."</p>
+  
+      <h2>Did You Know?</h2>
+      <ul>
+        <li>Kamala Harris is the first Democratic nominee with significant prosecutorial experience, having served as California's Attorney General.</li>
+        <li>Her acceptance speech marked the first time a woman of color officially accepted a major party's presidential nomination.</li>
+      </ul>
+  
+      <h2>A Vision for America</h2>
+      <p>Kamala Harris's speech at the DNC was more than just an acceptance of a nomination; it was a clarion call for unity, progress, and a renewed commitment to the values that define America. As the political landscape continues to evolve, Harris stands as a figure of hope and change, embodying the aspirations of countless Americans seeking a brighter future.</p>
+  
+      <blockquote>
+        <p>"Let us show each other — and the world — who we are. Freedom. Opportunity. Compassion. Dignity. Fairness. And endless possibilities," she concluded, leaving many inspired to take action in the upcoming election.</p>
+      </blockquote>
+
+      <div class="image-gallery">
+      <div class="image-container">
+        <img class="article-image" alt="Kamala Harris at DNC 2024" src="https://www.hollywoodreporter.com/wp-content/uploads/2024/08/Kamala-Harris-dnc-1-getty-H-2024.jpg?w=1296">
+      </div>
+      <div class="image-container">
+        <img class="article-image" alt="Harris on Stage" src="https://deadline.com/wp-content/uploads/2024/08/Kamala-Harris-DNC-2024-2-2167983574.jpg?w=681&h=383&crop=1">
+      </div>
+      <div class="image-container">
+        <img class="article-image" alt="Inspiring Speech" src="https://www.rollingstone.com/wp-content/uploads/2024/08/kamala-harris-dnc-speech.jpg?w=1581&h=1054&crop=1">
+      </div>
+    </div>
+
+      <h2>Sources and Further Reading</h2>
+      <ul>
+        <li><a href="https://www.cbsnews.com/" target="_blank" rel="noopener noreferrer">Kamala Harris' full speech at the 2024 DNC</a> - CBS News coverage of the event.</li>
+        <li><a href="https://www.npr.org/" target="_blank" rel="noopener noreferrer">Kamala Harris at DNC: A historical perspective</a> - NPR analysis on her speech and implications.</li>
+        <li><a href="https://www.factcheck.org/" target="_blank" rel="noopener noreferrer">Fact-checking Harris's claims</a> - A fact-check of key statements made during the speech.</li>
+        <li><a href="https://time.com/" target="_blank" rel="noopener noreferrer">Time's analysis of key moments</a> - Highlights and analysis from Time Magazine.</li>
+      </ul>
+    `,
+    ogImage: "https://example.com/kamala-harris-dnc-2024.jpg",
+    ogDescription: "Vice President Kamala Harris delivers a historic speech at the 2024 Democratic National Convention, accepting the presidential nomination and calling for unity and progress in America."
+  },
+  {
     id: "obamas-dnc-2024",
     date: "August 21, 2024",
     by: "By: Vote Information",
