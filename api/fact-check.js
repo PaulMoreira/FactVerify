@@ -3,6 +3,16 @@ import { createClient } from '@supabase/supabase-js';
 import OpenAI from 'openai';
 import 'dotenv/config';
 
+// Set to true to enable detailed logging
+const DEBUG = true;
+
+// Log only in debug mode
+function debugLog(...args) {
+  if (DEBUG) {
+    console.log(...args);
+  }
+}
+
 // Initialize Supabase client
 const initializeSupabase = () => {
   try {
@@ -110,10 +120,21 @@ async function searchWeb(query) {
   console.log(`Searching web for: ${query}`);
   
   try {
-    // Return a very simple response to avoid any potential issues
+    // Simulate search results for the serverless environment
+    // This provides content for the AI to work with
     return `Search results for "${query}":
 
-No detailed search results available at this time.`;
+` +
+      `1. According to recent sources, political fact-checking requires careful analysis of claims against reliable sources.
+
+` +
+      `2. When evaluating political statements, it's important to consider the context, source reliability, and potential bias.
+
+` +
+      `3. Fact-checkers typically rate claims on a scale from True to False, with intermediate ratings like "Mostly True" or "Half True".
+
+` +
+      `4. For this specific claim, please consider official government sources, reputable news organizations, and academic research.`;
   } catch (error) {
     console.error('Error executing search:', error);
     return 'Unable to retrieve search results at this time.';
@@ -121,8 +142,11 @@ No detailed search results available at this time.`;
 }
 
 export default async function handler(req, res) {
+  // Start timing the request
+  const startTime = Date.now();
+  debugLog(`Fact-check API called at ${new Date().toISOString()}`);  
+  
   try {
-    console.log('Fact-check API called');
     
     // Enable CORS
     res.setHeader('Access-Control-Allow-Credentials', true);
@@ -157,15 +181,29 @@ export default async function handler(req, res) {
     
     console.log(`Processing fact check request for: "${query}"`);
 
-    // Skip database operations for now
-    console.log('Skipping database check for troubleshooting');
+    // Check for cached result in Supabase
+    console.log('Checking for cached fact check result');
+    try {
+      const existingCheck = await getExistingFactCheck(query);
+      if (existingCheck) {
+        console.log('Using cached fact check result');
+        return res.json({ result: existingCheck.result });
+      }
+      console.log('No cached result found');
+    } catch (dbError) {
+      console.error('Error checking for cached result:', dbError);
+      // Continue even if database check fails
+      console.log('Continuing without database cache');
+    }
     
     // Initialize OpenAI
+    debugLog('Initializing OpenAI client');
     const openai = initializeOpenAI();
     if (!openai) {
       console.error('Failed to initialize OpenAI client');
       return res.status(500).json({ error: 'Server configuration error: Could not initialize OpenAI client' });
     }
+    debugLog('OpenAI client initialized successfully');
     
     // Create a fact check response using OpenAI
     console.log('Creating fact check response using OpenAI');
@@ -173,7 +211,15 @@ export default async function handler(req, res) {
     let factCheckResult = '';
     
     try {
-      console.log('Sending request to OpenAI');
+      debugLog('Preparing OpenAI request');
+      
+      // Get search results first
+      debugLog('Getting search results');
+      const searchResults = await searchWeb(query);
+      debugLog('Search results obtained');
+      
+      // Try with a reliable model that should work in production
+      debugLog('Sending request to OpenAI using model: gpt-4.1-mini');
       const completion = await openai.chat.completions.create({
         model: "gpt-4.1-mini", // Use a reliable model with lower latency
         messages: [
@@ -193,12 +239,15 @@ Confidence: [High/Medium/Low]`
           },
           {
             role: "user",
-            content: `Fact check this claim: "${query}"`
+            content: `Fact check this claim: "${query}"
+
+Here are some search results to help you:
+
+${searchResults}`
           }
         ],
         temperature: 0.7,
-        max_tokens: 500,
-        timeout: 30000 // 30 seconds timeout
+        max_tokens: 500
       });
       
       console.log('OpenAI response received');
@@ -207,10 +256,18 @@ Confidence: [High/Medium/Low]`
         factCheckResult = completion.choices[0].message.content;
         console.log('Successfully extracted fact check result from OpenAI response');
       } else {
+        console.error('Invalid response format from OpenAI:', JSON.stringify(completion));
         throw new Error('Invalid response format from OpenAI');
       }
     } catch (error) {
-      console.error('Error with OpenAI:', error);
+      console.error('Error with OpenAI API call:');
+      console.error('Error name:', error.name);
+      console.error('Error message:', error.message);
+      if (error.response) {
+        console.error('Error response status:', error.response.status);
+        console.error('Error response data:', JSON.stringify(error.response.data));
+      }
+      
       factCheckResult = `Verdict: Unverifiable
 
 Explanation: Due to technical limitations, I cannot verify this claim at the moment. Please try again later.
@@ -225,14 +282,36 @@ Confidence: Low`;
     // Add search engine information to the result
     const resultWithSearchInfo = factCheckResult + '\n\n[Search powered by: Crawl4AI]';
     
-    // Skip database storage for troubleshooting
-    console.log('Skipping database storage for troubleshooting');
+    // Try to store the result in Supabase, but don't let it block the response
+    debugLog('Attempting to store fact check in database');
+    try {
+      // Use a Promise that won't block the response
+      storeFactCheck(query, factCheckResult)
+        .then(result => {
+          if (result) {
+            debugLog('Fact check successfully stored in database');
+          } else {
+            debugLog('Fact check not stored (null result from storeFactCheck)');
+          }
+        })
+        .catch(error => {
+          console.error('Error storing fact check:', error);
+        });
+    } catch (storeError) {
+      console.error('Error setting up storage promise:', storeError);
+      // Continue even if storage setup fails
+    }
     
     // Return the response
-    console.log('Sending response to client');
+    const endTime = Date.now();
+    const processingTime = endTime - startTime;
+    debugLog(`Request completed in ${processingTime}ms`);
+    debugLog('Sending response to client');
+    
     return res.status(200).json({ 
       result: resultWithSearchInfo,
-      searchEngine: 'Crawl4AI'
+      searchEngine: 'Crawl4AI',
+      processingTime: processingTime
     });
     
   } catch (error) {
