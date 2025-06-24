@@ -128,37 +128,23 @@ async function searchWeb(query) {
   debugLog(`Searching web for: ${query}`);
   
   try {
-    // Call our Python Crawl4AI service with multiple fallback options
-    const crawl4aiUrls = [
-      process.env.CRAWL4AI_URL,
-      'http://localhost:3002/search'
-      // Removed external URLs that aren't working
-    ].filter(Boolean); // Filter out undefined/null values
+    // Call our search API endpoint
+    const apiUrl = process.env.API_URL || '';
+    const searchEndpoint = `${apiUrl}/api/search`;
+    debugLog(`Using search API endpoint: ${searchEndpoint}`);
     
-    let response = null;
-    let lastError = null;
+    debugLog(`Sending search request to: ${searchEndpoint}`);
+    const response = await axios.post(searchEndpoint, {
+      query: query,
+      max_results: 5
+    }, {
+      timeout: 8000 // 8 second timeout to allow for API Gateway processing
+    });
     
-    // Try each URL in sequence until one works
-    for (const url of crawl4aiUrls) {
-      try {
-        debugLog(`Attempting to connect to Crawl4AI at: ${url}`);
-        response = await axios.post(url, {
-          query: query,
-          max_results: 5
-        }, {
-          timeout: 5000 // 5 second timeout
-        });
-        debugLog(`Successfully connected to Crawl4AI at: ${url}`);
-        break; // Break the loop if successful
-      } catch (err) {
-        lastError = err;
-        debugLog(`Failed to connect to Crawl4AI at: ${url} - ${err.message}`);
-        // Continue to next URL
-      }
-    }
+    debugLog(`Successfully received search results from API`);
     
     if (!response) {
-      throw lastError || new Error('All Crawl4AI endpoints failed');
+      throw new Error('No response received from search API');
     }
     
     const data = response.data;
@@ -166,31 +152,15 @@ async function searchWeb(query) {
     // Prepare the search results
     let searchResults = `Crawl4AI search results for "${query}":\n\n`;
     
-    // Process the results
-    if (data.results && data.results.length > 0) {
+    if (data && Array.isArray(data.results) && data.results.length > 0) {
+      // Format the search results
       data.results.forEach((result, index) => {
-        searchResults += `${index + 1}. ${result.title}\n`;
-        if (result.url) {
-          searchResults += `   Source: ${result.url}\n`;
-        }
-        if (result.content) {
-          searchResults += `   ${result.content}\n\n`;
-        }
+        searchResults += `${index + 1}. ${result.title || 'Untitled'}\n`;
+        searchResults += `   URL: ${result.url || 'No URL'}\n`;
+        searchResults += `   Snippet: ${result.snippet || 'No snippet available'}\n\n`;
       });
-    } else if (data.error) {
-      searchResults += `${data.error}\n\n`;
-      searchResults += 'Suggestions:\n';
-      searchResults += '- Try rephrasing the query with more specific details\n';
-      searchResults += '- Check if the claim contains verifiable facts rather than opinions\n';
-      searchResults += '- Consider searching for individual elements of the claim separately\n';
     } else {
-      searchResults += 'No specific information was found for this query. This could be because:\n';
-      searchResults += '1. The claim might be very recent and not yet indexed\n';
-      searchResults += '2. The claim might be stated in different terms than how it appears in sources\n';
-      searchResults += '3. The claim might be about a topic with limited online coverage\n\n';
-      searchResults += 'Suggestions:\n';
-      searchResults += '- Try rephrasing the query with more specific details\n';
-      searchResults += '- Check if the claim contains verifiable facts rather than opinions\n';
+      searchResults += "No specific search results found for this query.\n";
       searchResults += '- Consider searching for individual elements of the claim separately\n';
     }
     
