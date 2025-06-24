@@ -128,48 +128,68 @@ async function searchWeb(query) {
   debugLog(`Searching web for: ${query}`);
   
   try {
-    // Call our search API endpoint
-    const apiUrl = process.env.API_URL || '';
-    const searchEndpoint = `${apiUrl}/api/search`;
-    debugLog(`Using search API endpoint: ${searchEndpoint}`);
+    // Since we're calling ourselves from within the serverless function,
+    // we need to call the search handler directly
+    debugLog('Making direct call to search function');
     
-    debugLog(`Sending search request to: ${searchEndpoint}`);
-    const response = await axios.post(searchEndpoint, {
-      query: query,
-      max_results: 5
-    }, {
-      timeout: 8000 // 8 second timeout to allow for API Gateway processing
-    });
+    // Import the search handler directly
+    const searchHandler = (await import('./search.js')).default;
     
-    debugLog(`Successfully received search results from API`);
+    // Create a mock request and response to call the handler directly
+    const mockReq = {
+      method: 'POST',
+      body: {
+        query: query,
+        max_results: 5
+      }
+    };
     
-    if (!response) {
-      throw new Error('No response received from search API');
+    // Create a variable to store the search results
+    let searchData = null;
+    
+    // Create a mock response object
+    const mockRes = {
+      status: (code) => {
+        return {
+          json: (data) => {
+            searchData = data;
+            return mockRes;
+          },
+          end: () => {}
+        };
+      },
+      setHeader: () => {}
+    };
+    
+    // Call the search handler directly
+    await searchHandler(mockReq, mockRes);
+    
+    // Check if we got search results
+    if (!searchData) {
+      throw new Error('No search results received');
     }
     
-    const data = response.data;
+    // Prepare the formatted search results string
+    let formattedResults = `Search results for "${query}":\n\n`;
     
-    // Prepare the search results
-    let searchResults = `Crawl4AI search results for "${query}":\n\n`;
-    
-    if (data && Array.isArray(data.results) && data.results.length > 0) {
+    if (searchData && Array.isArray(searchData.results) && searchData.results.length > 0) {
       // Format the search results
-      data.results.forEach((result, index) => {
-        searchResults += `${index + 1}. ${result.title || 'Untitled'}\n`;
-        searchResults += `   URL: ${result.url || 'No URL'}\n`;
-        searchResults += `   Snippet: ${result.snippet || 'No snippet available'}\n\n`;
+      searchData.results.forEach((result, index) => {
+        formattedResults += `${index + 1}. ${result.title || 'Untitled'}\n`;
+        formattedResults += `   URL: ${result.url || 'No URL'}\n`;
+        formattedResults += `   Snippet: ${result.snippet || 'No snippet available'}\n\n`;
       });
     } else {
-      searchResults += "No specific search results found for this query.\n";
-      searchResults += '- Consider searching for individual elements of the claim separately\n';
+      formattedResults += "No specific search results found for this query.\n";
+      formattedResults += '- Consider searching for individual elements of the claim separately\n';
     }
     
     // Add source attribution
-    searchResults += `\nSearch powered by: Crawl4AI\n`;
+    formattedResults += `\nSearch powered by: Crawl4AI\n`;
     
-    console.log('Crawl4AI search completed successfully');
+    console.log('Search completed successfully');
     
-    return searchResults;
+    return formattedResults;
   } catch (error) {
     console.error('Error executing Crawl4AI search:', error);
     
