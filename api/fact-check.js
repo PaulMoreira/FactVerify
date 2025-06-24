@@ -1,9 +1,7 @@
 // Serverless function for fact-check endpoint
 import { createClient } from '@supabase/supabase-js';
+import OpenAI from 'openai';
 import 'dotenv/config';
-
-// Disable OpenAI for now to simplify troubleshooting
-// import OpenAI from 'openai';
 
 // Initialize Supabase client
 const initializeSupabase = () => {
@@ -19,10 +17,25 @@ const initializeSupabase = () => {
   }
 };
 
-// Simplified OpenAI client initialization - just return true for now
+// Initialize OpenAI client with better error handling
 const initializeOpenAI = () => {
-  console.log('OpenAI initialization bypassed for troubleshooting');
-  return true;
+  try {
+    if (!process.env.OPENAI_API_KEY) {
+      console.error('Missing OpenAI API key');
+      return null;
+    }
+    console.log('Initializing OpenAI client');
+    const client = new OpenAI({
+      apiKey: process.env.OPENAI_API_KEY,
+      timeout: 60000, // 60 second timeout
+      maxRetries: 2
+    });
+    console.log('OpenAI client initialized successfully');
+    return client;
+  } catch (error) {
+    console.error('Error initializing OpenAI client:', error);
+    return null;
+  }
 };
 
 // Helper function to store fact check results in Supabase
@@ -147,17 +160,65 @@ export default async function handler(req, res) {
     // Skip database operations for now
     console.log('Skipping database check for troubleshooting');
     
-    // Create a simple fact check response
-    console.log('Creating a simple fact check response');
+    // Initialize OpenAI
+    const openai = initializeOpenAI();
+    if (!openai) {
+      console.error('Failed to initialize OpenAI client');
+      return res.status(500).json({ error: 'Server configuration error: Could not initialize OpenAI client' });
+    }
     
-    // Generate a simple response
-    const factCheckResult = `Verdict: Unverifiable
+    // Create a fact check response using OpenAI
+    console.log('Creating fact check response using OpenAI');
+    
+    let factCheckResult = '';
+    
+    try {
+      console.log('Sending request to OpenAI');
+      const completion = await openai.chat.completions.create({
+        model: "gpt-4.1-mini", // Use a reliable model with lower latency
+        messages: [
+          {
+            role: "system", 
+            content: `You are a political fact-checking assistant. Your task is to verify the following political claim. Provide a verdict (True, Mostly True, Mixed, Mostly False, False, or Unverifiable), a detailed explanation, and your confidence level (High, Medium, or Low).
 
-Explanation: This is a test response from the fact-checking service. We are currently troubleshooting the API.
+Format your response exactly as follows:
+
+Verdict: [Your verdict]
+
+Explanation: [Your detailed explanation]
+
+Sources: [List your sources if available, or state "Based on general knowledge"]
+
+Confidence: [High/Medium/Low]`
+          },
+          {
+            role: "user",
+            content: `Fact check this claim: "${query}"`
+          }
+        ],
+        temperature: 0.7,
+        max_tokens: 500,
+        timeout: 30000 // 30 seconds timeout
+      });
+      
+      console.log('OpenAI response received');
+      
+      if (completion?.choices?.[0]?.message?.content) {
+        factCheckResult = completion.choices[0].message.content;
+        console.log('Successfully extracted fact check result from OpenAI response');
+      } else {
+        throw new Error('Invalid response format from OpenAI');
+      }
+    } catch (error) {
+      console.error('Error with OpenAI:', error);
+      factCheckResult = `Verdict: Unverifiable
+
+Explanation: Due to technical limitations, I cannot verify this claim at the moment. Please try again later.
 
 Sources: No sources available
 
 Confidence: Low`;
+    }
     
     console.log('Successfully created fact check result');
     
