@@ -1,0 +1,492 @@
+/* FactCheck.css - Styling for the fact-checking portal */
+
+.fact-check-container {
+  max-width: 800px;
+  margin: 2rem auto;
+  padding: 2rem;
+  background-color: var(--card-background);
+  border-radius: 12px;
+  box-shadow: 0 4px 12px var(--shadow-color);
+  transition: background-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.fact-check-container h2 {
+  color: var(--text-color);
+  margin-bottom: 1rem;
+  font-size: 2rem;
+  text-align: center;
+  transition: color 0.3s ease;
+}
+
+.fact-check-container p {
+  color: var(--text-color);
+  margin-bottom: 1.5rem;
+  text-align: center;
+  font-size: 1.1rem;
+  line-height: 1.6;
+  transition: color 0.3s ease;
+}
+
+/* Form styling */
+.fact-check-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  margin-bottom: 2rem;
+}
+
+.fact-check-form textarea {
+  padding: 1rem;
+  border-radius: 8px;
+  border: 1px solid var(--border-color, #ccc);
+  background-color: var(--input-background, #fff);
+  color: var(--text-color);
+  font-size: 1rem;
+  resize: vertical;
+  transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.fact-check-form textarea:focus {
+  outline: none;
+  border-color: var(--primary-color, #0066cc);
+  box-shadow: 0 0 0 2px rgba(0, 102, 204, 0.2);
+}
+
+.fact-check-form button {
+  padding: 0.75rem 1.5rem;
+  background-color: var(--primary-color, #0066cc);
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.3s ease, transform 0.1s ease;
+  align-self: center;
+}
+
+.fact-check-form button:hover:not(:disabled) {
+  background-color: var(--primary-hover, #0055aa);
+}
+
+.fact-check-form button:active:not(:disabled) {
+  transform: scale(0.98);
+}
+
+.fact-check-form button:disabled {
+  background-color: var(--disabled-color, #cccccc);
+  cursor: not-allowed;
+}
+
+/* Result styling */
+.fact-check-result {
+  margin-top: 2rem;
+  padding: 1.5rem;
+  border-radius: 8px;
+  background-color: var(--result-background, rgba(255, 255, 255, 0.1));
+  border: 1px solid var(--border-color, rgba(255, 255, 255, 0.2));
+}
+
+.fact-check-result h3 {
+  margin-bottom: 1rem;
+  font-size: 1.5rem;
+  text-align: center;
+}
+
+.verdict-true {
+  color: var(--success-color, #2ecc71);
+}
+
+.verdict-false {
+  color: var(--error-color, #e74c3c);
+}
+
+.verdict-unverified,
+.verdict-partially-true {
+  color: var(--warning-color, #f39c12);
+}
+
+.result-explanation {
+  margin-bottom: 1.5rem;
+  line-height: 1.6;
+}
+
+.result-sources {
+  margin-bottom: 1.5rem;
+}
+
+.result-sources ul {
+  margin-top: 0.5rem;
+  padding-left: 1.5rem;
+}
+
+.result-sources li {
+  margin-bottom: 0.5rem;
+  word-break: break-all;
+}
+
+.result-sources a {
+  color: var(--link-color, #3498db);
+  text-decoration: none;
+  transition: all 0.3s ease;
+  display: inline-block;
+  padding: 8px 12px;
+  border-radius: 6px;
+  background-color: rgba(52, 152, 219, 0.1);
+  margin: 5px 0;
+  font-weight: 500;
+}
+
+.result-sources a:hover {
+  color: var(--link-hover, #2980b9);
+  background-color: rgba(52, 152, 219, 0.2);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.confidence-meter {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 1.5rem;
+}
+
+.confidence-high {
+  color: var(--success-color, #2ecc71);
+  font-weight: 600;
+}
+
+.confidence-medium {
+  color: var(--warning-color, #f39c12);
+  font-weight: 600;
+}
+
+.confidence-low {
+  color: var(--error-color, #e74c3c);
+  font-weight: 600;
+}
+
+/* Recent fact checks styling */
+.recent-fact-checks {
+  margin-top: 3rem;
+  border-top: 1px solid var(--border-color, rgba(255, 255, 255, 0.2));
+  padding-top: 1.5rem;
+}
+
+.toggle-recent {
+  background: none;
+  border: none;
+  color: var(--link-color, #3498db);
+  cursor: pointer;
+  font-size: 1rem;
+  padding: 0.5rem 1rem;
+  display: block;
+  margin: 0 auto;
+  text-decoration: underline;
+  transition: color 0.3s ease;
+}
+
+.toggle-recent:hover {
+  color: var(--link-hover, #2980b9);
+}
+
+.recent-checks-list {
+  margin-top: 1.5rem;
+}
+
+.recent-checks-list h3 {
+  font-size: 1.3rem;
+  margin-bottom: 1rem;
+  text-align: center;
+}
+
+.recent-checks-list ul {
+  list-style: none;
+  padding: 0;
+}
+
+.recent-check-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.75rem 1rem;
+  margin-bottom: 0.5rem;
+  background-color: var(--item-background, rgba(255, 255, 255, 0.05));
+  border-radius: 6px;
+  transition: background-color 0.3s ease;
+}
+
+.recent-check-item:hover {
+  background-color: var(--item-hover, rgba(255, 255, 255, 0.1));
+}
+
+.load-fact-check {
+  background: none;
+  border: none;
+  color: var(--text-color);
+  cursor: pointer;
+  text-align: left;
+  padding: 0;
+  font-size: 0.95rem;
+  flex: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  transition: color 0.3s ease;
+}
+
+.load-fact-check:hover {
+  color: var(--link-color, #3498db);
+}
+
+.check-date {
+  font-size: 0.85rem;
+  color: var(--muted-color, #999);
+  margin-left: 1rem;
+  white-space: nowrap;
+}
+
+/* Accessibility */
+.skip-to-content {
+  position: absolute;
+  left: -9999px;
+  top: auto;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+}
+
+.skip-to-content:focus {
+  position: static;
+  width: auto;
+  height: auto;
+  display: block;
+  margin: 0 auto 1rem;
+  text-align: center;
+  color: var(--link-color, #3498db);
+}
+
+.error {
+  color: var(--error-color, #e74c3c);
+  text-align: center;
+  margin: 1rem 0;
+  padding: 0.75rem;
+  background-color: rgba(231, 76, 60, 0.1);
+  border-radius: 6px;
+}
+.fact-check-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  margin-bottom: 2rem;
+}
+
+.fact-check-form textarea {
+  padding: 1rem;
+  border: 2px solid var(--border-color);
+  border-radius: 8px;
+  font-size: 1rem;
+  min-height: 120px;
+  transition: border-color 0.3s ease, background-color 0.3s ease, color 0.3s ease;
+  resize: vertical;
+  font-family: inherit;
+  background-color: var(--card-background);
+  color: var(--text-color);
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.fact-check-form textarea:focus {
+  border-color: var(--primary-color);
+  outline: none;
+  box-shadow: 0 0 0 3px var(--focus-outline);
+}
+
+.fact-check-form button {
+  padding: 0.8rem 1.5rem;
+  background-color: var(--primary-color);
+  color: var(--button-text);
+  border: none;
+  border-radius: 8px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.3s ease, transform 0.1s ease;
+  align-self: center;
+  min-width: 150px;
+}
+
+.fact-check-form button:hover:not(:disabled) {
+  background-color: var(--primary-hover);
+  transform: translateY(-2px);
+}
+
+.fact-check-form button:active:not(:disabled) {
+  transform: translateY(0);
+}
+
+.fact-check-form button:disabled {
+  background-color: var(--button-disabled);
+  cursor: not-allowed;
+  opacity: 0.7;
+}
+
+.error {
+  color: var(--error-color);
+  background-color: var(--error-background);
+  padding: 0.8rem;
+  border-radius: 6px;
+  margin-bottom: 1rem;
+  text-align: center;
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.fact-check-result {
+  background-color: var(--card-background);
+  border-radius: 8px;
+  padding: 1.5rem;
+  box-shadow: 0 2px 8px var(--shadow-color);
+  margin-top: 1.5rem;
+  transition: background-color 0.3s ease, box-shadow 0.3s ease;
+  position: relative;
+}
+
+/* Search engine badge styling */
+.search-engine-info {
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: 1rem;
+}
+
+.search-engine-badge.crawl4ai {
+  background-color: #4285F4;
+  color: white;
+  display: inline-flex;
+  align-items: center;
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 12px;
+  font-weight: 600;
+  margin-left: 8px;
+}
+
+.search-engine-badge.crawl4ai::before {
+  content: "";
+  display: inline-block;
+  width: 16px;
+  height: 16px;
+  margin-right: 4px;
+  background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="white"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 17.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.54c-.26-.81-1-1.39-1.9-1.39h-1v-3c0-.55-.45-1-1-1H8v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.39z"/></svg>');
+  background-size: contain;
+  background-repeat: no-repeat;
+}
+
+.fact-check-result h3 {
+  margin-top: 0;
+  padding-bottom: 0.8rem;
+  border-bottom: 1px solid var(--border-color);
+  font-size: 1.5rem;
+  transition: border-color 0.3s ease, color 0.3s ease;
+}
+
+.fact-check-result h3.verdict-true {
+  color: var(--success-color);
+}
+
+.fact-check-result h3.verdict-false {
+  color: var(--error-color);
+}
+
+.fact-check-result h3.verdict-unverified {
+  color: var(--warning-color);
+}
+
+.fact-check-result p {
+  text-align: left;
+  margin-top: 1rem;
+  line-height: 1.6;
+  color: var(--text-color);
+  transition: color 0.3s ease;
+}
+
+.fact-check-result ul {
+  padding-left: 1.5rem;
+}
+
+.fact-check-result li {
+  margin-bottom: 0.5rem;
+}
+
+.fact-check-result a {
+  color: var(--primary-color);
+  text-decoration: none;
+  transition: color 0.3s ease;
+}
+
+.fact-check-result a:hover {
+  text-decoration: underline;
+}
+
+.confidence-meter {
+  margin-top: 1rem;
+  padding-top: 1rem;
+  border-top: 1px solid var(--border-color);
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  transition: border-color 0.3s ease;
+}
+
+.confidence-meter span {
+  font-weight: 600;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .fact-check-container {
+    padding: 1.5rem;
+    margin: 1rem;
+  }
+  
+  .fact-check-form textarea {
+    min-height: 100px;
+  }
+  
+  .fact-check-container h2 {
+    font-size: 1.7rem;
+  }
+  
+  .fact-check-result h3 {
+    font-size: 1.3rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .fact-check-container {
+    padding: 1rem;
+    margin: 0.5rem;
+  }
+  
+  .fact-check-container h2 {
+    font-size: 1.5rem;
+  }
+  
+  .fact-check-form {
+    gap: 0.8rem;
+  }
+  
+  .fact-check-form button {
+    width: 100%;
+    padding: 0.7rem 1rem;
+  }
+  
+  .fact-check-result {
+    padding: 1rem;
+  }
+  
+  .confidence-meter {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.5rem;
+  }
+}

@@ -80,6 +80,19 @@ web_modules/
 .env.production.local
 .env.local
 
+# Python virtual environments and cache
+python_service/venv/
+python_service/__pycache__/
+python_service/*.pyc
+python_service/*.pyo
+python_service/*.pyd
+__pycache__/
+*.py[cod]
+*$py.class
+.pytest_cache/
+.coverage
+htmlcov/
+
 # parcel-bundler cache (https://parceljs.org/)
 .cache
 .parcel-cache
@@ -129,4 +142,34 @@ dist
 .yarn/build-state.yml
 .yarn/install-state.gz
 .pnp.*
+
+# IDE specific files
+.idea/
+.vscode/
+*.sublime-workspace
+*.sublime-project
+.DS_Store
+
+# Local configuration files
+config.local.js
+settings.local.json
+
+# Build artifacts
+build/
+dist/
+
+# Local database files
+*.sqlite
+*.db
+
+# Logs and debugging
+npm-debug.log
+yarn-debug.log
+yarn-error.log
+debug.log
+
+# API keys and secrets - make sure these are in .env files instead
+*.pem
+*.key
+*.cert
 

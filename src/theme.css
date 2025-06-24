@@ -1,0 +1,85 @@
+:root {
+  /* Light theme variables */
+  --background-color: #f0f2f5;
+  --card-background: #ffffff;
+  --text-color: #2c3e50;
+  --text-secondary: #7f8c8d;
+  --primary-color: #3498db;
+  --primary-hover: #2980b9;
+  --secondary-color: #95a5a6;
+  --border-color: #ddd;
+  --shadow-color: rgba(0, 0, 0, 0.1);
+  --header-background: #2c3e50;
+  --header-text: #ffffff;
+  --footer-background: #2c3e50;
+  --footer-text: #ffffff;
+  --error-color: #e74c3c;
+  --error-background: #fadbd8;
+  --success-color: #27ae60;
+  --warning-color: #f39c12;
+  --button-text: #ffffff;
+  --button-disabled: #95a5a6;
+  --focus-outline: rgba(52, 152, 219, 0.5);
+  --tooltip-background: rgba(45, 52, 54, 0.9);
+  --tooltip-text: #ffffff;
+}
+
+/* Dark theme variables */
+.dark-mode {
+  --background-color: #1a1a2e;
+  --card-background: #16213e;
+  --text-color: #ecf0f1;
+  --text-secondary: #bdc3c7;
+  --primary-color: #3498db;
+  --primary-hover: #2980b9;
+  --secondary-color: #7f8c8d;
+  --border-color: #34495e;
+  --shadow-color: rgba(0, 0, 0, 0.3);
+  --header-background: #0f3460;
+  --header-text: #ffffff;
+  --footer-background: #0f3460;
+  --footer-text: #ffffff;
+  --error-color: #e74c3c;
+  --error-background: rgba(231, 76, 60, 0.2);
+  --success-color: #2ecc71;
+  --warning-color: #f39c12;
+  --button-text: #ffffff;
+  --button-disabled: #7f8c8d;
+  --focus-outline: rgba(52, 152, 219, 0.7);
+  --tooltip-background: rgba(30, 39, 46, 0.95);
+  --tooltip-text: #ffffff;
+}
+
+/* Transition for smooth theme switching */
+body {
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+/* High contrast focus outlines for accessibility */
+*:focus {
+  outline: 3px solid var(--focus-outline);
+  outline-offset: 2px;
+}
+
+/* Skip to content link for keyboard accessibility */
+.skip-to-content {
+  position: absolute;
+  left: -9999px;
+  top: auto;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+}
+
+.skip-to-content:focus {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: auto;
+  height: auto;
+  padding: 10px 15px;
+  background-color: var(--primary-color);
+  color: var(--button-text);
+  font-weight: bold;
+  z-index: 9999;
+}
