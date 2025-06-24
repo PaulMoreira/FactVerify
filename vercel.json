@@ -1,10 +1,4 @@
 {
-  "rewrites": [
-    {
-      "source": "/api/:path*",
-      "destination": "/server/server.js"
-    }
-  ],
   "functions": {
     "server/server.js": {
       "memory": 1024,
@@ -12,6 +6,7 @@
     }
   },
   "routes": [
+    { "src": "/api/(.*)", "dest": "/server/server.js" },
     { "handle": "filesystem" },
     { "src": "/.*", "dest": "/index.html" }
   ]
