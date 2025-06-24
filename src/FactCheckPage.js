@@ -13,8 +13,8 @@ const FactCheckPage = () => {
   const [showRecent, setShowRecent] = useState(false);
   const [searchEngine, setSearchEngine] = useState(null);
 
-  // API base URL - use environment variable or default to production URL
-  const API_BASE_URL = process.env.REACT_APP_API_URL || 'https://factverify.vercel.app';
+  // API base URL - use relative URLs when deployed to the same domain
+  const API_BASE_URL = process.env.REACT_APP_API_URL || '';
 
   // Fetch recent fact checks on component mount
   useEffect(() => {
