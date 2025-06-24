@@ -7,8 +7,23 @@ import { Agent, tool, run } from '@openai/agents';
 import axios from 'axios';
 
 const app = express();
+// Configure CORS to allow requests from your frontend
+const allowedOrigins = process.env.FRONTEND_URL 
+  ? process.env.FRONTEND_URL.split(',') 
+  : ['http://localhost:3000', 'https://factverify.vercel.app'];
+
 app.use(cors({
-  origin: process.env.FRONTEND_URL || ['http://localhost:3000', 'https://factverify.vercel.app'] // Allow local development and production frontend
+  origin: function(origin, callback) {
+    // Allow requests with no origin (like mobile apps or curl requests)
+    if (!origin) return callback(null, true);
+    if (allowedOrigins.indexOf(origin) !== -1) {
+      callback(null, true);
+    } else {
+      console.log('CORS blocked origin:', origin);
+      callback(null, false);
+    }
+  },
+  credentials: true
 }));
 app.use(express.json());
 
