@@ -2,7 +2,6 @@
   "name": "factverify",
   "version": "0.1.0",
   "private": true,
-  "type": "module",
   "dependencies": {
     "@supabase/supabase-js": "^2.39.7",
     "@testing-library/jest-dom": "^5.17.0",

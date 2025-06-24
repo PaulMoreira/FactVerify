@@ -4,6 +4,10 @@ import OpenAI from 'openai';
 import axios from 'axios';
 import 'dotenv/config';
 
+// Ensure compatibility with both ES modules and CommonJS
+const __filename = new URL(import.meta.url).pathname;
+const __dirname = new URL('.', import.meta.url).pathname;
+
 // Set to true to enable detailed logging
 const DEBUG = true;
 
