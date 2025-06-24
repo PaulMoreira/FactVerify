@@ -43,9 +43,10 @@ async function storeFactCheck(claim, result) {
       return null;
     }
     
+    // Use 'query' column name to match the database schema used in server.js
     const { data, error } = await supabase
       .from('fact_checks')
-      .insert([{ claim, result, created_at: new Date().toISOString() }]);
+      .insert([{ query: claim, result, created_at: new Date().toISOString() }]);
     
     if (error) {
       console.error('Supabase insert error:', error);
@@ -73,7 +74,7 @@ async function getExistingFactCheck(query) {
     const { data, error } = await supabase
       .from('fact_checks')
       .select('*')
-      .eq('claim', query)
+      .eq('query', query)
       .order('created_at', { ascending: false })
       .limit(1);
     
