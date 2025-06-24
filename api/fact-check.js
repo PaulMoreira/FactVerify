@@ -132,7 +132,7 @@ async function searchWeb(query) {
     const crawl4aiUrls = [
       process.env.CRAWL4AI_URL,
       'http://localhost:3002/search',
-      'https://factverify.vercel.app/search'
+      'https://crawl4ai-service-pmoreirabr.vercel.app/search'
     ].filter(Boolean); // Filter out undefined/null values
     
     let response = null;
