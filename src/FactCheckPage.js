@@ -21,7 +21,7 @@ const FactCheckPage = () => {
     const fetchRecentFactChecks = async () => {
       try {
         // Ensure no double slashes in URL
-        const url = `${API_BASE_URL.replace(/\/$/, '')}/recent-fact-checks`;
+        const url = `${API_BASE_URL.replace(/\/$/, '')}/api/recent-fact-checks`;
         const response = await axios.get(url);
         if (response.data && response.data.factChecks) {
           setRecentFactChecks(response.data.factChecks);
@@ -43,7 +43,7 @@ const FactCheckPage = () => {
     try {
       // Call our backend API for fact-checking
       // Ensure no double slashes in URL
-      const url = `${API_BASE_URL.replace(/\/$/, '')}/fact-check`;
+      const url = `${API_BASE_URL.replace(/\/$/, '')}/api/fact-check`;
       const response = await axios.post(url, { query: claim });
       
       if (response.data && response.data.result) {
@@ -59,7 +59,7 @@ const FactCheckPage = () => {
         
         // Refresh recent fact checks after a new check
         // Ensure no double slashes in URL
-        const recentUrl = `${API_BASE_URL.replace(/\/$/, '')}/recent-fact-checks`;
+        const recentUrl = `${API_BASE_URL.replace(/\/$/, '')}/api/recent-fact-checks`;
         const recentResponse = await axios.get(recentUrl);
         if (recentResponse.data && recentResponse.data.factChecks) {
           setRecentFactChecks(recentResponse.data.factChecks);

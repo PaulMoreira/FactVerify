@@ -143,7 +143,7 @@ const crawl4aiSearchTool = tool({
 });
 
 // Endpoint for fact-checking with web search capability
-app.post('/fact-check', async (req, res) => {
+app.post('/api/fact-check', async (req, res) => {
   try {
     const { query } = req.body;
     
@@ -272,7 +272,7 @@ app.post('/fact-check', async (req, res) => {
 });
 
 // Endpoint to get recent fact checks
-app.get('/recent-fact-checks', async (req, res) => {
+app.get('/api/recent-fact-checks', async (req, res) => {
   try {
     const { data, error } = await supabase
       .from('fact_checks')
