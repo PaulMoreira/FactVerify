@@ -67,7 +67,12 @@ const crawl4aiSearchTool = tool({
   },
   execute: async ({ query }) => {
     console.log(`Executing Crawl4AI search for: ${query}`);
-    return await searchWeb(query);
+    try {
+      return await searchWeb(query);
+    } catch (error) {
+      console.error('Error in crawl4aiSearchTool:', error);
+      return `Error searching for information: ${error.message}`;
+    }
   }
 });
 
@@ -143,11 +148,38 @@ async function searchWeb(query) {
   debugLog(`Searching web for: ${query}`);
   
   try {
-    // Call our Python Crawl4AI service
-    const response = await axios.post('http://localhost:3002/search' || 'https://factverify.vercel.app/search', {
-      query: query,
-      max_results: 5
-    });
+    // Call our Python Crawl4AI service with multiple fallback options
+    const crawl4aiUrls = [
+      process.env.CRAWL4AI_URL,
+      'http://localhost:3002/search',
+      'https://factverify.vercel.app/search'
+    ].filter(Boolean); // Filter out undefined/null values
+    
+    let response = null;
+    let lastError = null;
+    
+    // Try each URL in sequence until one works
+    for (const url of crawl4aiUrls) {
+      try {
+        debugLog(`Attempting to connect to Crawl4AI at: ${url}`);
+        response = await axios.post(url, {
+          query: query,
+          max_results: 5
+        }, {
+          timeout: 5000 // 5 second timeout
+        });
+        debugLog(`Successfully connected to Crawl4AI at: ${url}`);
+        break; // Break the loop if successful
+      } catch (err) {
+        lastError = err;
+        debugLog(`Failed to connect to Crawl4AI at: ${url} - ${err.message}`);
+        // Continue to next URL
+      }
+    }
+    
+    if (!response) {
+      throw lastError || new Error('All Crawl4AI endpoints failed');
+    }
     
     const data = response.data;
     
@@ -274,8 +306,18 @@ export default async function handler(req, res) {
       
       // Get search results first
       debugLog('Getting search results');
-      const searchResults = await searchWeb(query);
-      debugLog('Search results obtained');
+      let searchResults;
+      try {
+        searchResults = await searchWeb(query);
+        debugLog('Search results obtained');
+      } catch (searchError) {
+        debugLog(`Error getting search results: ${searchError.message}`);
+        searchResults = `Unable to retrieve search results from Crawl4AI. Proceeding with fact-checking based on general knowledge.\n\nError: ${searchError.message}`;
+      }
+      
+      if (!searchResults || searchResults.includes('Unable to connect to the Crawl4AI service')) {
+        debugLog('Warning: Could not connect to Crawl4AI service, proceeding with limited search results');
+      }
       
       // Try with a reliable model that should work in production
       debugLog('Sending request to OpenAI using model: gpt-4.1-mini');
