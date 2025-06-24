@@ -131,8 +131,8 @@ async function searchWeb(query) {
     // Call our Python Crawl4AI service with multiple fallback options
     const crawl4aiUrls = [
       process.env.CRAWL4AI_URL,
-      'http://localhost:3002/search',
-      'https://crawl4ai-service-pmoreirabr.vercel.app/search'
+      'http://localhost:3002/search'
+      // Removed external URLs that aren't working
     ].filter(Boolean); // Filter out undefined/null values
     
     let response = null;
@@ -284,15 +284,30 @@ export default async function handler(req, res) {
     try {
       debugLog('Preparing OpenAI request');
       
-      // Get search results first
-      debugLog('Getting search results');
-      let searchResults;
+      // If all Crawl4AI endpoints failed, we'll continue with a message about that
+      let searchResults = '';
       try {
         searchResults = await searchWeb(query);
-        debugLog('Search results obtained');
-      } catch (searchError) {
-        debugLog(`Error getting search results: ${searchError.message}`);
-        searchResults = `Unable to retrieve search results from Crawl4AI. Proceeding with fact-checking based on general knowledge.\n\nError: ${searchError.message}`;
+        debugLog('Search results obtained successfully');
+      } catch (error) {
+        console.error('Error executing Crawl4AI search:', error);
+        searchResults = `Unable to retrieve search results from Crawl4AI at this time. Proceeding with fact-check using AI knowledge only.
+
+Note: For the most accurate fact-checking, please ensure the Crawl4AI Python service is running locally on port 3002 or set the CRAWL4AI_URL environment variable to a valid endpoint.`;
+        
+        // Log more detailed error information for debugging
+        if (error.response) {
+          // The request was made and the server responded with a status code outside of 2xx range
+          debugLog(`Crawl4AI error response status: ${error.response.status}`);
+          debugLog(`Crawl4AI error response headers: ${JSON.stringify(error.response.headers)}`);
+          debugLog(`Crawl4AI error response data: ${JSON.stringify(error.response.data)}`);
+        } else if (error.request) {
+          // The request was made but no response was received
+          debugLog('Crawl4AI error: No response received from server');
+        } else {
+          // Something happened in setting up the request
+          debugLog(`Crawl4AI error message: ${error.message}`);
+        }
       }
       
       if (!searchResults || searchResults.includes('Unable to connect to the Crawl4AI service')) {
