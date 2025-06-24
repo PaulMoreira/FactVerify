@@ -143,7 +143,7 @@ const crawl4aiSearchTool = tool({
 });
 
 // Endpoint for fact-checking with web search capability
-app.post('/fact-check', async (req, res) => {
+app.post(['/fact-check', '/api/fact-check'], async (req, res) => {
   try {
     const { query } = req.body;
     
@@ -272,7 +272,7 @@ app.post('/fact-check', async (req, res) => {
 });
 
 // Endpoint to get recent fact checks
-app.get('/recent-fact-checks', async (req, res) => {
+app.get(['/recent-fact-checks', '/api/recent-fact-checks'], async (req, res) => {
   try {
     const { data, error } = await supabase
       .from('fact_checks')
@@ -289,7 +289,7 @@ app.get('/recent-fact-checks', async (req, res) => {
 });
 
 // Keep the generate-example endpoint for backward compatibility
-app.post('/generate-example', async (req, res) => {
+app.post(['/generate-example', '/api/generate-example'], async (req, res) => {
   try {
     const { idea, candidateName } = req.body;
     const completion = await openai.chat.completions.create({
