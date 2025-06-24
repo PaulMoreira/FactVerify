@@ -150,18 +150,34 @@ export default async function handler(req, res) {
     
     console.log('Running agent to fact-check:', query);
     
-    // Run the agent to fact-check the claim using the run function
-    const result = await run(agent, `Fact check this claim: ${query}`);
-    
-    // Extract the final text response from the agent run result
-    let factCheckResult = '';
-    
     try {
+      console.log('Running agent to fact-check:', query);
+      
+      // Run the agent to fact-check the claim using the run function with a timeout
+      const runPromise = run(agent, `Fact check this claim: ${query}`);
+      
+      // Set a timeout to prevent hanging
+      const timeoutPromise = new Promise((_, reject) => {
+        setTimeout(() => reject(new Error('Agent run timed out after 25 seconds')), 25000);
+      });
+      
+      // Race between the run and the timeout
+      const result = await Promise.race([runPromise, timeoutPromise]);
+      console.log('Agent run completed successfully');
+      
+      // Extract the final text response from the agent run result
+      let factCheckResult = '';
+      
+      // Log the structure of the result to help with debugging
+      console.log('Result structure:', Object.keys(result));
+      
       // First check if finalOutput is available
       if (result.finalOutput !== undefined) {
+        console.log('finalOutput type:', typeof result.finalOutput);
+        
         if (typeof result.finalOutput === 'string') {
           factCheckResult = result.finalOutput;
-        } else {
+        } else if (result.finalOutput && typeof result.finalOutput === 'object') {
           // Handle object or array finalOutput
           if (result.finalOutput.text) {
             factCheckResult = result.finalOutput.text;
@@ -169,11 +185,15 @@ export default async function handler(req, res) {
             factCheckResult = result.finalOutput.content;
           } else if (Array.isArray(result.finalOutput)) {
             // Look for message type outputs
-            const messageItem = result.finalOutput.find(item => item.type === 'message');
+            const messageItem = result.finalOutput.find(item => item && item.type === 'message');
             if (messageItem && messageItem.content) {
-              const textContent = messageItem.content.find(c => c.type === 'text');
-              if (textContent && textContent.text) {
-                factCheckResult = textContent.text;
+              if (typeof messageItem.content === 'string') {
+                factCheckResult = messageItem.content;
+              } else if (Array.isArray(messageItem.content)) {
+                const textContent = messageItem.content.find(c => c && c.type === 'text');
+                if (textContent && textContent.text) {
+                  factCheckResult = textContent.text;
+                }
               }
             }
           }
@@ -182,15 +202,27 @@ export default async function handler(req, res) {
       
       // If we still don't have a result, try the output property
       if (!factCheckResult && result.output) {
+        console.log('output type:', typeof result.output);
+        
         if (typeof result.output === 'string') {
           factCheckResult = result.output;
-        } else if (Array.isArray(result.output)) {
-          // Look for message type outputs
-          const messageOutput = result.output.find(item => item.type === 'message');
-          if (messageOutput && messageOutput.content) {
-            const textContent = messageOutput.content.find(c => c.type === 'text');
-            if (textContent && textContent.text) {
-              factCheckResult = textContent.text;
+        } else if (result.output && typeof result.output === 'object') {
+          if (result.output.text) {
+            factCheckResult = result.output.text;
+          } else if (result.output.content) {
+            factCheckResult = result.output.content;
+          } else if (Array.isArray(result.output)) {
+            // Look for message type outputs
+            const messageOutput = result.output.find(item => item && item.type === 'message');
+            if (messageOutput && messageOutput.content) {
+              if (typeof messageOutput.content === 'string') {
+                factCheckResult = messageOutput.content;
+              } else if (Array.isArray(messageOutput.content)) {
+                const textContent = messageOutput.content.find(c => c && c.type === 'text');
+                if (textContent && textContent.text) {
+                  factCheckResult = textContent.text;
+                }
+              }
             }
           }
         }
@@ -198,6 +230,7 @@ export default async function handler(req, res) {
       
       // If we still don't have a result, use a default format
       if (!factCheckResult) {
+        console.log('No result extracted, using default format');
         factCheckResult = `Verdict: Inconclusive\n\nExplanation: Unable to extract a proper response from the AI agent.\n\nSources: No specific sources cited\n\nConfidence: Low`;
       }
     } catch (error) {
