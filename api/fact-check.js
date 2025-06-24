@@ -221,7 +221,10 @@ export default async function handler(req, res) {
     });
   } catch (error) {
     console.error('Error during fact-checking:', error);
+    console.error('Error name:', error.name);
+    console.error('Error message:', error.message);
+    console.error('Error stack:', error.stack);
     console.error('Error details:', JSON.stringify(error, null, 2));
-    res.status(500).json({ error: 'An error occurred during fact-checking.' });
+    res.status(500).json({ error: 'An error occurred during fact-checking: ' + error.message });
   }
 }

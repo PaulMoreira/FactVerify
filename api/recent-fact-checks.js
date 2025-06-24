@@ -29,16 +29,28 @@ export default async function handler(req, res) {
   }
 
   try {
+    console.log('Attempting to fetch recent fact checks from Supabase');
+    console.log('Using Supabase URL:', supabaseUrl);
+    console.log('Supabase key available:', !!supabaseKey);
+    
     const { data, error } = await supabase
       .from('fact_checks')
       .select('*')
       .order('created_at', { ascending: false })
       .limit(10);
     
-    if (error) throw error;
-    res.json({ factChecks: data });
+    if (error) {
+      console.error('Supabase returned an error:', error);
+      throw error;
+    }
+    
+    console.log('Successfully fetched fact checks:', data ? data.length : 0);
+    res.json({ factChecks: data || [] });
   } catch (error) {
     console.error('Error fetching recent fact checks:', error);
-    res.status(500).json({ error: 'An error occurred while fetching recent fact checks.' });
+    console.error('Error name:', error.name);
+    console.error('Error message:', error.message);
+    console.error('Error details:', JSON.stringify(error, null, 2));
+    res.status(500).json({ error: 'An error occurred while fetching recent fact checks: ' + error.message });
   }
 }
