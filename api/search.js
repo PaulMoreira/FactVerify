@@ -44,7 +44,7 @@ export default async function handler(req, res) {
     const crawl4aiUrls = [
       process.env.CRAWL4AI_URL,
       'http://localhost:3002/search',
-      'https://factverify.vercel.app/search'
+      'https://factverify.vercel.app/api/search'
       // Add additional fallback URLs if needed
     ].filter(Boolean); // Filter out undefined/null values
     
