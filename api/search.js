@@ -44,8 +44,8 @@ export default async function handler(req, res) {
     const crawl4aiUrls = [
       process.env.CRAWL4AI_URL,
       'http://localhost:3002/search',
-      'https://factverify.vercel.app/search'
-      // Add additional fallback URLs if needed
+      // Remove the fallback URL that's causing 405 errors
+      // 'https://factverify.vercel.app/search'
     ].filter(Boolean); // Filter out undefined/null values
     
     let response = null;
@@ -59,7 +59,11 @@ export default async function handler(req, res) {
           query: query,
           max_results: max_results
         }, {
-          timeout: 5000 // 5 second timeout
+          timeout: 5000, // 5 second timeout
+          headers: {
+            'Content-Type': 'application/json',
+            'Accept': 'application/json'
+          }
         });
         debugLog(`Successfully connected to Crawl4AI at: ${url}`);
         break; // Break the loop if successful
@@ -73,9 +77,18 @@ export default async function handler(req, res) {
     if (!response) {
       const errorMessage = lastError ? lastError.message : 'All Crawl4AI endpoints failed';
       debugLog(`Search failed: ${errorMessage}`);
+      
+      // Provide fallback search results when Crawl4AI is unavailable
       return res.status(500).json({ 
         error: 'Unable to retrieve search results',
-        message: errorMessage
+        message: errorMessage,
+        results: [
+          {
+            title: 'Search Service Unavailable',
+            url: '',
+            content: 'The search service is currently unavailable. Please try again later or check if the Crawl4AI service is running.'
+          }
+        ]
       });
     }
     

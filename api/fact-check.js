@@ -132,7 +132,52 @@ async function searchWeb(query) {
     // we need to call the search handler directly
     debugLog('Making direct call to search function');
     
-    // Import the search handler directly
+    // Check if the Crawl4AI service is running by pinging it first
+    let crawl4aiAvailable = false;
+    try {
+      await axios.get('http://localhost:3002/health', { timeout: 1000 });
+      crawl4aiAvailable = true;
+      debugLog('Crawl4AI service is available');
+    } catch (e) {
+      debugLog('Crawl4AI service is not available: ' + e.message);
+    }
+    
+    // Call the search API with proper error handling
+    let searchResults = '';
+    
+    if (crawl4aiAvailable) {
+      try {
+        const response = await axios.post('http://localhost:3002/search', {
+          query: query,
+          max_results: 5
+        }, {
+          timeout: 5000,
+          headers: {
+            'Content-Type': 'application/json',
+            'Accept': 'application/json'
+          }
+        });
+        
+        if (response.data && response.data.results) {
+          // Format search results
+          searchResults = `Search results for "${query}":\n\n`;
+          response.data.results.forEach((result, i) => {
+            searchResults += `${i + 1}. ${result.title}\n`;
+            if (result.url) searchResults += `   Source: ${result.url}\n`;
+            if (result.content) searchResults += `   ${result.content}\n\n`;
+          });
+        }
+        
+        debugLog('Search completed successfully');
+        debugLog('Search results obtained successfully');
+      } catch (error) {
+        debugLog(`Error calling Crawl4AI service: ${error.message}`);
+        searchResults = `Unable to retrieve search results from Crawl4AI. Proceeding with fact-checking based on general knowledge.\n\n`;
+      }
+    } else {
+      // Fallback message when Crawl4AI is not available
+      searchResults = `Crawl4AI service is not available. Proceeding with fact-checking based on general knowledge.\n\n`;
+    }
     const searchHandler = (await import('./search.js')).default;
     
     // Create a mock request and response to call the handler directly
