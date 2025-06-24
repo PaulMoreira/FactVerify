@@ -43,7 +43,8 @@ export default async function handler(req, res) {
     // Call our Python Crawl4AI service with multiple fallback options
     const crawl4aiUrls = [
       process.env.CRAWL4AI_URL,
-      'http://localhost:3002/search'
+      'http://localhost:3002/search',
+      'https://factverify.vercel.app/search'
       // Add additional fallback URLs if needed
     ].filter(Boolean); // Filter out undefined/null values
     
