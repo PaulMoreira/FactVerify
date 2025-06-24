@@ -85,7 +85,7 @@ const crawl4aiSearchTool = tool({
     
     try {
       // Call our Python Crawl4AI service
-      const response = await axios.post('http://localhost:3002/search', {
+      const response = await axios.post('http://localhost:3002/search' || 'https://factverify.vercel.app/search', {
         query: query,
         max_results: 5
       });

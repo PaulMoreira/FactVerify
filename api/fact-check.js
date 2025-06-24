@@ -1,6 +1,8 @@
 // Serverless function for fact-check endpoint
 import { createClient } from '@supabase/supabase-js';
 import OpenAI from 'openai';
+import { Agent, tool, run } from '@openai/agents';
+import axios from 'axios';
 import 'dotenv/config';
 
 // Set to true to enable detailed logging
@@ -47,6 +49,27 @@ const initializeOpenAI = () => {
     return null;
   }
 };
+
+// Crawl4AI search tool implementation for OpenAI Assistants API
+const crawl4aiSearchTool = tool({
+  name: 'search_web',
+  description: 'Search the web for current information about political claims using Crawl4AI',
+  parameters: {
+    type: 'object',
+    properties: {
+      query: {
+        type: 'string',
+        description: 'The search query to find information about the claim'
+      }
+    },
+    required: ['query'],
+    additionalProperties: false
+  },
+  execute: async ({ query }) => {
+    console.log(`Executing Crawl4AI search for: ${query}`);
+    return await searchWeb(query);
+  }
+});
 
 // Helper function to store fact check results in Supabase
 async function storeFactCheck(claim, result) {
@@ -115,56 +138,65 @@ async function getExistingFactCheck(query) {
   }
 }
 
-// Web search function that simulates crawl4ai behavior but works in serverless environment
+// Web search function that provides intelligent search results for fact-checking using Crawl4AI
 async function searchWeb(query) {
   debugLog(`Searching web for: ${query}`);
   
   try {
-    // Try to extract key terms from the query for better search results
-    const searchTerms = query.toLowerCase().split(' ');
+    // Call our Python Crawl4AI service
+    const response = await axios.post('http://localhost:3002/search' || 'https://factverify.vercel.app/search', {
+      query: query,
+      max_results: 5
+    });
     
-    // Create a more tailored response based on the query content
-    let searchResults = `Search results for "${query}":\n\n`;
+    const data = response.data;
     
-    // Check for specific topics in the query to provide more relevant search results
-    if (query.toLowerCase().includes('trump') && query.toLowerCase().includes('fuck') && query.toLowerCase().includes('video')) {
-      searchResults += `1. There have been numerous claims about Donald Trump using explicit language, including the F-word, in various contexts. While Trump has been documented using profanity in some settings, specific claims about videos require verification.\n\n`;
-      searchResults += `2. According to PolitiFact and other fact-checkers, many viral videos claiming to show Trump using explicit language have been edited, taken out of context, or are completely fabricated.\n\n`;
-      searchResults += `3. The Washington Post reported that Trump has used profanity at public events, particularly at campaign rallies, though the specific instances and exact language vary.\n\n`;
-      searchResults += `4. Several books by former White House staff and journalists have claimed that Trump frequently used profanity in private conversations, though these accounts vary in credibility and verification.\n\n`;
-    } else if (query.toLowerCase().includes('trump')) {
-      searchResults += `1. According to fact-checking organizations, statements made by Donald Trump during his presidency and campaigns have been subject to extensive fact-checking. Many claims have been rated as false or misleading by independent fact-checkers.\n\n`;
-      searchResults += `2. The Washington Post's Fact Checker database recorded over 30,000 false or misleading claims made by Trump during his presidency.\n\n`;
-      searchResults += `3. PolitiFact has fact-checked hundreds of Trump statements, with ratings ranging from True to Pants on Fire.\n\n`;
-    } else if (query.toLowerCase().includes('biden')) {
-      searchResults += `1. President Joe Biden's statements have been fact-checked by various organizations throughout his career and presidency.\n\n`;
-      searchResults += `2. According to PolitiFact, Biden's statements have received a mix of ratings from True to False, with fewer statements rated as False compared to his predecessor.\n\n`;
-      searchResults += `3. Fact-checkers have noted inaccuracies in some of Biden's claims about economic statistics and his legislative record.\n\n`;
-    } else if (query.toLowerCase().includes('election') || query.toLowerCase().includes('vote')) {
-      searchResults += `1. Claims about election fraud in the 2020 US presidential election have been extensively investigated and debunked by election officials, courts, and independent fact-checkers.\n\n`;
-      searchResults += `2. The Cybersecurity and Infrastructure Security Agency stated that the 2020 election was "the most secure in American history."\n\n`;
-      searchResults += `3. Multiple court cases challenging the 2020 election results were dismissed due to lack of evidence.\n\n`;
+    // Prepare the search results
+    let searchResults = `Crawl4AI search results for "${query}":\n\n`;
+    
+    // Process the results
+    if (data.results && data.results.length > 0) {
+      data.results.forEach((result, index) => {
+        searchResults += `${index + 1}. ${result.title}\n`;
+        if (result.url) {
+          searchResults += `   Source: ${result.url}\n`;
+        }
+        if (result.content) {
+          searchResults += `   ${result.content}\n\n`;
+        }
+      });
+    } else if (data.error) {
+      searchResults += `${data.error}\n\n`;
+      searchResults += 'Suggestions:\n';
+      searchResults += '- Try rephrasing the query with more specific details\n';
+      searchResults += '- Check if the claim contains verifiable facts rather than opinions\n';
+      searchResults += '- Consider searching for individual elements of the claim separately\n';
     } else {
-      // Generic political fact-checking information for other queries
-      searchResults += `1. According to recent sources, political fact-checking requires careful analysis of claims against reliable sources.\n\n`;
-      searchResults += `2. When evaluating political statements, it's important to consider the context, source reliability, and potential bias.\n\n`;
-      searchResults += `3. Fact-checkers typically rate claims on a scale from True to False, with intermediate ratings like "Mostly True" or "Half True".\n\n`;
+      searchResults += 'No specific information was found for this query. This could be because:\n';
+      searchResults += '1. The claim might be very recent and not yet indexed\n';
+      searchResults += '2. The claim might be stated in different terms than how it appears in sources\n';
+      searchResults += '3. The claim might be about a topic with limited online coverage\n\n';
+      searchResults += 'Suggestions:\n';
+      searchResults += '- Try rephrasing the query with more specific details\n';
+      searchResults += '- Check if the claim contains verifiable facts rather than opinions\n';
+      searchResults += '- Consider searching for individual elements of the claim separately\n';
     }
     
-    // Add a generic recommendation for all queries
-    searchResults += `4. For this specific claim, please consider official government sources, reputable news organizations, and academic research.\n\n`;
+    // Add source attribution
+    searchResults += `\nSearch powered by: Crawl4AI\n`;
     
-    // Add some realistic-looking search result metadata with URLs and timestamps
-    searchResults += `\nSearch Results from Crawl4AI:\n`;
-    searchResults += `[1] https://www.politifact.com/factchecks/recent/ (Retrieved ${new Date().toISOString().split('T')[0]})\n`;
-    searchResults += `[2] https://www.factcheck.org/latest-posts/ (Retrieved ${new Date().toISOString().split('T')[0]})\n`;
-    searchResults += `[3] https://www.washingtonpost.com/politics/fact-checker/ (Retrieved ${new Date().toISOString().split('T')[0]})\n`;
+    console.log('Crawl4AI search completed successfully');
     
-    debugLog('Generated search results');
     return searchResults;
   } catch (error) {
-    console.error('Error executing search:', error);
-    return 'Unable to retrieve search results at this time.';
+    console.error('Error executing Crawl4AI search:', error);
+    
+    // If the Python service is not running, provide a helpful error message
+    if (error.code === 'ECONNREFUSED') {
+      return 'Unable to connect to the Crawl4AI service. Please make sure the Python service is running on port 3002. Error: Connection refused.';
+    }
+    
+    return 'Unable to retrieve search results from Crawl4AI at this time. Please try again later. Error details: ' + error.message;
   }
 }
 
