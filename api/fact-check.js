@@ -1,7 +1,6 @@
 // Serverless function for fact-check endpoint
 import { createClient } from '@supabase/supabase-js';
 import OpenAI from 'openai';
-import { Agent, tool, run } from '@openai/agents';
 import axios from 'axios';
 import 'dotenv/config';
 
@@ -50,31 +49,8 @@ const initializeOpenAI = () => {
   }
 };
 
-// Crawl4AI search tool implementation for OpenAI Assistants API
-const crawl4aiSearchTool = tool({
-  name: 'search_web',
-  description: 'Search the web for current information about political claims using Crawl4AI',
-  parameters: {
-    type: 'object',
-    properties: {
-      query: {
-        type: 'string',
-        description: 'The search query to find information about the claim'
-      }
-    },
-    required: ['query'],
-    additionalProperties: false
-  },
-  execute: async ({ query }) => {
-    console.log(`Executing Crawl4AI search for: ${query}`);
-    try {
-      return await searchWeb(query);
-    } catch (error) {
-      console.error('Error in crawl4aiSearchTool:', error);
-      return `Error searching for information: ${error.message}`;
-    }
-  }
-});
+// Note: We're using the searchWeb function directly instead of through OpenAI Agents API
+// to ensure compatibility with serverless environments
 
 // Helper function to store fact check results in Supabase
 async function storeFactCheck(claim, result) {
