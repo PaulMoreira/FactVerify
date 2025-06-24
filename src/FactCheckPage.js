@@ -13,14 +13,16 @@ const FactCheckPage = () => {
   const [showRecent, setShowRecent] = useState(false);
   const [searchEngine, setSearchEngine] = useState(null);
 
-  // API base URL - change this to your production URL when deploying
-  const API_BASE_URL = process.env.REACT_APP_API_URL || 'http://localhost:3001';
+  // API base URL - use environment variable or default to production URL
+  const API_BASE_URL = process.env.REACT_APP_API_URL || 'https://factverify.vercel.app';
 
   // Fetch recent fact checks on component mount
   useEffect(() => {
     const fetchRecentFactChecks = async () => {
       try {
-        const response = await axios.get(`${API_BASE_URL}/recent-fact-checks`);
+        // Ensure no double slashes in URL
+        const url = `${API_BASE_URL.replace(/\/$/, '')}/recent-fact-checks`;
+        const response = await axios.get(url);
         if (response.data && response.data.factChecks) {
           setRecentFactChecks(response.data.factChecks);
         }
@@ -40,7 +42,9 @@ const FactCheckPage = () => {
     
     try {
       // Call our backend API for fact-checking
-      const response = await axios.post(`${API_BASE_URL}/fact-check`, { query: claim });
+      // Ensure no double slashes in URL
+      const url = `${API_BASE_URL.replace(/\/$/, '')}/fact-check`;
+      const response = await axios.post(url, { query: claim });
       
       if (response.data && response.data.result) {
         // Parse the result to extract verdict, explanation, sources, etc.
@@ -54,7 +58,9 @@ const FactCheckPage = () => {
         }
         
         // Refresh recent fact checks after a new check
-        const recentResponse = await axios.get(`${API_BASE_URL}/recent-fact-checks`);
+        // Ensure no double slashes in URL
+        const recentUrl = `${API_BASE_URL.replace(/\/$/, '')}/recent-fact-checks`;
+        const recentResponse = await axios.get(recentUrl);
         if (recentResponse.data && recentResponse.data.factChecks) {
           setRecentFactChecks(recentResponse.data.factChecks);
         }

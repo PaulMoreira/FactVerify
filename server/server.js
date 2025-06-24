@@ -8,7 +8,7 @@ import axios from 'axios';
 
 const app = express();
 app.use(cors({
-  origin: process.env.FRONTEND_URL || 'http://localhost:3000' // Set this to your frontend's URL in production
+  origin: process.env.FRONTEND_URL || ['http://localhost:3000', 'https://factverify.vercel.app'] // Allow local development and production frontend
 }));
 app.use(express.json());
 
