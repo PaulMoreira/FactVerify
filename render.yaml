@@ -1,11 +1,15 @@
 services:
   - type: web
     name: crawl4ai-service
-    env: python
+    env: docker
     plan: free
-    # Tell Render that the code for this service is in the python_service directory
-    rootDir: python_service
-    buildCommand: "pip install -r requirements.txt && playwright install --with-deps"
-    startCommand: "uvicorn crawl4ai_service:app --host 0.0.0.0 --port $PORT"
-    healthCheckPath: /health
+    # Path to the Dockerfile, relative to the repository root
+    dockerfilePath: ./python_service/Dockerfile
     autoDeploy: true
+    # Docker services on Render must listen on the port specified by the PORT env var.
+    # Render sets this to 10000 by default, but we are explicit here.
+    # The CMD in our Dockerfile uses this port.
+    envVars:
+      - key: PORT
+        value: 10000
+    healthCheckPath: /health
