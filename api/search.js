@@ -57,16 +57,6 @@ function generateMockSearchResults(query, max_results = 5) {
 }
 
 module.exports = async (req, res) => {
-    console.log('--- SEARCH.JS HANDLER HAS STARTED ---'); // Raw log to ensure visibility
-
-    const internalSecretForSearch = process.env.INTERNAL_API_SECRET;
-    if (internalSecretForSearch) {
-        console.log(`[SEARCH] Secret length: ${internalSecretForSearch.length}`);
-        console.log(`[SEARCH] Secret partial: ${internalSecretForSearch.substring(0, 3)}...${internalSecretForSearch.slice(-3)}`);
-    } else {
-        console.log('[SEARCH] INTERNAL_API_SECRET is NOT defined here.');
-    }
-
   // Start timing the request
   const startTime = Date.now();
   debugLog(`Search API called at ${new Date().toISOString()}`);
