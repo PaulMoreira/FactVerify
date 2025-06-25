@@ -104,7 +104,12 @@ module.exports = async (req, res) => {
     // Determine the correct Crawl4AI service URL based on the environment.
     let crawl4aiUrl;
     if (IS_VERCEL) {
-      crawl4aiUrl = process.env.CRAWL4AI_SERVICE_URL;
+      const baseUrl = process.env.CRAWL4AI_SERVICE_URL;
+      // Ensure the URL points to the /search endpoint.
+      if (baseUrl) {
+        // Remove trailing slash if it exists, then add /search
+        crawl4aiUrl = `${baseUrl.replace(/\/$/, '')}/search`;
+      }
     } else {
       // For local development, use the local Python service.
       crawl4aiUrl = 'http://localhost:3002/search';
