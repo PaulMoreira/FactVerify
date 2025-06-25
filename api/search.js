@@ -95,6 +95,13 @@ export default async function handler(req, res) {
 
     // If the secret is configured, we must validate it.
     if (internalSecret && authHeader !== `Bearer ${internalSecret}`) {
+      // --- TEMPORARY DEBUGGING LOGS ---
+      // WARNING: This logs secrets. Remove this after debugging.
+      debugLog('--- SECRET MISMATCH DEBUG ---');
+      debugLog(`Expected Header: Bearer ${internalSecret}`);
+      debugLog(`Received Header: ${authHeader}`);
+      debugLog('--- END SECRET MISMATCH DEBUG ---');
+      // --- END TEMPORARY DEBUGGING ---
       debugLog('Unauthorized internal API call attempt');
       return res.status(401).json({ error: 'Unauthorized' });
     }
