@@ -157,6 +157,13 @@ async function searchWeb(query) {
     let searchResults = '';
     
     try {
+      // Log the state of the internal secret to diagnose auth issues
+      const secretIsDefined = !!process.env.INTERNAL_API_SECRET;
+      debugLog(`INTERNAL_API_SECRET is defined: ${secretIsDefined}`);
+      if (!secretIsDefined) {
+        debugLog('Warning: INTERNAL_API_SECRET is not defined. The API call will be unauthorized.');
+      }
+
       debugLog(`Making POST request to: ${searchEndpoint}`);
       const response = await axios.post(searchEndpoint, {
         query: query,
