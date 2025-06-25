@@ -48,7 +48,7 @@ const initializeOpenAI = () => {
     console.log('Initializing OpenAI client');
     const client = new OpenAI({
       apiKey: process.env.OPENAI_API_KEY,
-      timeout: 60000, // 60 second timeout
+      timeout: 25000, // 25-second timeout
       maxRetries: 2
     });
     console.log('OpenAI client initialized successfully');
@@ -168,7 +168,7 @@ async function searchWeb(query) {
         query: query,
         max_results: 5
       }, {
-        timeout: 10000, // Increased timeout for Vercel cold starts
+        timeout: 25000, // 25-second timeout to allow the search service to complete
         headers: {
           'Content-Type': 'application/json',
           'Accept': 'application/json',
