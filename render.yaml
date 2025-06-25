@@ -3,6 +3,8 @@ services:
     name: crawl4ai-service
     env: python
     plan: free
+    # Tell Render that the code for this service is in the python_service directory
+    rootDir: python_service
     buildCommand: "pip install -r requirements.txt"
     startCommand: "uvicorn crawl4ai_service:app --host 0.0.0.0 --port $PORT"
     healthCheckPath: /health
