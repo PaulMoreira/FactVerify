@@ -107,10 +107,9 @@ async def search(request: SearchRequest):
     
     try:
         # Create search URLs based on the query
+        # Using only Google Search to speed up the process and avoid timeouts.
         search_urls = [
-            f"https://www.google.com/search?q={request.query.replace(' ', '+')}",
-            f"https://duckduckgo.com/?q={request.query.replace(' ', '+')}&t=h_&ia=web",
-            f"https://www.bing.com/search?q={request.query.replace(' ', '+')}"
+            f"https://www.google.com/search?q={request.query.replace(' ', '+')}"
         ]
         
         all_results = []
