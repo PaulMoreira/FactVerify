@@ -4,6 +4,9 @@ import OpenAI from 'openai';
 import axios from 'axios';
 import 'dotenv/config';
 
+// Determine if we're running in a Vercel environment
+const IS_VERCEL = process.env.VERCEL === '1' || process.env.VERCEL === 'true';
+
 // Ensure compatibility with both ES modules and CommonJS
 const __filename = new URL(import.meta.url).pathname;
 const __dirname = new URL('.', import.meta.url).pathname;
@@ -128,122 +131,65 @@ async function searchWeb(query) {
   debugLog(`Searching web for: ${query}`);
   
   try {
-    // Since we're calling ourselves from within the serverless function,
-    // we need to call the search handler directly
-    debugLog('Making direct call to search function');
+    // In Vercel environment or when using API routes, we should call our own search API
+    // rather than trying to connect directly to the Crawl4AI service
+    debugLog('Making call to search API');
     
-    // Check if the Crawl4AI service is running by pinging it first
-    let crawl4aiAvailable = false;
-    try {
-      await axios.get('http://localhost:3002/health', { timeout: 1000 });
-      crawl4aiAvailable = true;
-      debugLog('Crawl4AI service is available');
-    } catch (e) {
-      debugLog('Crawl4AI service is not available: ' + e.message);
+    // Determine the appropriate search endpoint
+    let searchEndpoint;
+    
+    if (IS_VERCEL) {
+      // In Vercel, use relative API path
+      searchEndpoint = '/api/search';
+      debugLog(`Using Vercel API endpoint: ${searchEndpoint}`);
+    } else {
+      // In local development, use the full URL
+      const apiBaseUrl = process.env.API_BASE_URL || 'http://localhost:3001';
+      searchEndpoint = `${apiBaseUrl}/api/search`;
+      debugLog(`Using local API endpoint: ${searchEndpoint}`);
     }
     
     // Call the search API with proper error handling
     let searchResults = '';
     
-    if (crawl4aiAvailable) {
-      try {
-        const response = await axios.post('http://localhost:3002/search', {
-          query: query,
-          max_results: 5
-        }, {
-          timeout: 5000,
-          headers: {
-            'Content-Type': 'application/json',
-            'Accept': 'application/json'
-          }
-        });
-        
-        if (response.data && response.data.results) {
-          // Format search results
-          searchResults = `Search results for "${query}":\n\n`;
-          response.data.results.forEach((result, i) => {
-            searchResults += `${i + 1}. ${result.title}\n`;
-            if (result.url) searchResults += `   Source: ${result.url}\n`;
-            if (result.content) searchResults += `   ${result.content}\n\n`;
-          });
-        }
-        
-        debugLog('Search completed successfully');
-        debugLog('Search results obtained successfully');
-      } catch (error) {
-        debugLog(`Error calling Crawl4AI service: ${error.message}`);
-        searchResults = `Unable to retrieve search results from Crawl4AI. Proceeding with fact-checking based on general knowledge.\n\n`;
-      }
-    } else {
-      // Fallback message when Crawl4AI is not available
-      searchResults = `Crawl4AI service is not available. Proceeding with fact-checking based on general knowledge.\n\n`;
-    }
-    const searchHandler = (await import('./search.js')).default;
-    
-    // Create a mock request and response to call the handler directly
-    const mockReq = {
-      method: 'POST',
-      body: {
+    try {
+      const response = await axios.post(searchEndpoint, {
         query: query,
         max_results: 5
-      }
-    };
-    
-    // Create a variable to store the search results
-    let searchData = null;
-    
-    // Create a mock response object
-    const mockRes = {
-      status: (code) => {
-        return {
-          json: (data) => {
-            searchData = data;
-            return mockRes;
-          },
-          end: () => {}
-        };
-      },
-      setHeader: () => {}
-    };
-    
-    // Call the search handler directly
-    await searchHandler(mockReq, mockRes);
-    
-    // Check if we got search results
-    if (!searchData) {
-      throw new Error('No search results received');
-    }
-    
-    // Prepare the formatted search results string
-    let formattedResults = `Search results for "${query}":\n\n`;
-    
-    if (searchData && Array.isArray(searchData.results) && searchData.results.length > 0) {
-      // Format the search results
-      searchData.results.forEach((result, index) => {
-        formattedResults += `${index + 1}. ${result.title || 'Untitled'}\n`;
-        formattedResults += `   URL: ${result.url || 'No URL'}\n`;
-        formattedResults += `   Snippet: ${result.snippet || 'No snippet available'}\n\n`;
+      }, {
+        timeout: 8000, // Increased timeout for Vercel cold starts
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json'
+        }
       });
-    } else {
-      formattedResults += "No specific search results found for this query.\n";
-      formattedResults += '- Consider searching for individual elements of the claim separately\n';
+      
+      if (response.data && response.data.results) {
+        // Format search results
+        searchResults = `Search results for "${query}":\n\n`;
+        response.data.results.forEach((result, i) => {
+          searchResults += `${i + 1}. ${result.title}\n`;
+          if (result.url) searchResults += `   Source: ${result.url}\n`;
+          if (result.content) searchResults += `   ${result.content}\n\n`;
+        });
+        
+        // Check if these are mock results
+        if (response.data.is_mock) {
+          searchResults += '\n[Note: These are simulated search results as the search service is currently unavailable]\n';
+        }
+      }
+      
+      debugLog('Search completed successfully');
+      debugLog('Search results obtained successfully');
+    } catch (error) {
+      debugLog(`Error calling search API: ${error.message}`);
+      searchResults = `Unable to retrieve search results. Proceeding with fact-checking based on general knowledge.\n\n`;
     }
     
-    // Add source attribution
-    formattedResults += `\nSearch powered by: Crawl4AI\n`;
-    
-    console.log('Search completed successfully');
-    
-    return formattedResults;
+    return searchResults;
   } catch (error) {
-    console.error('Error executing Crawl4AI search:', error);
-    
-    // If the Python service is not running, provide a helpful error message
-    if (error.code === 'ECONNREFUSED') {
-      return 'Unable to connect to the Crawl4AI service. Please make sure the Python service is running on port 3002. Error: Connection refused.';
-    }
-    
-    return 'Unable to retrieve search results from Crawl4AI at this time. Please try again later. Error details: ' + error.message;
+    console.error('Error in searchWeb function:', error);
+    return `Unable to perform web search. Proceeding with fact-checking based on general knowledge.\n\n`;
   }
 }
 
