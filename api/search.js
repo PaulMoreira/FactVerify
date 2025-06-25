@@ -91,6 +91,7 @@ export default async function handler(req, res) {
     // Verify the internal API call secret to prevent public access
     const internalSecret = process.env.INTERNAL_API_SECRET;
     const authHeader = req.headers.authorization;
+    debugLog(`Received Authorization header: ${authHeader}`);
 
     // If the secret is configured, we must validate it.
     if (internalSecret && authHeader !== `Bearer ${internalSecret}`) {
