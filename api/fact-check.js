@@ -173,7 +173,7 @@ async function searchWeb(query) {
         headers: {
           'Content-Type': 'application/json',
           'Accept': 'application/json',
-          'Authorization': `Bearer ${process.env.INTERNAL_API_SECRET}`
+          'Authorization': 'Bearer FactCheckSecret2024' // TEMPORARY: Hardcoded for debugging
         },
         validateStatus: function (status) {
           // Accept any status code to handle it ourselves

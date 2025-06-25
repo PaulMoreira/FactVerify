@@ -89,19 +89,13 @@ export default async function handler(req, res) {
     }
 
     // Verify the internal API call secret to prevent public access
-    const internalSecret = process.env.INTERNAL_API_SECRET;
+    // TEMPORARY: Hardcoded for debugging. The real secret should come from process.env.
+    const internalSecret = 'FactCheckSecret2024';
     const authHeader = req.headers.authorization;
     debugLog(`Received Authorization header: ${authHeader}`);
 
     // If the secret is configured, we must validate it.
     if (internalSecret && authHeader !== `Bearer ${internalSecret}`) {
-      // --- TEMPORARY DEBUGGING LOGS ---
-      // WARNING: This logs secrets. Remove this after debugging.
-      debugLog('--- SECRET MISMATCH DEBUG ---');
-      debugLog(`Expected Header: Bearer ${internalSecret}`);
-      debugLog(`Received Header: ${authHeader}`);
-      debugLog('--- END SECRET MISMATCH DEBUG ---');
-      // --- END TEMPORARY DEBUGGING ---
       debugLog('Unauthorized internal API call attempt');
       return res.status(401).json({ error: 'Unauthorized' });
     }
