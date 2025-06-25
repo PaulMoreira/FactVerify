@@ -1,5 +1,5 @@
 // Search API endpoint that connects to the Crawl4AI Python service
-import axios from 'axios';
+const axios = require('axios');
 
 // Determine if we're running in a Vercel environment
 const IS_VERCEL = process.env.VERCEL === '1' || process.env.VERCEL === 'true';
@@ -56,7 +56,7 @@ function generateMockSearchResults(query, max_results = 5) {
   return results.slice(0, max_results);
 }
 
-export default async function handler(req, res) {
+module.exports = async (req, res) => {
 
   // Start timing the request
   const startTime = Date.now();

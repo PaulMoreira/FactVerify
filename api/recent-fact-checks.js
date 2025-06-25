@@ -1,13 +1,13 @@
 // Serverless function for recent-fact-checks endpoint
-import { createClient } from '@supabase/supabase-js';
-import 'dotenv/config';
+const { createClient } = require('@supabase/supabase-js');
+require('dotenv').config();
 
 // Initialize Supabase client
 const supabaseUrl = process.env.SUPABASE_URL || 'https://czlnbfqkvxyhyhpmdlmo.supabase.co';
 const supabaseKey = process.env.SUPABASE_KEY;
 const supabase = createClient(supabaseUrl, supabaseKey);
 
-export default async function handler(req, res) {
+module.exports = async (req, res) => {
   // Enable CORS
   res.setHeader('Access-Control-Allow-Credentials', true);
   res.setHeader('Access-Control-Allow-Origin', '*');

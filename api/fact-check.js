@@ -1,8 +1,8 @@
 // Serverless function for fact-check endpoint
-import { createClient } from '@supabase/supabase-js';
-import OpenAI from 'openai';
-import axios from 'axios';
-import 'dotenv/config';
+const { createClient } = require('@supabase/supabase-js');
+const OpenAI = require('openai');
+const axios = require('axios');
+require('dotenv').config();
 
 // Determine if we're running in a Vercel environment
 const IS_VERCEL = process.env.VERCEL === '1' || process.env.VERCEL === 'true';
@@ -216,7 +216,7 @@ async function searchWeb(query) {
   }
 }
 
-export default async function handler(req, res) {
+module.exports = async (req, res) => {
   // Start timing the request
   const startTime = Date.now();
   debugLog(`Fact-check API called at ${new Date().toISOString()}`);  
