@@ -57,6 +57,8 @@ function generateMockSearchResults(query, max_results = 5) {
 }
 
 export default async function handler(req, res) {
+  // DEPLOYMENT BEACON: If you see this log, the latest code is running.
+  debugLog('--- Executing search.js version from 10:25 AM ---');
   // Start timing the request
   const startTime = Date.now();
   debugLog(`Search API called at ${new Date().toISOString()}`);
@@ -89,8 +91,7 @@ export default async function handler(req, res) {
     }
 
     // Verify the internal API call secret to prevent public access
-    // TEMPORARY: Hardcoded for debugging. The real secret should come from process.env.
-    const internalSecret = 'FactCheckSecret2024';
+        const internalSecret = process.env.INTERNAL_API_SECRET;
     const authHeader = req.headers.authorization;
     debugLog(`Received Authorization header: ${authHeader}`);
 
