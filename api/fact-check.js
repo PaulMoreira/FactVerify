@@ -22,10 +22,15 @@ function debugLog(...args) {
 // Initialize Supabase client once
 let supabase;
 try {
-  if (!process.env.SUPABASE_URL || !process.env.SUPABASE_KEY) {
+  const supabaseUrl = process.env.SUPABASE_URL;
+  const supabaseKey = process.env.SUPABASE_KEY;
+
+  if (!supabaseUrl || !supabaseKey) {
     console.error('Missing Supabase credentials. Database operations will be skipped.');
   } else {
-    supabase = createClient(process.env.SUPABASE_URL, process.env.SUPABASE_KEY);
+    // Log the URL for debugging, but never the key
+    debugLog(`Initializing Supabase client with URL: ${supabaseUrl.substring(0, 20)}...`);
+    supabase = createClient(supabaseUrl, supabaseKey);
     debugLog('Supabase client initialized successfully.');
   }
 } catch (error) {
@@ -378,24 +383,19 @@ Confidence: Low`;
     // Add search engine information to the result
     const resultWithSearchInfo = factCheckResult + '\n\n[Search powered by: Crawl4AI]';
     
-    // Try to store the result in Supabase, but don't let it block the response
+    // Store the result in Supabase. We must await this on Vercel's Hobby plan
+    // as background tasks are not supported after a response is sent.
     debugLog('Attempting to store fact check in database');
     try {
-      // Use a Promise that won't block the response
-      storeFactCheck(query, factCheckResult)
-        .then(result => {
-          if (result) {
-            debugLog('Fact check successfully stored in database');
-          } else {
-            debugLog('Fact check not stored (null result from storeFactCheck)');
-          }
-        })
-        .catch(error => {
-          console.error('Error storing fact check:', error);
-        });
+      const storedResult = await storeFactCheck(query, factCheckResult);
+      if (storedResult) {
+        debugLog('Fact check successfully stored in database');
+      } else {
+        debugLog('Fact check not stored (null result from storeFactCheck)');
+      }
     } catch (storeError) {
-      console.error('Error setting up storage promise:', storeError);
-      // Continue even if storage setup fails
+      console.error('Error storing fact check:', storeError);
+      // Continue even if storage fails, to not block the user response.
     }
     
     // Return the response
