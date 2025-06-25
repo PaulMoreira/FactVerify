@@ -19,19 +19,19 @@ function debugLog(...args) {
   }
 }
 
-// Initialize Supabase client
-const initializeSupabase = () => {
-  try {
-    if (!process.env.SUPABASE_URL || !process.env.SUPABASE_KEY) {
-      console.error('Missing Supabase credentials');
-      return null;
-    }
-    return createClient(process.env.SUPABASE_URL, process.env.SUPABASE_KEY);
-  } catch (error) {
-    console.error('Error initializing Supabase client:', error);
-    return null;
+// Initialize Supabase client once
+let supabase;
+try {
+  if (!process.env.SUPABASE_URL || !process.env.SUPABASE_KEY) {
+    console.error('Missing Supabase credentials. Database operations will be skipped.');
+  } else {
+    supabase = createClient(process.env.SUPABASE_URL, process.env.SUPABASE_KEY);
+    debugLog('Supabase client initialized successfully.');
   }
-};
+} catch (error) {
+  console.error('Error initializing Supabase client:', error);
+  supabase = null; // Ensure supabase is null on error
+}
 
 // Initialize OpenAI client with better error handling
 const initializeOpenAI = () => {
@@ -60,10 +60,9 @@ const initializeOpenAI = () => {
 // Helper function to store fact check results in Supabase
 async function storeFactCheck(claim, result) {
   try {
-    console.log('storeFactCheck called with claim length:', claim?.length, 'result length:', result?.length);
-    const supabase = initializeSupabase();
+    debugLog('storeFactCheck called with claim length:', claim?.length, 'result length:', result?.length);
     if (!supabase) {
-      console.log('Supabase client not initialized');
+      debugLog('Supabase client not initialized, skipping storage.');
       return null;
     }
     
@@ -74,25 +73,23 @@ async function storeFactCheck(claim, result) {
     }
     
     // Use 'query' column name to match the database schema
-    console.log('Inserting into fact_checks table with query:', claim.substring(0, 50) + '...');
-    try {
-      const { data, error } = await supabase
-        .from('fact_checks')
-        .insert([{ query: claim, result, created_at: new Date().toISOString() }]);
-      
-      if (error) {
-        console.error('Supabase insert error:', error);
-        return null;
+    debugLog('Inserting into fact_checks table with query:', claim.substring(0, 50) + '...');
+    const { data, error } = await supabase
+      .from('fact_checks')
+      .insert([{ query: claim, result, created_at: new Date().toISOString() }]);
+    
+    if (error) {
+      console.error('Supabase insert error:', error);
+      if (error.message.includes('fetch failed')) {
+        console.error('Detailed fetch error: Could not connect to Supabase. Check network configuration and SUPABASE_URL.');
       }
-      
-      console.log('Insert successful, data:', data ? 'Data returned' : 'No data returned');
-      return data;
-    } catch (dbError) {
-      console.error('Database operation failed:', dbError);
       return null;
     }
-  } catch (error) {
-    console.error('Error in storeFactCheck:', error);
+    
+    debugLog('Insert successful, data:', data ? 'Data returned' : 'No data returned');
+    return data;
+  } catch (dbError) {
+    console.error('Database operation failed:', dbError);
     return null;
   }
 }
@@ -100,8 +97,8 @@ async function storeFactCheck(claim, result) {
 // Helper function to check if we already have this query cached
 async function getExistingFactCheck(query) {
   try {
-    const supabase = initializeSupabase();
     if (!supabase) {
+      debugLog('Supabase client not initialized, skipping cache check.');
       return null;
     }
     

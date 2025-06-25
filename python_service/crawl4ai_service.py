@@ -1,6 +1,7 @@
 import asyncio
 import json
 import logging
+import re
 from typing import Dict, List, Optional
 
 import uvicorn
@@ -41,6 +42,65 @@ class SearchResponse(BaseModel):
     search_engine: str = "Crawl4AI"
     error: Optional[str] = None
 
+async def crawl_and_process(url: str, crawler: AsyncWebCrawler, max_results: int) -> List[SearchResult]:
+    """Crawls a single URL and processes the results."""
+    local_results = []
+    try:
+        logger.info(f"Crawling: {url}")
+        
+        # Configure the crawler
+        config = CrawlerRunConfig(
+            word_count_threshold=5,  # Minimum words per element
+            wait_for="css:body",  # Wait for body element to be loaded
+            verbose=True  # Enable verbose logging
+        )
+        
+        # Run the crawler
+        result = await crawler.arun(url=url, config=config)
+        
+        # Process the search results
+        if result and result.markdown:
+            # Extract relevant information from the markdown
+            content_parts = result.markdown.split("\n\n")
+            
+            # Process search results to extract titles, URLs, and snippets
+            for i, part in enumerate(content_parts):
+                if i >= max_results:
+                    break
+                    
+                # Create a result entry with available information
+                title = f"Search Result {i+1}"
+                url_found = ""
+                content = part
+                
+                # Try to extract URL if present - improved extraction
+                if "http" in part:
+                    # Find all URLs in the content
+                    url_pattern = r'https?://[^\s()<>"]+'
+                    found_urls = re.findall(url_pattern, part)
+                    if found_urls:
+                        url_found = found_urls[0]  # Take the first URL found
+                        # Clean up the URL - remove trailing punctuation
+                        url_found = re.sub(r'[.,;:!?)]+$', '', url_found)
+                        content = part.replace(url_found, "").strip()
+                
+                # Try to extract title if present
+                if "##" in part:
+                    title_line = part.split("\n")[0]
+                    title = title_line.replace("#", "").strip()
+                    content = part.replace(title_line, "").strip()
+                
+                if content:  # Only add if there's content
+                    local_results.append(SearchResult(
+                        title=title,
+                        url=url_found or "No URL available",
+                        content=content
+                    ))
+    except Exception as e:
+        logger.error(f"Error crawling {url}: {str(e)}")
+    
+    return local_results
+
 @app.post("/search", response_model=SearchResponse)
 async def search(request: SearchRequest):
     logger.info(f"Received search request for query: {request.query}")
@@ -53,101 +113,46 @@ async def search(request: SearchRequest):
             f"https://www.bing.com/search?q={request.query.replace(' ', '+')}"
         ]
         
-        results = []
+        all_results = []
         
-        # Use AsyncWebCrawler to fetch and process search results
+        # Use AsyncWebCrawler to fetch and process search results concurrently
         async with AsyncWebCrawler() as crawler:
-            for url in search_urls:  # Search all engines to get more sources
-                try:
-                    logger.info(f"Crawling: {url}")
-                    
-                    # Configure the crawler
-                    config = CrawlerRunConfig(
-                        word_count_threshold=5,  # Minimum words per element
-                        wait_for="css:body",  # Wait for body element to be loaded
-                        verbose=True  # Enable verbose logging
-                    )
-                    
-                    # Run the crawler
-                    result = await crawler.arun(url=url, config=config)
-                    
-                    # Process the search results
-                    if result and result.markdown:
-                        # Extract relevant information from the markdown
-                        content_parts = result.markdown.split("\n\n")
-                        
-                        # Process search results to extract titles, URLs, and snippets
-                        for i, part in enumerate(content_parts):
-                            if i >= request.max_results:
-                                break
-                                
-                            # Create a result entry with available information
-                            title = f"Search Result {i+1}"
-                            url = ""
-                            content = part
-                            
-                            # Try to extract URL if present - improved extraction
-                            if "http" in part:
-                                # Find all URLs in the content
-                                import re
-                                url_pattern = r'https?://[^\s()<>"\\\[\]]+'
-                                found_urls = re.findall(url_pattern, part)
-                                if found_urls:
-                                    url = found_urls[0]  # Take the first URL found
-                                    # Clean up the URL - remove trailing punctuation
-                                    url = re.sub(r'[.,;:!?)]+$', '', url)
-                                    content = part.replace(url, "").strip()
-                                else:
-                                    # Fallback to basic extraction
-                                    url_start = part.find("http")
-                                    url_end = part.find(" ", url_start) if part.find(" ", url_start) > 0 else len(part)
-                                    url = part[url_start:url_end].strip()
-                                    content = part.replace(url, "").strip()
-                            
-                            # Try to extract title if present
-                            if "##" in part:
-                                title_line = part.split("\n")[0]
-                                title = title_line.replace("#", "").strip()
-                                content = part.replace(title_line, "").strip()
-                            
-                            if content:  # Only add if there's content
-                                results.append(SearchResult(
-                                    title=title,
-                                    url=url or "No URL available",
-                                    content=content
-                                ))
-                except Exception as e:
-                    logger.error(f"Error crawling {url}: {str(e)}")
-                    continue
+            tasks = [crawl_and_process(url, crawler, request.max_results) for url in search_urls]
+            results_from_all_engines = await asyncio.gather(*tasks)
+            
+            # Flatten the list of lists
+            for res_list in results_from_all_engines:
+                all_results.extend(res_list)
         
         # If we didn't get any results, try to crawl directly for the query topic
-        if not results:
+        if not all_results:
             try:
                 topic_url = f"https://en.wikipedia.org/wiki/{request.query.replace(' ', '_')}"
                 logger.info(f"No search results found, trying direct topic crawl: {topic_url}")
                 
-                config = CrawlerRunConfig(
-                    word_count_threshold=10,
-                    verbose=True
-                )
-                
-                result = await crawler.arun(url=topic_url, config=config)
-                
-                if result and result.markdown:
-                    # Extract a summary from the markdown
-                    summary = result.markdown[:1000] + "..." if len(result.markdown) > 1000 else result.markdown
+                async with AsyncWebCrawler() as crawler:
+                    config = CrawlerRunConfig(
+                        word_count_threshold=10,
+                        verbose=True
+                    )
                     
-                    results.append(SearchResult(
-                        title=f"Information about {request.query}",
-                        url=topic_url,
-                        content=summary
-                    ))
+                    result = await crawler.arun(url=topic_url, config=config)
+                    
+                    if result and result.markdown:
+                        # Extract a summary from the markdown
+                        summary = result.markdown[:1000] + "..." if len(result.markdown) > 1000 else result.markdown
+                        
+                        all_results.append(SearchResult(
+                            title=f"Information about {request.query}",
+                            url=topic_url,
+                            content=summary
+                        ))
             except Exception as e:
                 logger.error(f"Error in direct topic crawl: {str(e)}")
         
         # Return the results
-        if results:
-            return SearchResponse(results=results)
+        if all_results:
+            return SearchResponse(results=all_results)
         else:
             return SearchResponse(
                 results=[],
