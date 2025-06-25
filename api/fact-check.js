@@ -183,6 +183,9 @@ async function searchWeb(query) {
       // Log the response status
       debugLog(`Search API response status: ${response.status}`);
       
+      // Log the raw response data for debugging
+      debugLog('Raw search API response data:', JSON.stringify(response.data, null, 2));
+      
       // Check if the response was successful
       if (response.status !== 200) {
         throw new Error(`Request failed with status code ${response.status}`);
@@ -203,6 +206,9 @@ async function searchWeb(query) {
         }
       }
       
+      // Log the final formatted string before returning
+      debugLog('Formatted search results to be used in prompt:', searchResults);
+
       debugLog('Search completed successfully');
       debugLog('Search results obtained successfully');
     } catch (error) {
