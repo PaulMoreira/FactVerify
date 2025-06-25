@@ -87,6 +87,16 @@ export default async function handler(req, res) {
     if (!query) {
       return res.status(400).json({ error: 'Query parameter is required' });
     }
+
+    // Verify the internal API call secret to prevent public access
+    const internalSecret = process.env.INTERNAL_API_SECRET;
+    const authHeader = req.headers.authorization;
+
+    // If the secret is configured, we must validate it.
+    if (internalSecret && authHeader !== `Bearer ${internalSecret}`) {
+      debugLog('Unauthorized internal API call attempt');
+      return res.status(401).json({ error: 'Unauthorized' });
+    }
     
     debugLog(`Searching for: ${query}`);
     

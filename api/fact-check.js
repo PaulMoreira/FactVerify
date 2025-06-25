@@ -165,7 +165,8 @@ async function searchWeb(query) {
         timeout: 10000, // Increased timeout for Vercel cold starts
         headers: {
           'Content-Type': 'application/json',
-          'Accept': 'application/json'
+          'Accept': 'application/json',
+          'Authorization': `Bearer ${process.env.INTERNAL_API_SECRET}`
         },
         validateStatus: function (status) {
           // Accept any status code to handle it ourselves
