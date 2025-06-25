@@ -7,9 +7,7 @@ import 'dotenv/config';
 // Determine if we're running in a Vercel environment
 const IS_VERCEL = process.env.VERCEL === '1' || process.env.VERCEL === 'true';
 
-// Ensure compatibility with both ES modules and CommonJS
-const __filename = new URL(import.meta.url).pathname;
-const __dirname = new URL('.', import.meta.url).pathname;
+
 
 // Set to true to enable detailed logging
 const DEBUG = true;
