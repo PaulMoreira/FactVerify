@@ -138,23 +138,20 @@ async function searchWeb(query) {
     // Determine the appropriate search endpoint
     let searchEndpoint;
     
-    // When running in Vercel or as a serverless function, we need to use the Crawl4AI service directly
-    // since we can't call our own API endpoints from within the same function
-    const crawl4aiUrls = [
-      process.env.CRAWL4AI_URL,
-      'https://factverify.vercel.app/search',
-      'https://crawl4ai-service.vercel.app/search'
-    ].filter(Boolean); // Filter out undefined/null values
+    // This function should call our own /api/search endpoint.
+    // That endpoint will then handle connecting to the Crawl4AI service.
     
-    if (crawl4aiUrls.length > 0) {
-      // Use the first available Crawl4AI URL
-      searchEndpoint = crawl4aiUrls[0];
-      debugLog(`Using Crawl4AI endpoint: ${searchEndpoint}`);
+    if (IS_VERCEL) {
+      // In Vercel, we must use the full public URL to call another API route.
+      // Vercel provides the deployment URL in the VERCEL_URL environment variable.
+      const host = process.env.VERCEL_URL || 'factverify.vercel.app'; // Fallback to the known app name
+      searchEndpoint = `https://${host}/api/search`;
     } else {
-      // Fallback to direct localhost connection
-      searchEndpoint = 'http://localhost:3002/search';
-      debugLog(`Using fallback localhost endpoint: ${searchEndpoint}`);
+      // For local development, use the local server's URL.
+      const apiBaseUrl = process.env.API_BASE_URL || 'http://localhost:3001';
+      searchEndpoint = `${apiBaseUrl}/api/search`;
     }
+    debugLog(`Calling internal search API at: ${searchEndpoint}`);
     
     // Call the search API with proper error handling
     let searchResults = '';

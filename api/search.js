@@ -90,21 +90,21 @@ export default async function handler(req, res) {
     
     debugLog(`Searching for: ${query}`);
     
-    // Call our Python Crawl4AI service with appropriate URLs based on environment
+    // This API's job is to connect to the Crawl4AI Python service.
+    // The URLs should only point to instances of that service.
     const crawl4aiUrls = [];
-    
-    // Add environment-specific URLs
-    if (process.env.CRAWL4AI_URL) {
-      crawl4aiUrls.push(process.env.CRAWL4AI_URL);
+
+    // 1. Primary URL from environment variable (most specific)
+    if (process.env.CRAWL4AI_SERVICE_URL) {
+      crawl4aiUrls.push(process.env.CRAWL4AI_SERVICE_URL);
     }
-    
-    // Add Vercel-specific URLs
+
     if (IS_VERCEL) {
-      // Try the deployed Crawl4AI service URLs
-      crawl4aiUrls.push('https://factverify.vercel.app/search');
+      // 2. In Vercel, use the known deployed service URL as a fallback.
+      // This should be the URL of your DEPLOYED PYTHON SERVICE.
       crawl4aiUrls.push('https://crawl4ai-service.vercel.app/search');
     } else {
-      // Only use localhost in non-Vercel environments
+      // 3. For local development, use the local Python service.
       crawl4aiUrls.push('http://localhost:3002/search');
     }
     
