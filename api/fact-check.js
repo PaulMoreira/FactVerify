@@ -145,11 +145,11 @@ async function searchWeb(query) {
       // In Vercel, we must use the full public URL to call another API route.
       // Vercel provides the deployment URL in the VERCEL_URL environment variable.
       const host = process.env.VERCEL_URL || 'factverify.vercel.app'; // Fallback to the known app name
-      searchEndpoint = `https://${host}/api/search`;
+      searchEndpoint = `https://${host}/api/search_v2`;
     } else {
       // For local development, use the local server's URL.
       const apiBaseUrl = process.env.API_BASE_URL || 'http://localhost:3001';
-      searchEndpoint = `${apiBaseUrl}/api/search`;
+      searchEndpoint = `${apiBaseUrl}/api/search_v2`;
     }
     debugLog(`Calling internal search API at: ${searchEndpoint}`);
     
