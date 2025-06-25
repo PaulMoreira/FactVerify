@@ -101,64 +101,58 @@ module.exports = async (req, res) => {
     
     debugLog(`Searching for: ${query}`);
     
-    // This API's job is to connect to the Crawl4AI Python service.
-    // The URLs should only point to instances of that service.
-    const crawl4aiUrls = [];
-
-    // 1. Primary URL from environment variable (most specific)
-    if (process.env.CRAWL4AI_SERVICE_URL) {
-      crawl4aiUrls.push(process.env.CRAWL4AI_SERVICE_URL);
-    }
-
+    // Determine the correct Crawl4AI service URL based on the environment.
+    let crawl4aiUrl;
     if (IS_VERCEL) {
-      // 2. In Vercel, use the known deployed service URL as a fallback.
-      // This should be the URL of your DEPLOYED PYTHON SERVICE.
-      crawl4aiUrls.push('https://crawl4ai-service.vercel.app/search');
+      crawl4aiUrl = process.env.CRAWL4AI_SERVICE_URL;
     } else {
-      // 3. For local development, use the local Python service.
-      crawl4aiUrls.push('http://localhost:3002/search');
+      // For local development, use the local Python service.
+      crawl4aiUrl = 'http://localhost:3002/search';
     }
-    
-    debugLog(`Using Crawl4AI URLs: ${crawl4aiUrls.join(', ')}`);
-    
-    // If no URLs are available, we'll use the mock search function
-    
+
+    // If no URL is configured for the environment, fall back to mock results.
+    if (!crawl4aiUrl) {
+      debugLog('CRAWL4AI_SERVICE_URL is not configured for this environment. Using mock results.');
+      const mockResults = generateMockSearchResults(query, max_results);
+      return res.status(200).json({
+        results: mockResults,
+        search_engine: 'Mock Search (Crawl4AI service not configured)',
+        is_mock: true
+      });
+    }
+
     let response = null;
     let lastError = null;
-    
-    // Try each URL in sequence until one works
-    for (const url of crawl4aiUrls) {
-      try {
-        debugLog(`Attempting to connect to Crawl4AI at: ${url}`);
-        response = await axios.post(url, { query, max_results }, {
-          timeout: 10000, // Increased timeout for potentially slow services
-          headers: {
-            'Content-Type': 'application/json',
-            'Accept': 'application/json'
-          },
-          validateStatus: function (status) {
-            // Accept any status code to handle it ourselves
-            return true;
-          }
-        });
-        
-        // Log the response status
-        debugLog(`Response from ${url} - Status: ${response.status}`);
-        
-        // Only consider 200 responses as successful
-        if (response.status === 200) {
-          debugLog(`Successfully connected to Crawl4AI at: ${url}`);
-          break;
-        } else {
-          // Treat non-200 responses as errors
-          lastError = new Error(`Request failed with status code ${response.status}`);
-          debugLog(`Failed to connect to Crawl4AI at: ${url} - ${lastError.message}`);
-          response = null; // Reset response so we try the next URL
+
+    try {
+      debugLog(`Attempting to connect to Crawl4AI at: ${crawl4aiUrl}`);
+      response = await axios.post(crawl4aiUrl, { query, max_results }, {
+        timeout: 30000, // 30-second timeout for services that may need to spin up
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json'
+        },
+        validateStatus: function (status) {
+          // Accept any status code to handle it ourselves
+          return true;
         }
-      } catch (err) {
-        lastError = err;
-        debugLog(`Failed to connect to Crawl4AI at: ${url} - ${err.message}`);
+      });
+
+      // Log the response status
+      debugLog(`Response from ${crawl4aiUrl} - Status: ${response.status}`);
+
+      // If the response is not 200, treat it as a failure.
+      if (response.status !== 200) {
+        lastError = new Error(`Request failed with status code ${response.status}`);
+        debugLog(`Failed to connect to Crawl4AI at: ${crawl4aiUrl} - ${lastError.message}`);
+        response = null; // Set response to null to trigger the fallback logic
+      } else {
+        debugLog(`Successfully connected to Crawl4AI at: ${crawl4aiUrl}`);
       }
+    } catch (err) {
+      lastError = err;
+      debugLog(`Failed to connect to Crawl4AI at: ${crawl4aiUrl} - ${err.message}`);
+      response = null; // Ensure response is null on error
     }
     
     if (!response) {
