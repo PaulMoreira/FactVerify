@@ -168,7 +168,7 @@ async function searchWeb(query) {
         query: query,
         max_results: 5
       }, {
-        timeout: 25000, // 25-second timeout to allow the search service to complete
+        timeout: 29000, // 29-second timeout, pushing the limits of Vercel's free tier
         headers: {
           'Content-Type': 'application/json',
           'Accept': 'application/json',
