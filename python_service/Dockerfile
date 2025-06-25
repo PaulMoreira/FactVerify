@@ -1,27 +1,19 @@
-# Use an official Python runtime as a parent image
-# Using -slim variant to keep the image size down
-FROM python:3.11-slim
+# Use the official Playwright image which comes with browsers and dependencies pre-installed.
+# Using a specific version for reproducibility.
+FROM mcr.microsoft.com/playwright/python:v1.44.0-jammy
 
 # Set the working directory in the container
 WORKDIR /app
-
-# Install nodejs and npm to use npx, which is the recommended way
-# to install playwright system dependencies.
-# Then, clean up apt cache to keep image small.
-RUN apt-get update && \
-    apt-get install -y nodejs npm && \
-    npx --yes playwright install-deps && \
-    apt-get purge -y --auto-remove nodejs npm && \
-    rm -rf /var/lib/apt/lists/*
 
 # Copy the dependencies file to the working directory
 COPY ./python_service/requirements.txt .
 
 # Install Python packages
+# The --system flag is important when using the official Playwright image
+# to avoid conflicts with the pre-installed virtual environment.
 RUN pip install --no-cache-dir -r requirements.txt
 
-# Install Playwright browsers (without system deps, as they are already installed)
-RUN playwright install
+# The Playwright browsers are already included in the base image, so no need to run `playwright install`
 
 # Copy the rest of the application's code to the working directory
 COPY ./python_service/ .
