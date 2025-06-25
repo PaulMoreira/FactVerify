@@ -156,8 +156,13 @@ async function searchWeb(query) {
     
     try {
       // Log the state of the internal secret to diagnose auth issues
-      const secretIsDefined = !!process.env.INTERNAL_API_SECRET;
+      const internalSecret = process.env.INTERNAL_API_SECRET;
+      const secretIsDefined = !!internalSecret;
       debugLog(`INTERNAL_API_SECRET is defined: ${secretIsDefined}`);
+      if (internalSecret) {
+        debugLog(`[FACT-CHECK] Secret length: ${internalSecret.length}`);
+        debugLog(`[FACT-CHECK] Secret partial: ${internalSecret.substring(0, 3)}...${internalSecret.slice(-3)}`);
+      }
       if (!secretIsDefined) {
         debugLog('Warning: INTERNAL_API_SECRET is not defined. The API call will be unauthorized.');
       }
