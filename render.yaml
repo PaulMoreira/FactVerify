@@ -1,15 +1,18 @@
+# This file configures the deployment on Render.
 services:
   - type: web
     name: crawl4ai-service
+    # We are using Docker to build a custom environment.
     env: docker
     plan: free
-    # Path to the Dockerfile, relative to the repository root
+    # This points to the Dockerfile that defines our build steps.
     dockerfilePath: ./python_service/Dockerfile
+    # Automatically deploy when changes are pushed to the main branch.
     autoDeploy: true
-    # Docker services on Render must listen on the port specified by the PORT env var.
-    # Render sets this to 10000 by default, but we are explicit here.
-    # The CMD in our Dockerfile uses this port.
+    # Render uses this path to check if the service is healthy.
+    healthCheckPath: /health
+    # Environment variables for the service.
     envVars:
       - key: PORT
+        # The port our Docker container will listen on.
         value: 10000
-    healthCheckPath: /health
