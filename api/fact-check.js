@@ -138,31 +138,51 @@ async function searchWeb(query) {
     // Determine the appropriate search endpoint
     let searchEndpoint;
     
-    if (IS_VERCEL) {
-      // In Vercel, use relative API path
-      searchEndpoint = '/api/search';
-      debugLog(`Using Vercel API endpoint: ${searchEndpoint}`);
+    // When running in Vercel or as a serverless function, we need to use the Crawl4AI service directly
+    // since we can't call our own API endpoints from within the same function
+    const crawl4aiUrls = [
+      process.env.CRAWL4AI_URL,
+      'https://factverify.vercel.app/search',
+      'https://crawl4ai-service.vercel.app/search'
+    ].filter(Boolean); // Filter out undefined/null values
+    
+    if (crawl4aiUrls.length > 0) {
+      // Use the first available Crawl4AI URL
+      searchEndpoint = crawl4aiUrls[0];
+      debugLog(`Using Crawl4AI endpoint: ${searchEndpoint}`);
     } else {
-      // In local development, use the full URL
-      const apiBaseUrl = process.env.API_BASE_URL || 'http://localhost:3001';
-      searchEndpoint = `${apiBaseUrl}/api/search`;
-      debugLog(`Using local API endpoint: ${searchEndpoint}`);
+      // Fallback to direct localhost connection
+      searchEndpoint = 'http://localhost:3002/search';
+      debugLog(`Using fallback localhost endpoint: ${searchEndpoint}`);
     }
     
     // Call the search API with proper error handling
     let searchResults = '';
     
     try {
+      debugLog(`Making POST request to: ${searchEndpoint}`);
       const response = await axios.post(searchEndpoint, {
         query: query,
         max_results: 5
       }, {
-        timeout: 8000, // Increased timeout for Vercel cold starts
+        timeout: 10000, // Increased timeout for Vercel cold starts
         headers: {
           'Content-Type': 'application/json',
           'Accept': 'application/json'
+        },
+        validateStatus: function (status) {
+          // Accept any status code to handle it ourselves
+          return true;
         }
       });
+      
+      // Log the response status
+      debugLog(`Search API response status: ${response.status}`);
+      
+      // Check if the response was successful
+      if (response.status !== 200) {
+        throw new Error(`Request failed with status code ${response.status}`);
+      }
       
       if (response.data && response.data.results) {
         // Format search results
