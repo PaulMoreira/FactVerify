@@ -2,7 +2,13 @@
   "functions": {
     "api/*.js": {
       "memory": 1024,
-      "maxDuration": 30
+      "maxDuration": 30,
+      "includeFiles": [
+        "node_modules/axios/**/*",
+        "node_modules/openai/**/*",
+        "node_modules/@supabase/supabase-js/**/*",
+        "node_modules/dotenv/**/*"
+      ]
     }
   },
   "rewrites": [
