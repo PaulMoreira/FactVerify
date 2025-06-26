@@ -87,12 +87,29 @@ module.exports = async (req, res) => {
     const { id: jobId } = job;
 
     // 3. Trigger the worker asynchronously (fire-and-forget)
-    const workerUrl = `https://${req.headers.host}/api/worker`;
+    const host = req.headers.host;
+    const workerUrl = `https://${host}/api/worker`;
+    debugLog(`Host header is: ${host}`);
     debugLog(`Triggering worker for job ${jobId} at ${workerUrl}`);
-    axios.post(workerUrl, { jobId }, { timeout: 2000 }).catch(err => {
-      // This error is non-blocking. Log it for monitoring.
-      console.error(`Error triggering worker for job ${jobId}. This may require manual intervention. Message: ${err.message}`);
-    });
+
+    axios.post(workerUrl, { jobId }, { timeout: 5000 })
+      .then(response => {
+        debugLog(`Worker triggered successfully with status: ${response.status}`);
+      })
+      .catch(err => {
+        // This error is non-blocking. Log it for monitoring.
+        console.error(`---! ERROR TRIGGERING WORKER FOR JOB ${jobId} !---`);
+        if (err.response) {
+          console.error('Error Response Data:', err.response.data);
+          console.error('Error Response Status:', err.response.status);
+        } else if (err.request) {
+          console.error('Error: No response was received for the request.');
+        } else {
+          console.error('Error Message:', err.message);
+        }
+        console.error('Full Axios Error:', JSON.stringify(err, null, 2));
+        console.error(`---! END ERROR TRIGGERING WORKER !---`);
+      });
 
     // 4. Immediately return the job ID to the client for polling
     debugLog(`Successfully created and triggered job ${jobId}`);
