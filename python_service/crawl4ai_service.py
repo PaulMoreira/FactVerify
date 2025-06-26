@@ -107,9 +107,11 @@ async def search(request: SearchRequest):
     
     try:
         # Create search URLs based on the query
-        # Switching to DuckDuckGo to avoid Google's CAPTCHA blocks on Render.
+        # Sanitize the query to remove quotes, which allows for a broader search
+        # and prevents the "no results found" issue for fabricated quotes.
+        sanitized_query = request.query.replace('"', '').replace("'", "")
         search_urls = [
-            f"https://duckduckgo.com/?q={request.query.replace(' ', '+')}&t=h_&ia=web"
+            f"https://duckduckgo.com/?q={sanitized_query.replace(' ', '+')}&t=h_&ia=web"
         ]
         
         all_results = []
