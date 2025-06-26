@@ -73,42 +73,63 @@ async function storeResultInCache(query, result) {
 // --- Main Worker Handler ---
 
 module.exports = async (req, res) => {
+  debugLog('Worker invoked.');
+  debugLog(`Supabase URL loaded: ${!!process.env.SUPABASE_URL}`);
+  debugLog(`Supabase Key loaded: ${!!process.env.SUPABASE_KEY}`);
+  debugLog(`OpenAI Key loaded: ${!!process.env.OPENAI_API_KEY}`);
+
   if (req.method !== 'POST') {
     return res.status(405).end();
   }
 
   const { jobId } = req.body;
   if (!jobId) {
+    debugLog('Request rejected: jobId is missing.');
     return res.status(400).json({ error: 'jobId is required' });
   }
+  debugLog(`Received job ID: ${jobId}`);
 
   // Acknowledge the request immediately to prevent the client from waiting
   res.status(202).end();
+  debugLog('Response sent to caller. Starting background processing.');
 
   let jobQuery;
   try {
     // 1. Fetch job details and mark as processing
+    debugLog(`Step 1: Fetching job details for ${jobId}.`);
     const { data: job, error: fetchError } = await supabase
       .from('fact_check_jobs').select('query').eq('id', jobId).single();
 
-    if (fetchError || !job) throw new Error(`Job ${jobId} not found.`);
+    if (fetchError || !job) {
+      debugLog(`Error fetching job: ${fetchError?.message}`);
+      throw new Error(`Job ${jobId} not found.`);
+    }
     jobQuery = job.query;
+    debugLog(`Found job with query: ${jobQuery.substring(0, 50)}...`);
+
+    debugLog('Updating job status to "processing".');
     await supabase.from('fact_check_jobs').update({ status: 'processing' }).eq('id', jobId);
-    debugLog(`Processing job ${jobId} for query: ${jobQuery.substring(0, 50)}...`);
+    debugLog(`Successfully marked job ${jobId} as processing.`);
 
     // 2. Perform the long-running tasks
+    debugLog('Step 2: Performing long-running tasks.');
     const searchResults = await searchWeb(jobQuery);
     const factCheckResult = await runOpenAIFactCheck(jobQuery, searchResults);
 
     // 3. Update job with the final result
+    debugLog('Step 3: Updating job with final result.');
     await supabase.from('fact_check_jobs').update({ result: factCheckResult, status: 'completed' }).eq('id', jobId);
     debugLog(`Job ${jobId} completed successfully.`);
 
     // 4. Store the result in the permanent cache for future requests
+    debugLog('Step 4: Storing result in cache.');
     await storeResultInCache(jobQuery, factCheckResult);
 
   } catch (error) {
-    debugLog(`Worker failed for job ${jobId}:`, error.message);
+    debugLog(`Worker failed for job ${jobId}: ${error.message}`);
+    if (error.stack) {
+      debugLog(error.stack);
+    }
     await supabase.from('fact_check_jobs').update({ status: 'failed', error_message: error.message }).eq('id', jobId);
   }
 };
