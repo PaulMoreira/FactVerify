@@ -1,0 +1,14 @@
+<svg width="50" height="50" viewBox="0 0 50 50" xmlns="http://www.w3.org/2000/svg">
+  <style>
+    .shield {
+      fill: #2980b9; /* Default blue for light mode */
+    }
+    @media (prefers-color-scheme: dark) {
+      .shield {
+        fill: #3498db; /* Brighter blue for dark mode */
+      }
+    }
+  </style>
+  <path class="shield" d="M25 2 C15 2 5 10 5 20 L5 30 C5 40 15 48 25 48 C35 48 45 40 45 30 L45 20 C45 10 35 2 25 2 Z" />
+  <path d="M16 25 L23 32 L34 21" fill="none" stroke="#ffffff" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" />
+</svg>
