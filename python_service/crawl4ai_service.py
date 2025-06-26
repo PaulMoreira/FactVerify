@@ -68,7 +68,8 @@ async def crawl_and_process(url: str, crawler: AsyncWebCrawler, max_results: int
                 content = match[2].strip()
 
                 # Filter out irrelevant search results
-                if 'duckduckgo.com' in url_found or 'msn.com' in url_found:
+                # Filter out irrelevant search results from search engines themselves
+                if 'duckduckgo.com' in url_found or 'google.com' in url_found or 'msn.com' in url_found:
                     continue
 
                 # Clean up content
@@ -96,7 +97,9 @@ async def search(request: SearchRequest):
         # and prevents the "no results found" issue for fabricated quotes.
         sanitized_query = request.query.replace('"', '').replace("'", "")
         search_urls = [
-            f"https://duckduckgo.com/?q={sanitized_query.replace(' ', '+')}&t=h_&ia=web"
+            f"https://duckduckgo.com/?q={sanitized_query.replace(' ', '+')}&t=h_&ia=web",
+            f"https://www.google.com/search?q={sanitized_query.replace(' ', '+')}",
+            f"https://www.bing.com/search?q={sanitized_query.replace(' ', '+')}"
         ]
         
         all_results = []
