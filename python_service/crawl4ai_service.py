@@ -43,62 +43,47 @@ class SearchResponse(BaseModel):
     error: Optional[str] = None
 
 async def crawl_and_process(url: str, crawler: AsyncWebCrawler, max_results: int) -> List[SearchResult]:
-    """Crawls a single URL and processes the results."""
+    """Crawls a single URL and processes the results with robust regex parsing."""
     local_results = []
     try:
         logger.info(f"Crawling: {url}")
-        
-        # Configure the crawler
-        config = CrawlerRunConfig(
-            word_count_threshold=5,  # Minimum words per element
-            wait_for="css:body",  # Wait for body element to be loaded
-            verbose=True  # Enable verbose logging
-        )
-        
-        # Run the crawler
+        config = CrawlerRunConfig(word_count_threshold=10, verbose=True)
         result = await crawler.arun(url=url, config=config)
-        
-        # Process the search results
+
         if result and result.markdown:
-            # Extract relevant information from the markdown
-            content_parts = result.markdown.split("\n\n")
-            
-            # Process search results to extract titles, URLs, and snippets
-            for i, part in enumerate(content_parts):
-                if i >= max_results:
+            # Regex to find search result blocks with title, URL, and snippet
+            # This looks for a markdown link, followed by a URL, and then a text snippet.
+            pattern = re.compile(
+                r'## \[(.*?)\]\((.*?)\)\n(.*?)(?=\n## |$)',
+                re.DOTALL
+            )
+            matches = pattern.findall(result.markdown)
+
+            for match in matches:
+                if len(local_results) >= max_results:
                     break
-                    
-                # Create a result entry with available information
-                title = f"Search Result {i+1}"
-                url_found = ""
-                content = part
-                
-                # Try to extract URL if present - improved extraction
-                if "http" in part:
-                    # Find all URLs in the content
-                    url_pattern = r'https?://[^\s()<>"]+'
-                    found_urls = re.findall(url_pattern, part)
-                    if found_urls:
-                        url_found = found_urls[0]  # Take the first URL found
-                        # Clean up the URL - remove trailing punctuation
-                        url_found = re.sub(r'[.,;:!?)]+$', '', url_found)
-                        content = part.replace(url_found, "").strip()
-                
-                # Try to extract title if present
-                if "##" in part:
-                    title_line = part.split("\n")[0]
-                    title = title_line.replace("#", "").strip()
-                    content = part.replace(title_line, "").strip()
-                
-                if content:  # Only add if there's content
+
+                title = match[0].strip()
+                url_found = match[1].strip()
+                content = match[2].strip()
+
+                # Filter out irrelevant search results
+                if 'duckduckgo.com' in url_found or 'msn.com' in url_found:
+                    continue
+
+                # Clean up content
+                content = re.sub(r'\s*\n\s*', ' ', content)  # Replace newlines with spaces
+                content = content.replace('...', '').strip()
+
+                if title and url_found and content:
                     local_results.append(SearchResult(
                         title=title,
-                        url=url_found or "No URL available",
+                        url=url_found,
                         content=content
                     ))
     except Exception as e:
-        logger.error(f"Error crawling {url}: {str(e)}")
-    
+        logger.error(f"Error crawling or parsing {url}: {str(e)}")
+
     return local_results
 
 @app.post("/search", response_model=SearchResponse)
