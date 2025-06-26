@@ -267,9 +267,25 @@ module.exports = async (req, res) => {
     console.log('Checking for cached fact check result');
     try {
       const existingCheck = await getExistingFactCheck(query);
-      if (existingCheck) {
+      if (existingCheck && existingCheck.result) {
         console.log('Using cached fact check result');
-        return res.json({ result: existingCheck.result });
+        try {
+          // The cached result is a string; parse it into an object before sending.
+          const factCheckResult = JSON.parse(existingCheck.result);
+          const endTime = Date.now();
+          const processingTime = endTime - startTime;
+
+          // Ensure the response format is consistent with a new fact check
+          const responseData = {
+            ...factCheckResult,
+            processingTime
+          };
+
+          return res.status(200).json(responseData);
+        } catch (parseError) {
+          console.error('Failed to parse cached result, proceeding with new check.', parseError);
+          // Fall through to perform a new fact check if cached data is corrupt.
+        }
       }
       console.log('No cached result found');
     } catch (dbError) {
