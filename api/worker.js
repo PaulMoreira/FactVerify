@@ -100,7 +100,8 @@ module.exports = async (req, res) => {
     const { error: updateError } = await supabase
       .from('fact_check_jobs')
       .update({ status: 'processing' })
-      .eq('id', jobId);
+      .eq('id', jobId)
+      .select('id'); // Force the query to wait for a response
 
     if (updateError) {
       debugLog(`Error during status update: ${updateError.message}`);
