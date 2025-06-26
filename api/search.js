@@ -132,7 +132,7 @@ module.exports = async (req, res) => {
     try {
       debugLog(`Attempting to connect to Crawl4AI at: ${crawl4aiUrl}`);
       response = await axios.post(crawl4aiUrl, { query, max_results }, {
-        timeout: 30000, // 30-second timeout for services that may need to spin up
+        timeout: 55000, // 55-second timeout to accommodate Render's cold starts
         headers: {
           'Content-Type': 'application/json',
           'Accept': 'application/json'
