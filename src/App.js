@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import './App.css';
 import FactCheckPage from './FactCheckPage.js';
+import Logo from './Logo';
 import { Analytics } from "@vercel/analytics/react";
 import { SpeedInsights } from "@vercel/speed-insights/react";
 
@@ -39,7 +40,7 @@ const App = () => {
       <div className={`app ${darkMode ? 'dark-mode' : ''}`}>
         <header>
           <div className="header-content">
-            <h1>FactVerify</h1>
+            <Logo />
             <button 
               className="theme-toggle" 
               onClick={toggleDarkMode}

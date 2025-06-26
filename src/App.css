@@ -366,6 +366,57 @@ footer {
 .linkedin { background-color: #0A66C2; }
 .reddit { background-color: #FF4500; }
 
+/* Logo Styles */
+.logo-container {
+  display: flex;
+  align-items: center;
+  margin-left: -10px; /* Adjust for new icon shape */
+  flex-shrink: 0; /* Prevent the logo from shrinking */
+}
+
+.fact-verify-logo {
+  height: 50px; /* Increased height for better proportions */
+  width: auto;
+  min-width: 220px; /* Ensure enough space for the full logo */
+}
+
+.logo-text {
+  font-family: 'Segoe UI', 'Roboto', 'Helvetica Neue', sans-serif;
+  font-size: 32px; /* Slightly larger font */
+}
+
+.logo-text-fact {
+  font-weight: 400; /* Regular weight */
+  fill: var(--header-text); /* Use theme variable for high contrast */
+  transition: fill 0.3s ease;
+}
+
+.logo-text-verify {
+  font-weight: 700; /* Bold weight */
+  fill: var(--header-text); /* Use theme variable for high contrast */
+  transition: fill 0.3s ease;
+}
+
+.logo-icon-shield {
+  fill: #2980b9; /* A strong, trustworthy blue */
+  transition: fill 0.3s ease;
+}
+
+.logo-icon-check {
+  fill: none;
+  stroke: #ffffff;
+  stroke-width: 4; /* Thicker checkmark */
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+/* Dark Mode Logo Styles */
+/* Text color is now handled by the --header-text variable */
+
+.dark-mode .logo-icon-shield {
+  fill: #3498db; /* A slightly brighter blue for dark mode */
+}
+
 /* Media query for larger screens */
 @media (min-width: 768px) {
   .share-buttons {
