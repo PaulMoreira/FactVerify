@@ -92,24 +92,23 @@ module.exports = async (req, res) => {
     debugLog(`Host header is: ${host}`);
     debugLog(`Triggering worker for job ${jobId} at ${workerUrl}`);
 
-    axios.post(workerUrl, { jobId }, { timeout: 5000 })
-      .then(response => {
-        debugLog(`Worker triggered successfully with status: ${response.status}`);
-      })
-      .catch(err => {
-        // This error is non-blocking. Log it for monitoring.
-        console.error(`---! ERROR TRIGGERING WORKER FOR JOB ${jobId} !---`);
-        if (err.response) {
-          console.error('Error Response Data:', err.response.data);
-          console.error('Error Response Status:', err.response.status);
-        } else if (err.request) {
-          console.error('Error: No response was received for the request.');
-        } else {
-          console.error('Error Message:', err.message);
-        }
-        console.error('Full Axios Error:', JSON.stringify(err, null, 2));
-        console.error(`---! END ERROR TRIGGERING WORKER !---`);
-      });
+    try {
+      await axios.post(workerUrl, { jobId }, { timeout: 5000 });
+      debugLog(`Worker triggered successfully for job ${jobId}.`);
+    } catch (err) {
+      // This error is non-blocking. Log it for monitoring but don't fail the request.
+      console.error(`---! ERROR TRIGGERING WORKER FOR JOB ${jobId} !---`);
+      if (err.response) {
+        console.error('Error Response Data:', err.response.data);
+        console.error('Error Response Status:', err.response.status);
+      } else if (err.request) {
+        console.error('Error: No response was received for the request.');
+      } else {
+        console.error('Error Message:', err.message);
+      }
+      console.error('Full Axios Error:', JSON.stringify(err, null, 2));
+      console.error(`---! END ERROR TRIGGERING WORKER !---`);
+    }
 
     // 4. Immediately return the job ID to the client for polling
     debugLog(`Successfully created and triggered job ${jobId}`);
