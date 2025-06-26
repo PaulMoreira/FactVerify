@@ -11,7 +11,6 @@ const FactCheckPage = () => {
   const [error, setError] = useState('');
   const [recentFactChecks, setRecentFactChecks] = useState([]);
   const [showRecent, setShowRecent] = useState(false);
-  const [searchEngine, setSearchEngine] = useState(null);
 
   // API base URL - use relative URLs when deployed to the same domain
   const API_BASE_URL = process.env.REACT_APP_API_URL || '';
@@ -20,7 +19,6 @@ const FactCheckPage = () => {
   useEffect(() => {
     const fetchRecentFactChecks = async () => {
       try {
-        // Ensure no double slashes in URL and use /api/ prefix for Vercel compatibility
         const url = `${API_BASE_URL.replace(/\/$/, '')}/api/recent-fact-checks`;
         const response = await axios.get(url);
         if (response.data && response.data.factChecks) {
@@ -41,24 +39,14 @@ const FactCheckPage = () => {
     setResult(null);
     
     try {
-      // Call our backend API for fact-checking
-      // Ensure no double slashes in URL and use /api/ prefix for Vercel compatibility
       const url = `${API_BASE_URL.replace(/\/$/, '')}/api/fact-check`;
       const response = await axios.post(url, { query: claim });
       
-      if (response.data && response.data.result) {
-        // Parse the result to extract verdict, explanation, sources, etc.
-        const factCheckResult = parseFactCheckResult(response.data.result, claim);
-        setResult(factCheckResult);
-        
-        // Set search engine information if available
-        if (response.data.searchEngine) {
-          setSearchEngine(response.data.searchEngine);
-          console.log(`Search powered by: ${response.data.searchEngine}`);
-        }
+      // The backend now sends a clean JSON object directly.
+      if (response.data && response.data.verdict) {
+        setResult(response.data);
         
         // Refresh recent fact checks after a new check
-        // Ensure no double slashes in URL and use /api/ prefix for Vercel compatibility
         const recentUrl = `${API_BASE_URL.replace(/\/$/, '')}/api/recent-fact-checks`;
         const recentResponse = await axios.get(recentUrl);
         if (recentResponse.data && recentResponse.data.factChecks) {
@@ -75,115 +63,22 @@ const FactCheckPage = () => {
     }
   };
   
-  // Helper function to parse the fact check result from OpenAI
-  const parseFactCheckResult = (resultText, originalClaim) => {
-    // Default values
-    let verdict = 'Unverified';
-    let explanation = resultText;
-    let sources = ['No specific sources cited'];
-    let confidence = 'Medium';
-    
-    try {
-      // Check if the result is already in a structured format with sections
-      if (typeof resultText === 'string') {
-        // Look for "Verdict:" section
-        const verdictMatch = resultText.match(/Verdict:\s*([^\n\r]+)/i);
-        if (verdictMatch && verdictMatch[1]) {
-          verdict = verdictMatch[1].trim();
-        }
-        
-        // Look for "Explanation:" section - capture everything until the next section
-        const explanationMatch = resultText.match(/Explanation:\s*([\s\S]*?)(?=(Sources:|Confidence:|$))/i);
-        if (explanationMatch && explanationMatch[1]) {
-          explanation = explanationMatch[1].trim();
-        }
-        
-        // Look for "Sources:" section
-        const sourcesSection = resultText.match(/Sources:\s*([\s\S]*?)(?=(Confidence:|$))/i);
-        if (sourcesSection && sourcesSection[1]) {
-          // Extract URLs or bullet points
-          const urlRegex = /(https?:\/\/[^\s\)\]"']+)/g;
-          const foundUrls = sourcesSection[1].match(urlRegex);
-          
-          if (foundUrls && foundUrls.length > 0) {
-            // Limit to 3 sources and clean up URLs
-            sources = foundUrls.slice(0, 3).map(url => {
-              // Remove trailing punctuation or special characters that might break URLs
-              return url.replace(/[.,;:!?)\]]+$/, '');
-            });
-          } else {
-            // Look for bullet points or numbered lists
-            const bulletPoints = sourcesSection[1]
-              .split('\n')
-              .map(line => line.trim())
-              .filter(line => line.startsWith('-') || line.startsWith('*') || /^\d+\./.test(line))
-              .map(line => line.replace(/^[-*\d\.\s]+/, '').trim());
-              
-            if (bulletPoints.length > 0) {
-              // Limit to 3 sources
-              sources = bulletPoints.slice(0, 3);
-            } else if (sourcesSection[1].trim() !== '') {
-              sources = [sourcesSection[1].trim()];
-            }
-          }
-        }
-        
-        // Look for "Confidence:" section
-        const confidenceMatch = resultText.match(/Confidence:\s*([^\n\r]+)/i);
-        if (confidenceMatch && confidenceMatch[1]) {
-          const confidenceText = confidenceMatch[1].trim().toLowerCase();
-          if (confidenceText.includes('high')) {
-            confidence = 'High';
-          } else if (confidenceText.includes('low')) {
-            confidence = 'Low';
-          } else {
-            confidence = 'Medium';
-          }
-        }
-      }
-      
-      // Fallback to simple keyword matching if structured parsing fails
-      if (verdict === 'Unverified') {
-        if (resultText.toLowerCase().includes('true') && 
-            !resultText.toLowerCase().includes('false') && 
-            !resultText.toLowerCase().includes('mostly false')) {
-          verdict = 'True';
-        } else if (resultText.toLowerCase().includes('false') && 
-                  !resultText.toLowerCase().includes('mostly true')) {
-          verdict = 'False';
-        } else if (resultText.toLowerCase().includes('partially true') || 
-                  resultText.toLowerCase().includes('partly true') || 
-                  resultText.toLowerCase().includes('mixed') ||
-                  resultText.toLowerCase().includes('mostly true')) {
-          verdict = 'Partially True';
-        }
-      }
-    } catch (error) {
-      console.error('Error parsing fact check result:', error);
-      // Keep the defaults if parsing fails
-    }
-    
-    return {
-      verdict,
-      explanation,
-      sources,
-      confidence
-    };
-  };
-  
-  // Function to load a previous fact check
+  // Function to load a previous fact check from the history
   const loadFactCheck = (factCheck) => {
     setClaim(factCheck.query);
-    setResult(parseFactCheckResult(factCheck.result, factCheck.query));
-    
-    // Check if the result contains search engine information
-    if (factCheck.result.includes('[Search powered by:')) {
-      const engineMatch = factCheck.result.match(/\[Search powered by:\s*([^\]]+)\]/i);
-      if (engineMatch && engineMatch[1]) {
-        setSearchEngine(engineMatch[1].trim());
-      }
-    } else {
-      setSearchEngine(null);
+    try {
+      // The result from the DB is a stringified JSON object, so we parse it.
+      const parsedResult = JSON.parse(factCheck.result);
+      setResult(parsedResult);
+    } catch (err) {
+      console.error('Failed to parse stored fact check result:', err);
+      // If parsing fails, create a fallback error display
+      setResult({
+        verdict: 'Error',
+        summary: 'Could not load this fact check. The stored data may be corrupted.',
+        sources: [],
+        confidence: 'Low'
+      });
     }
   };
 
@@ -216,40 +111,36 @@ const FactCheckPage = () => {
       
       {result && (
         <div className="fact-check-result" role="region" aria-label="Fact check result">
-          {searchEngine && (
-            <div className="search-engine-info">
-              <span className={`search-engine-badge ${searchEngine.toLowerCase()}`}>Powered by {searchEngine}</span>
-            </div>
-          )}
           <h3 className={`verdict-${result.verdict.toLowerCase().replace(/\s+/g, '-')}`}>Verdict: {result.verdict}</h3>
           <div className="result-explanation">
-            {result.explanation.split('\n').map((paragraph, idx) => (
+            {/* We now use the 'summary' field from our JSON object */}
+            {result.summary.split('\n').map((paragraph, idx) => (
               paragraph.trim() ? <p key={idx}>{paragraph}</p> : null
             ))}
           </div>
           
-          <div className="result-sources">
-            <strong>Sources:</strong>
-            <ul>
-              {result.sources.slice(0, 3).map((src, idx) => (
-                <li key={idx}>
-                  {src.match(/^https?:\/\//i) ? (
+          {/* Render sources only if they exist and the array is not empty */}
+          {result.sources && result.sources.length > 0 && (
+            <div className="result-sources">
+              <strong>Sources:</strong>
+              <ul>
+                {/* Map over the sources array to create clickable links */}
+                {result.sources.map((src, idx) => (
+                  <li key={idx}>
                     <a 
-                      href={src.trim()} 
+                      href={src.url} 
                       target="_blank" 
                       rel="noopener noreferrer"
-                      aria-label={`Source ${idx + 1}`}
+                      aria-label={`Source: ${src.title}`}
                       className="source-link"
                     >
-                      {`Source ${idx + 1}: ${src.trim().replace(/^https?:\/\/(?:www\.)?([^\/]+).*$/, '$1')}`}
+                      {src.title}
                     </a>
-                  ) : (
-                    <span>{src}</span>
-                  )}
-                </li>
-              ))}
-            </ul>
-          </div>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )}
           
           <div className="confidence-meter">
             <strong>Confidence:</strong> <span className={`confidence-${result.confidence.toLowerCase()}`}>{result.confidence}</span>

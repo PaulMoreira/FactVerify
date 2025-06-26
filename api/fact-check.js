@@ -332,17 +332,20 @@ Note: For the most accurate fact-checking, please ensure the Crawl4AI Python ser
         messages: [
           {
             role: "system", 
-            content: `You are a political fact-checking assistant. Your task is to verify the following political claim. Provide a verdict (True, Mostly True, Mixed, Mostly False, False, or Unverifiable), a detailed explanation, and your confidence level (High, Medium, or Low).
+            content: `You are a political fact-checking assistant. Your task is to analyze the provided claim and search results and return a single, valid JSON object. Do not include any text, markdown, or formatting outside of the JSON object.
 
-Format your response exactly as follows:
+The JSON object must have the following structure:
+{
+  "verdict": "<one of: Mostly True, Mostly False, True, False, Misleading, Unverifiable>",
+  "summary": "<a concise, objective summary of the findings, explaining your reasoning>",
+  "sources": [
+    {"title": "<source 1 title>", "url": "<source 1 url>"},
+    {"title": "<source 2 title>", "url": "<source 2 url>"}
+  ],
+  "confidence": "<one of: High, Medium, Low>"
+}
 
-Verdict: [Your verdict]
-
-Explanation: [Your detailed explanation]
-
-Sources: [List your sources if available, or state "Based on general knowledge"]
-
-Confidence: [High/Medium/Low]`
+For the "sources" field, use the search results provided. If a source was used to make your conclusion, include it in the array. If no search results are relevant, return an empty array.`
           },
           {
             role: "user",
@@ -360,8 +363,16 @@ ${searchResults}`
       console.log('OpenAI response received');
       
       if (completion?.choices?.[0]?.message?.content) {
-        factCheckResult = completion.choices[0].message.content;
-        console.log('Successfully extracted fact check result from OpenAI response');
+        const rawContent = completion.choices[0].message.content;
+        try {
+          // The AI should return a JSON string. We need to parse it.
+          factCheckResult = JSON.parse(rawContent);
+          console.log('Successfully parsed fact check JSON from OpenAI response');
+        } catch (parseError) {
+          console.error('Failed to parse JSON from OpenAI response:', parseError);
+          console.error('Raw content from OpenAI was:', rawContent);
+          throw new Error('The response from the AI was not valid JSON.');
+        }
       } else {
         console.error('Invalid response format from OpenAI:', JSON.stringify(completion));
         throw new Error('Invalid response format from OpenAI');
@@ -375,25 +386,21 @@ ${searchResults}`
         console.error('Error response data:', JSON.stringify(error.response.data));
       }
       
-      factCheckResult = `Verdict: Unverifiable
-
-Explanation: Due to technical limitations, I cannot verify this claim at the moment. Please try again later.
-
-Sources: No sources available
-
-Confidence: Low`;
+      // If the AI call fails, create a structured error object to send to the frontend.
+      factCheckResult = {
+        verdict: 'Unverifiable',
+        summary: 'Due to a technical error with the AI model, this claim could not be verified. Please try again later.',
+        sources: [],
+        confidence: 'Low'
+      };
     }
     
     console.log('Successfully created fact check result');
     
-    // Add search engine information to the result
-    const resultWithSearchInfo = factCheckResult + '\n\n[Search powered by: Crawl4AI]';
-    
-    // Store the result in Supabase. We must await this on Vercel's Hobby plan
-    // as background tasks are not supported after a response is sent.
+    // Store the result in Supabase. The 'result' column expects a string, so we stringify our JSON object.
     debugLog('Attempting to store fact check in database');
     try {
-      const storedResult = await storeFactCheck(query, factCheckResult);
+      const storedResult = await storeFactCheck(query, JSON.stringify(factCheckResult));
       if (storedResult) {
         debugLog('Fact check successfully stored in database');
       } else {
@@ -404,17 +411,18 @@ Confidence: Low`;
       // Continue even if storage fails, to not block the user response.
     }
     
-    // Return the response
+    // Return the structured JSON response to the client
     const endTime = Date.now();
     const processingTime = endTime - startTime;
     debugLog(`Request completed in ${processingTime}ms`);
     debugLog('Sending response to client');
     
-    return res.status(200).json({ 
-      result: resultWithSearchInfo,
-      searchEngine: 'Crawl4AI',
-      processingTime: processingTime
-    });
+    const responseData = {
+      ...factCheckResult,
+      processingTime
+    };
+    
+    return res.status(200).json(responseData);
     
   } catch (error) {
     console.error('Error in fact-check handler:', error);
