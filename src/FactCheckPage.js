@@ -86,7 +86,7 @@ const FactCheckPage = () => {
     <div className="fact-check-container">
       <a href="#fact-check-form" className="skip-to-content">Skip to fact check form</a>
       <h2>AI Fact-Checking Portal</h2>
-      <p>Enter a political claim, headline, or statement below. Our AI will research and check its accuracy using Crawl4AI search and AI agent capabilities.</p>
+      <p>Enter a political claim, headline, or statement below. Our AI will research and check its accuracy using real-time web search and AI agent capabilities.</p>
       
       <form onSubmit={handleSubmit} className="fact-check-form" id="fact-check-form">
         <textarea 
