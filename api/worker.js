@@ -95,22 +95,32 @@ module.exports = async (req, res) => {
 
   let jobQuery;
   try {
-    // 1. Atomically update the job status to 'processing' and retrieve the query
-    debugLog(`Step 1: Atomically updating job ${jobId} to 'processing'.`);
-    const { data: job, error: updateError } = await supabase
+    // 1. Break down the job update and fetch into two steps for robust logging
+    debugLog(`Step 1a: Updating job ${jobId} status to 'processing'.`);
+    const { error: updateError } = await supabase
       .from('fact_check_jobs')
       .update({ status: 'processing' })
-      .eq('id', jobId)
+      .eq('id', jobId);
+
+    if (updateError) {
+      debugLog(`Error during status update: ${updateError.message}`);
+      throw new Error(`Could not update status for job ${jobId}.`);
+    }
+    debugLog(`Step 1b: Status updated. Fetching query for job ${jobId}.`);
+
+    const { data: job, error: fetchError } = await supabase
+      .from('fact_check_jobs')
       .select('query')
+      .eq('id', jobId)
       .single();
 
-    if (updateError || !job) {
-      debugLog(`Error updating/fetching job: ${updateError?.message}`);
-      throw new Error(`Could not lock job ${jobId} for processing.`);
+    if (fetchError || !job) {
+      debugLog(`Error fetching job after update: ${fetchError?.message}`);
+      throw new Error(`Could not fetch job details for ${jobId} after update.`);
     }
 
     jobQuery = job.query;
-    debugLog(`Successfully locked job ${jobId}. Query: ${jobQuery.substring(0, 50)}...`);
+    debugLog(`Successfully fetched job ${jobId}. Query: ${jobQuery.substring(0, 50)}...`);
 
     // 2. Perform the long-running tasks
     debugLog('Step 2: Performing long-running tasks.');
