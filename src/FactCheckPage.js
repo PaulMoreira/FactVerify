@@ -16,21 +16,21 @@ const FactCheckPage = () => {
   // API base URL - use relative URLs when deployed to the same domain
   const API_BASE_URL = process.env.REACT_APP_API_URL || '';
 
+  const fetchRecentFactChecks = async () => {
+    try {
+      // Ensure no double slashes in URL and use /api/ prefix for Vercel compatibility
+      const url = `${API_BASE_URL.replace(/\/$/, '')}/api/recent-fact-checks`;
+      const response = await axios.get(url);
+      if (response.data && response.data.factChecks) {
+        setRecentFactChecks(response.data.factChecks);
+      }
+    } catch (err) {
+      console.error('Error fetching recent fact checks:', err);
+    }
+  };
+
   // Fetch recent fact checks on component mount
   useEffect(() => {
-    const fetchRecentFactChecks = async () => {
-      try {
-        // Ensure no double slashes in URL and use /api/ prefix for Vercel compatibility
-        const url = `${API_BASE_URL.replace(/\/$/, '')}/api/recent-fact-checks`;
-        const response = await axios.get(url);
-        if (response.data && response.data.factChecks) {
-          setRecentFactChecks(response.data.factChecks);
-        }
-      } catch (err) {
-        console.error('Error fetching recent fact checks:', err);
-      }
-    };
-
     fetchRecentFactChecks();
   }, [API_BASE_URL]);
 
@@ -39,38 +39,55 @@ const FactCheckPage = () => {
     setLoading(true);
     setError('');
     setResult(null);
-    
+    setSearchEngine(null);
+
+    let pollInterval;
+
     try {
-      // Call our backend API for fact-checking
-      // Ensure no double slashes in URL and use /api/ prefix for Vercel compatibility
+      // Step 1: Initiate the fact-check job
       const url = `${API_BASE_URL.replace(/\/$/, '')}/api/fact-check`;
-      const response = await axios.post(url, { query: claim });
-      
-      if (response.data && response.data.result) {
-        // Parse the result to extract verdict, explanation, sources, etc.
-        const factCheckResult = parseFactCheckResult(response.data.result, claim);
-        setResult(factCheckResult);
-        
-        // Set search engine information if available
-        if (response.data.searchEngine) {
-          setSearchEngine(response.data.searchEngine);
-          console.log(`Search powered by: ${response.data.searchEngine}`);
-        }
-        
-        // Refresh recent fact checks after a new check
-        // Ensure no double slashes in URL and use /api/ prefix for Vercel compatibility
-        const recentUrl = `${API_BASE_URL.replace(/\/$/, '')}/api/recent-fact-checks`;
-        const recentResponse = await axios.get(recentUrl);
-        if (recentResponse.data && recentResponse.data.factChecks) {
-          setRecentFactChecks(recentResponse.data.factChecks);
-        }
-      } else {
-        throw new Error('Invalid response from server');
+      const initialResponse = await axios.post(url, { query: claim });
+      const { jobId } = initialResponse.data;
+
+      if (!jobId) {
+        throw new Error('Failed to start the fact-checking job.');
       }
+
+      // Step 2: Poll for the result
+      pollInterval = setInterval(async () => {
+        try {
+          const statusUrl = `${API_BASE_URL.replace(/\/$/, '')}/api/status?jobId=${jobId}`;
+          const statusResponse = await axios.get(statusUrl);
+          const { status, result: jobResult, error_message } = statusResponse.data;
+
+          if (status === 'completed') {
+            clearInterval(pollInterval);
+            const factCheckResult = parseFactCheckResult(jobResult.result, claim);
+            setResult(factCheckResult);
+            if (jobResult.searchEngine) {
+              setSearchEngine(jobResult.searchEngine);
+            }
+            setLoading(false);
+            // Refresh recent fact checks
+            fetchRecentFactChecks();
+          } else if (status === 'failed') {
+            clearInterval(pollInterval);
+            setError(error_message || 'The fact-check failed. Please try again.');
+            setLoading(false);
+          }
+          // If status is 'pending' or 'processing', do nothing and wait for the next poll.
+        } catch (pollError) {
+          clearInterval(pollInterval);
+          console.error('Error polling for fact check status:', pollError);
+          setError('Error checking the status of the fact-check. Please try again.');
+          setLoading(false);
+        }
+      }, 3000); // Poll every 3 seconds
+
     } catch (err) {
-      console.error('Error during fact check:', err);
-      setError('Error checking the claim. Please try again.');
-    } finally {
+      if (pollInterval) clearInterval(pollInterval); // Ensure interval is cleared on initial error
+      console.error('Error during fact check initiation:', err);
+      setError('Error starting the fact-check. Please try again.');
       setLoading(false);
     }
   };
