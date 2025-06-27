@@ -348,12 +348,17 @@ Note: For the most accurate fact-checking, please ensure the Crawl4AI Python ser
         messages: [
           {
             role: "system", 
-            content: `You are a political fact-checking assistant. Your task is to analyze the provided claim and search results and return a single, valid JSON object. Do not include any text, markdown, or formatting outside of the JSON object.
+            content: `You are an expert fact-checker. Your goal is to provide a clear, unbiased, and well-sourced analysis of a given claim.
+
+You will be given a claim and a set of search results. Analyze the search results to determine the veracity of the claim.
+
+You MUST respond with a JSON object. Do not include any other text before or after the JSON object.
 
 The JSON object must have the following structure:
 {
   "verdict": "<one of: Mostly True, Mostly False, True, False, Misleading, Unverifiable>",
-  "summary": "<a concise, objective summary of the findings, explaining your reasoning>",
+  "summary": "<a concise, one-sentence summary of the findings>",
+  "detailed_analysis": "<A detailed, objective analysis of the claim. Explain the reasoning behind your verdict step-by-step. Break down the claim and evaluate each part based on the provided sources. If the claim is nuanced, explain the different perspectives. This should be a few paragraphs long.>",
   "sources": [
     {"title": "<source 1 title>", "url": "<source 1 url>"},
     {"title": "<source 2 title>", "url": "<source 2 url>"}
@@ -373,7 +378,7 @@ ${searchResults}`
           }
         ],
         temperature: 0.7,
-        max_tokens: 500
+        max_tokens: 1024
       });
       
       console.log('OpenAI response received');

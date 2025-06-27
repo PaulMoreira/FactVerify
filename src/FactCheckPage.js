@@ -119,6 +119,16 @@ const FactCheckPage = () => {
             ))}
           </div>
           
+          {/* Render detailed analysis only if it exists */}
+          {result.detailed_analysis && (
+            <div className="result-detailed-analysis">
+              <h4>Detailed Analysis</h4>
+              {result.detailed_analysis.split('\n').map((paragraph, idx) => (
+                paragraph.trim() ? <p key={idx}>{paragraph}</p> : null
+              ))}
+            </div>
+          )}
+          
           {/* Render sources only if they exist and the array is not empty */}
           {result.sources && result.sources.length > 0 && (
             <div className="result-sources">
