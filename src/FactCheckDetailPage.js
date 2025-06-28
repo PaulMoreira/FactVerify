@@ -124,49 +124,50 @@ const FactCheckDetailPage = () => {
         </Helmet>
 
         <section className="fact-check-result" aria-live="polite" aria-labelledby="result-heading">
-            <h2 className="claim-reviewed">Claim: \"{query}\"</h2>
+            <h2 className="claim-reviewed">Claim: "{query}"</h2>
             <h3 id="result-heading" className={`verdict-${result.verdict.toLowerCase().replace(/\s+/g, '-')}`}>Verdict: {result.verdict}</h3>
-            <div className="result-explanation">
-                {result.summary.split('\n').map((paragraph, idx) => (
-                paragraph.trim() ? <p key={idx}>{paragraph}</p> : null
-                ))}
-            </div>
-            
-            {result.detailed_analysis && (
-                <div className="result-detailed-analysis">
-                <h4>Detailed Analysis</h4>
-                {result.detailed_analysis.split('\n').map((paragraph, idx) => (
+            <div className="result-content-wrapper">
+                <div className="result-explanation">
+                    {result.summary.split('\n').map((paragraph, idx) => (
                     paragraph.trim() ? <p key={idx}>{paragraph}</p> : null
-                ))}
-                </div>
-            )}
-            
-            {result.sources && result.sources.length > 0 && (
-                <div className="result-sources">
-                <strong>Sources:</strong>
-                <ul>
-                    {result.sources.map((src, idx) => (
-                    <li key={idx}>
-                        <a 
-                        href={src.url} 
-                        target="_blank" 
-                        rel="noopener noreferrer"
-                        aria-label={`Source: ${src.title}`}
-                        className="source-link"
-                        >
-                        {src.title}
-                        </a>
-                    </li>
                     ))}
-                </ul>
                 </div>
-            )}
-            
-            <div className="confidence-meter">
-                <strong>Confidence:</strong> <span className={`confidence-${result.confidence.toLowerCase()}`}>{result.confidence}</span>
-            </div>
+                
+                {result.detailed_analysis && (
+                    <div className="result-detailed-analysis">
+                    <h4>Detailed Analysis</h4>
+                    {result.detailed_analysis.split('\n').map((paragraph, idx) => (
+                        paragraph.trim() ? <p key={idx}>{paragraph}</p> : null
+                    ))}
+                    </div>
+                )}
+                
+                {result.sources && result.sources.length > 0 && (
+                    <div className="result-sources">
+                    <strong>Sources:</strong>
+                    <ul>
+                        {result.sources.map((src, idx) => (
+                        <li key={idx}>
+                            <a 
+                            href={src.url} 
+                            target="_blank" 
+                            rel="noopener noreferrer"
+                            aria-label={`Source: ${src.title}`}
+                            >
+                            {src.title}
+                            </a>
+                        </li>
+                        ))}
+                    </ul>
+                    </div>
+                )}
+                
+                <div className="confidence-meter">
+                    <strong>Confidence:</strong> <span className={`confidence-${result.confidence.toLowerCase()}`}>{result.confidence}</span>
+                </div>
 
-            <ShareResults result={result} claim={query} url={`https://factverify.app/fact-check/${id}`} />
+                <ShareResults result={result} claim={query} url={`https://factverify.app/fact-check/${id}`} />
+            </div>
         </section>
         <div className="back-link-container">
             <Link to="/" className="home-link">Check another claim</Link>

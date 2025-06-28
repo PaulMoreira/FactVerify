@@ -1,53 +1,61 @@
 :root {
   /* Light theme variables */
-  --background-color: #f0f2f5;
+  --background-color: #f4f7f9;
   --card-background: #ffffff;
   --text-color: #2c3e50;
+  --text-color-light: #5a6876;
   --text-secondary: #7f8c8d;
-  --primary-color: #3498db;
-  --primary-hover: #2980b9;
+  --primary-color: #0066cc;
+  --primary-hover: #0052a3;
   --secondary-color: #95a5a6;
-  --border-color: #ddd;
-  --shadow-color: rgba(0, 0, 0, 0.1);
-  --header-background: #2c3e50;
-  --header-text: #ffffff;
+  --border-color: #e1e5e8;
+  --shadow-color: rgba(0, 0, 0, 0.05);
+  --header-background: #ffffff;
+  --header-text: #2c3e50;
   --footer-background: #2c3e50;
   --footer-text: #ffffff;
-  --error-color: #e74c3c;
-  --error-background: #fadbd8;
+  --error-color: #d63031;
+  --error-background: #ffdddd;
   --success-color: #27ae60;
   --warning-color: #f39c12;
   --button-text: #ffffff;
-  --button-disabled: #95a5a6;
-  --focus-outline: rgba(52, 152, 219, 0.5);
+  --button-disabled: #bdc3c7;
+  --focus-outline: rgba(0, 102, 204, 0.5);
   --tooltip-background: rgba(45, 52, 54, 0.9);
   --tooltip-text: #ffffff;
+  --result-background: #ffffff;
+  --link-color: #0066cc;
+  --link-hover: #0052a3;
 }
 
 /* Dark theme variables */
 .dark-mode {
-  --background-color: #1a1a2e;
-  --card-background: #16213e;
-  --text-color: #ecf0f1;
-  --text-secondary: #bdc3c7;
-  --primary-color: #3498db;
-  --primary-hover: #2980b9;
-  --secondary-color: #7f8c8d;
-  --border-color: #34495e;
-  --shadow-color: rgba(0, 0, 0, 0.3);
-  --header-background: #0f3460;
-  --header-text: #ffffff;
-  --footer-background: #0f3460;
-  --footer-text: #ffffff;
-  --error-color: #e74c3c;
-  --error-background: rgba(231, 76, 60, 0.2);
-  --success-color: #2ecc71;
-  --warning-color: #f39c12;
+  --background-color: #0d1117;
+  --card-background: #161b22;
+  --text-color: #c9d1d9;
+  --text-color-light: #8b949e;
+  --text-secondary: #8b949e;
+  --primary-color: #388bfd;
+  --primary-hover: #58a6ff;
+  --secondary-color: #30363d;
+  --border-color: #30363d;
+  --shadow-color: rgba(0, 0, 0, 0.4);
+  --header-background: #161b22;
+  --header-text: #c9d1d9;
+  --footer-background: #161b22;
+  --footer-text: #c9d1d9;
+  --error-color: #f85149;
+  --error-background: rgba(248, 81, 73, 0.15);
+  --success-color: #3fb950;
+  --warning-color: #d29922;
   --button-text: #ffffff;
-  --button-disabled: #7f8c8d;
-  --focus-outline: rgba(52, 152, 219, 0.7);
+  --button-disabled: #21262d;
+  --focus-outline: rgba(56, 139, 253, 0.7);
   --tooltip-background: rgba(30, 39, 46, 0.95);
   --tooltip-text: #ffffff;
+  --result-background: #161b22;
+  --link-color: #58a6ff;
+  --link-hover: #388bfd;
 }
 
 /* Transition for smooth theme switching */

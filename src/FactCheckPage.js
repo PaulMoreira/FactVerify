@@ -6,8 +6,11 @@ import './FactCheck.css';
 import LoadingAnimation from './LoadingAnimation';
 import ShareResults from './ShareResults';
 
+const initialClaim = '';
+
 const FactCheckPage = () => {
-  const [claim, setClaim] = useState('');
+  const [claim, setClaim] = useState(initialClaim);
+  const [displayedClaim, setDisplayedClaim] = useState(initialClaim);
   const [result, setResult] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
@@ -38,7 +41,7 @@ const FactCheckPage = () => {
     setLoading(true);
     setError('');
     setResult(null);
-    setNewFactCheckId(null);
+    setDisplayedClaim(claim);
     
     try {
       const url = `${API_BASE_URL.replace(/\/$/, '')}/api/fact-check`;
@@ -63,27 +66,28 @@ const FactCheckPage = () => {
       setError('Error checking the claim. Please try again.');
     } finally {
       setLoading(false);
+      setClaim('');
     }
   };
   
   const loadFactCheck = (factCheck) => {
-    setClaim(factCheck.query);
+    setDisplayedClaim(factCheck.query);
     try {
       const parsedResult = JSON.parse(factCheck.result);
       setResult(parsedResult);
+      setNewFactCheckId(factCheck.id);
+      setClaim('');
+      setError('');
     } catch (err) {
       console.error('Failed to parse stored fact check result:', err);
-      setResult({
-        verdict: 'Error',
-        summary: 'Could not load this fact check. The stored data may be corrupted.',
-        sources: [],
-        confidence: 'Low'
-      });
+      setError('Could not load this fact check. The stored data may be corrupted.');
+      setResult(null);
+      setDisplayedClaim('');
     }
   };
 
   const generateStructuredData = () => {
-    if (!result || !claim) return null;
+    if (!result || !displayedClaim) return null;
 
     const ratingMap = {
       'true': 5,
@@ -101,7 +105,7 @@ const FactCheckPage = () => {
       "@context": "https://schema.org",
       "@type": "ClaimReview",
       "datePublished": new Date().toISOString(),
-      "claimReviewed": claim,
+      "claimReviewed": displayedClaim,
       "author": {
         "@type": "Organization",
         "name": "FactVerify",
@@ -132,9 +136,9 @@ const FactCheckPage = () => {
   return (
     <main className="fact-check-container">
       <Helmet>
-        <title>{result ? `Fact Check: ${claim.substring(0, 50)}...` : 'FactVerify | AI-Powered Political Fact-Checking'}</title>
+        <title>{result ? `Fact Check: ${displayedClaim.substring(0, 50)}...` : 'FactVerify | AI-Powered Political Fact-Checking'}</title>
         <meta name="description" content={result ? result.summary : 'Enter a political claim to get an instant, AI-powered fact-check. We use real-time data to verify statements and fight misinformation.'} />
-        <meta property="og:title" content={result ? `Fact Check: ${claim}` : 'FactVerify | AI-Powered Political Fact-Checking'} />
+        <meta property="og:title" content={result ? `Fact Check: ${displayedClaim}` : 'FactVerify | AI-Powered Political Fact-Checking'} />
         <meta property="og:description" content={result ? result.summary : 'Instant, unbiased fact-checking of political claims. Stay informed with verified information and sources.'} />
         {structuredData && (
           <script type="application/ld+json">
@@ -145,7 +149,7 @@ const FactCheckPage = () => {
       <a href="#fact-check-form" className="skip-to-content">Skip to fact check form</a>
       
       <section id="fact-check-form-section" aria-labelledby="form-heading">
-        <h2 id="form-heading" className="visually-hidden">AI Fact-Checking Form</h2>
+        <h2 id="form-heading" className="visually-hidden">AI Fact-Checking Portal</h2>
         <p className="form-description">
           Enter a political claim, headline, or statement below. Our AI will research and check its accuracy using real-time web search and AI agent capabilities.
         </p>
@@ -173,55 +177,59 @@ const FactCheckPage = () => {
       
       {result && (
         <section className="fact-check-result" aria-live="polite" aria-labelledby="result-heading">
+          <h2 className="claim-reviewed">Claim: "{displayedClaim}"</h2>
           <h3 id="result-heading" className={`verdict-${result.verdict.toLowerCase().replace(/\s+/g, '-')}`}>Verdict: {result.verdict}</h3>
-          <div className="result-explanation">
-            {result.summary.split('\n').map((paragraph, idx) => (
-              paragraph.trim() ? <p key={idx}>{paragraph}</p> : null
-            ))}
-          </div>
           
-          {result.detailed_analysis && (
-            <div className="result-detailed-analysis">
-              <h4>Detailed Analysis</h4>
-              {result.detailed_analysis.split('\n').map((paragraph, idx) => (
+          <div className="result-content-wrapper">
+            <div className="result-explanation">
+              {result.summary.split('\n').map((paragraph, idx) => (
                 paragraph.trim() ? <p key={idx}>{paragraph}</p> : null
               ))}
             </div>
-          )}
-          
-          {result.sources && result.sources.length > 0 && (
-            <div className="result-sources">
-              <strong>Sources:</strong>
-              <ul>
-                {result.sources.map((src, idx) => (
-                  <li key={idx}>
-                    <a 
-                      href={src.url} 
-                      target="_blank" 
-                      rel="noopener noreferrer"
-                      aria-label={`Source: ${src.title}`}
-                      className="source-link"
-                    >
-                      {src.title}
-                    </a>
-                  </li>
+            
+            {result.detailed_analysis && (
+              <div className="result-detailed-analysis">
+                <h4>Detailed Analysis</h4>
+                {result.detailed_analysis.split('\n').map((paragraph, idx) => (
+                  paragraph.trim() ? <p key={idx}>{paragraph}</p> : null
                 ))}
-              </ul>
+              </div>
+            )}
+            
+            {result.sources && result.sources.length > 0 && (
+              <div className="result-sources">
+                <strong>Sources:</strong>
+                <ul>
+                  {result.sources.map((src, idx) => (
+                    <li key={idx}>
+                      <a 
+                        href={src.url} 
+                        target="_blank" 
+                        rel="noopener noreferrer"
+                        aria-label={`Source: ${src.title}`}
+                      >
+                        {src.title}
+                      </a>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            )}
+            
+            <div className="confidence-meter">
+              <strong>Confidence:</strong> <span className={`confidence-${result.confidence.toLowerCase()}`}>{result.confidence}</span>
             </div>
-          )}
-          
-          <div className="confidence-meter">
-            <strong>Confidence:</strong> <span className={`confidence-${result.confidence.toLowerCase()}`}>{result.confidence}</span>
+            
+            <ShareResults result={result} claim={displayedClaim} url={newFactCheckId ? `https://factverify.app/fact-check/${newFactCheckId}` : ''} />
+            
+            {newFactCheckId && (
+              <div className="permalink-container">
+                <Link to={`/fact-check/${newFactCheckId}`} className="permalink">
+                  View or share this fact-check
+                </Link>
+              </div>
+            )}
           </div>
-          
-          <ShareResults result={result} claim={claim} url={newFactCheckId ? `https://factverify.app/fact-check/${newFactCheckId}` : ''} />
-          {newFactCheckId && (
-            <div className="permalink-container">
-              <Link to={`/fact-check/${newFactCheckId}`} className="permalink">
-                View or share this fact-check
-              </Link>
-            </div>
-          )}
         </section>
       )}
       

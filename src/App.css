@@ -34,10 +34,16 @@ header {
   padding: 0 20px;
 }
 
+.logo-link {
+  text-decoration: none;
+  color: inherit;
+  display: block;
+}
+
 .theme-toggle {
   background-color: transparent;
-  border: 2px solid rgba(255, 255, 255, 0.3);
-  color: var(--header-text);
+  border: 2px solid var(--border-color);
+  color: var(--text-color);
   padding: 8px 16px;
   border-radius: 20px;
   cursor: pointer;
@@ -49,8 +55,9 @@ header {
 }
 
 .theme-toggle:hover {
-  background-color: rgba(255, 255, 255, 0.1);
-  border-color: rgba(255, 255, 255, 0.5);
+  background-color: var(--primary-color);
+  border-color: var(--primary-color);
+  color: var(--button-text);
 }
 
 .theme-toggle:focus {
@@ -64,7 +71,7 @@ header {
   margin-right: 15px;
   border-radius: 50%;
   object-fit: cover;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  box-shadow: 0 2px 4px var(--shadow-color);
 }
 
 h1 {
@@ -86,18 +93,25 @@ h1 {
 
 .sidebar {
   width: 300px;
-}
-
-.introduction, .countdown-timer, .whats-new-section {
-  background-color: #f0f0f0;
+  background-color: var(--card-background);
   padding: 20px;
   border-radius: 8px;
   margin-bottom: 20px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 2px 4px var(--shadow-color);
+  border: 1px solid var(--border-color);
+}
+
+.introduction, .countdown-timer, .whats-new-section {
+  background-color: var(--card-background);
+  padding: 20px;
+  border-radius: 8px;
+  margin-bottom: 20px;
+  box-shadow: 0 2px 4px var(--shadow-color);
+  border: 1px solid var(--border-color);
 }
 
 .introduction h2 {
-  color: #1a365d;
+  color: var(--text-color);
   margin-top: 0;
 }
 

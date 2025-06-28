@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
+import { BrowserRouter as Router, Route, Routes, Link } from 'react-router-dom';
 import './App.css';
 import FactCheckPage from './FactCheckPage.js';
 import FactCheckDetailPage from './FactCheckDetailPage.js';
@@ -43,7 +43,9 @@ const App = () => {
       <div className={`app ${darkMode ? 'dark-mode' : ''}`}>
         <header>
           <div className="header-content">
-            <Logo />
+            <Link to="/" className="logo-link">
+              <Logo />
+            </Link>
             <button 
               className="theme-toggle" 
               onClick={toggleDarkMode}
