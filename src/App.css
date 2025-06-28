@@ -618,31 +618,16 @@ footer {
 
 @media (max-width: 768px) {
   .app {
-    padding: 10px;
+    padding: 15px;
   }
 
   .content-wrapper {
-    display: flex;
     flex-direction: column;
   }
 
   .sidebar {
-    display: flex;
-    flex-direction: column;
-  }
-
-  .introduction {
-    order: -1; /* Ensure introduction stays at the top */
-  }
-
-  .header-content {
-    flex-direction: column;
-    text-align: center;
-  }
-
-  .logo {
-    margin-right: 0;
-    margin-bottom: 10px;
+    width: 100%;
+    margin-top: 20px;
   }
 
   h1 {
@@ -650,59 +635,48 @@ footer {
   }
 
   .candidate {
-    padding: 15px;
-  }
-
-  .candidate-image {
-    height: auto;
-    max-height: 200px;
+    padding: 20px;
   }
 
   .comparison-content {
     flex-direction: column;
   }
-  
+
   .candidate-policy {
     width: 100%;
     margin-bottom: 20px;
   }
 
-  .idea h3 {
-    font-size: 1.1em;
-  }
-
-  .idea ul {
-    padding-left: 15px;
-  }
-
-  .policy-selector, .candidate-policy h3, .fact-check-resources h2, .voter-resources h2 {
-    font-size: 1.1em;
-  }
-
-  .candidate-policy li, .fact-check-resources li, .voter-resources li {
-    font-size: 0.95em;
-  }
-
-  .idea button, .candidate-policy button {
-    width: 100%;
-    margin-left: 0;
-  }
-
   .main-navigation ul {
     flex-direction: column;
+    align-items: flex-start;
+  }
+}
+
+@media (max-width: 600px) {
+  .app {
+    padding: 10px;
   }
 
-  .main-navigation ul li {
-    margin: 5px 0;
+  .header-content {
+    flex-direction: column;
+    gap: 15px;
   }
 
-  .main-navigation .sub-menu {
-    position: static;
-    display: none;
+  h1 {
+    font-size: 1.8em;
   }
 
-  .main-navigation li:hover > .sub-menu {
-    display: block;
+  .candidate h2 {
+    font-size: 1.6em;
+  }
+
+  .candidate-image {
+    max-height: 180px;
+  }
+
+  .policy-selector {
+    font-size: 1em;
   }
 }
 

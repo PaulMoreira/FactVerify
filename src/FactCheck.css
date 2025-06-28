@@ -465,17 +465,13 @@
     padding: 1.5rem;
     margin: 1rem;
   }
-  
-  .fact-check-form textarea {
-    min-height: 100px;
-  }
-  
+
   .fact-check-container h2 {
-    font-size: 1.7rem;
+    font-size: 1.8rem;
   }
-  
+
   .fact-check-result h3 {
-    font-size: 1.3rem;
+    font-size: 1.4rem;
   }
 }
 
@@ -484,24 +480,29 @@
     padding: 1rem;
     margin: 0.5rem;
   }
-  
+
   .fact-check-container h2 {
     font-size: 1.5rem;
   }
-  
+
   .fact-check-form {
-    gap: 0.8rem;
+    gap: 1rem;
   }
-  
+
   .fact-check-form button {
     width: 100%;
-    padding: 0.7rem 1rem;
+    padding: 0.8rem 1rem;
   }
-  
+
   .fact-check-result {
     padding: 1rem;
   }
-  
+
+  .result-sources a {
+    padding: 6px 10px;
+    font-size: 0.9rem;
+  }
+
   .confidence-meter {
     flex-direction: column;
     align-items: flex-start;
