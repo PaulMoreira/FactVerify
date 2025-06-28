@@ -112,6 +112,7 @@ module.exports = async (req, res) => {
       }
     } else {
       // For local development, use the local Python service.
+      // For local development, we point to the Python-based Crawl4AI service, which should be running on port 3002.
       crawl4aiUrl = 'http://localhost:3002/search';
     }
 

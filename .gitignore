@@ -98,8 +98,15 @@ htmlcov/
 .parcel-cache
 
 # Next.js build output
-.next
-out
+.next/
+out/
+
+# Vercel local development output
+.vercel/
+vercel.dev.json
+
+# Create React App build directory
+build/
 
 # Nuxt.js build / generate output
 .nuxt

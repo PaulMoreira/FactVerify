@@ -2,9 +2,11 @@ import React, { useState, useEffect } from 'react';
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import './App.css';
 import FactCheckPage from './FactCheckPage.js';
+import FactCheckDetailPage from './FactCheckDetailPage.js';
 import Logo from './Logo';
 import { Analytics } from "@vercel/analytics/react";
 import { SpeedInsights } from "@vercel/speed-insights/react";
+import { HelmetProvider } from 'react-helmet-async';
 
 const App = () => {
   const [darkMode, setDarkMode] = useState(false);
@@ -36,7 +38,8 @@ const App = () => {
   };
   
   return (
-    <Router>
+    <HelmetProvider>
+      <Router>
       <div className={`app ${darkMode ? 'dark-mode' : ''}`}>
         <header>
           <div className="header-content">
@@ -52,6 +55,7 @@ const App = () => {
         </header>
         <Routes>
           <Route path="/" element={<FactCheckPage />} />
+          <Route path="/fact-check/:id" element={<FactCheckDetailPage />} />
         </Routes>
         <footer>
           <p>&copy; 2025 FactVerify. All rights reserved.</p>
@@ -60,7 +64,8 @@ const App = () => {
         <Analytics />
         <SpeedInsights/>
       </div>
-    </Router>
+          </Router>
+    </HelmetProvider>
   );
 };
 

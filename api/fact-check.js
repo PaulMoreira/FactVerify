@@ -81,8 +81,9 @@ async function storeFactCheck(claim, result) {
     debugLog('Inserting into fact_checks table with query:', claim.substring(0, 50) + '...');
     const { data, error } = await supabase
       .from('fact_checks')
-      .insert([{ query: claim, result, created_at: new Date().toISOString() }]);
-    
+      .insert([{ query: claim, result, created_at: new Date().toISOString() }])
+      .select();
+      
     if (error) {
       console.error('Supabase insert error:', error);
       if (error.message.includes('fetch failed')) {
@@ -90,9 +91,14 @@ async function storeFactCheck(claim, result) {
       }
       return null;
     }
+
+    if (!data || data.length === 0) {
+      debugLog('Insert successful, but no data returned. This might be due to RLS policies.');
+      return null;
+    }
     
-    debugLog('Insert successful, data:', data ? 'Data returned' : 'No data returned');
-    return data;
+    debugLog('Insert successful, data returned for new record.');
+    return data[0];
   } catch (dbError) {
     console.error('Database operation failed:', dbError);
     return null;
@@ -144,11 +150,11 @@ async function searchWeb(query) {
     if (IS_VERCEL) {
       // In Vercel, we must use the full public URL to call another API route.
       // Vercel provides the deployment URL in the VERCEL_URL environment variable.
-      const host = process.env.VERCEL_URL || 'factverify.vercel.app'; // Fallback to the known app name
+      const host = process.env.VERCEL_URL || 'factverify.app'; // Fallback to the known app name
       searchEndpoint = `https://${host}/api/search`;
     } else {
       // For local development, use the local server's URL.
-      const apiBaseUrl = process.env.API_BASE_URL || 'http://localhost:3001';
+      const apiBaseUrl = process.env.API_BASE_URL || 'http://localhost:3000';
       searchEndpoint = `${apiBaseUrl}/api/search`;
     }
     debugLog(`Calling internal search API at: ${searchEndpoint}`);
@@ -422,11 +428,13 @@ ${searchResults}`
     console.log('Successfully created fact check result');
     
     // Store the result in Supabase. The 'result' column expects a string, so we stringify our JSON object.
+    let newFactCheckId = null;
     debugLog('Attempting to store fact check in database');
     try {
       const storedResult = await storeFactCheck(query, JSON.stringify(factCheckResult));
       if (storedResult) {
-        debugLog('Fact check successfully stored in database');
+        debugLog('Fact check successfully stored in database', storedResult);
+        newFactCheckId = storedResult.id;
       } else {
         debugLog('Fact check not stored (null result from storeFactCheck)');
       }
@@ -443,6 +451,7 @@ ${searchResults}`
     
     const responseData = {
       ...factCheckResult,
+      id: newFactCheckId,
       processingTime
     };
     

@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from 'react';
+import { Helmet } from 'react-helmet-async';
 import axios from 'axios';
+import { Link } from 'react-router-dom';
 import './FactCheck.css';
 import LoadingAnimation from './LoadingAnimation';
 import ShareResults from './ShareResults';
@@ -9,6 +11,7 @@ const FactCheckPage = () => {
   const [result, setResult] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
+  const [newFactCheckId, setNewFactCheckId] = useState(null);
   const [recentFactChecks, setRecentFactChecks] = useState([]);
   const [showRecent, setShowRecent] = useState(false);
 
@@ -35,6 +38,7 @@ const FactCheckPage = () => {
     setLoading(true);
     setError('');
     setResult(null);
+    setNewFactCheckId(null);
     
     try {
       const url = `${API_BASE_URL.replace(/\/$/, '')}/api/fact-check`;
@@ -42,6 +46,9 @@ const FactCheckPage = () => {
       
       if (response.data && response.data.verdict) {
         setResult(response.data);
+        if (response.data.id) {
+          setNewFactCheckId(response.data.id);
+        }
         
         const recentUrl = `${API_BASE_URL.replace(/\/$/, '')}/api/recent-fact-checks`;
         const recentResponse = await axios.get(recentUrl);
@@ -75,8 +82,66 @@ const FactCheckPage = () => {
     }
   };
 
+  const generateStructuredData = () => {
+    if (!result || !claim) return null;
+
+    const ratingMap = {
+      'true': 5,
+      'mostly true': 4,
+      'mixture': 3,
+      'mostly false': 2,
+      'false': 1,
+      'misleading': 2.5,
+    };
+
+    const verdictText = result.verdict?.toLowerCase().replace(/\s+/g, ' ') || '';
+    const numericRating = ratingMap[verdictText];
+
+    const claimReview = {
+      "@context": "https://schema.org",
+      "@type": "ClaimReview",
+      "datePublished": new Date().toISOString(),
+      "claimReviewed": claim,
+      "author": {
+        "@type": "Organization",
+        "name": "FactVerify",
+        "url": "https://factverify.app"
+      }
+    };
+
+    if (numericRating) {
+      claimReview.reviewRating = {
+        "@type": "Rating",
+        "ratingValue": numericRating,
+        "bestRating": 5,
+        "worstRating": 1,
+        "alternateName": result.verdict
+      };
+    } else {
+        claimReview.reviewRating = {
+            "@type": "Rating",
+            "alternateName": result.verdict
+        }
+    }
+
+    return claimReview;
+  };
+
+  const structuredData = generateStructuredData();
+
   return (
     <main className="fact-check-container">
+      <Helmet>
+        <title>{result ? `Fact Check: ${claim.substring(0, 50)}...` : 'FactVerify | AI-Powered Political Fact-Checking'}</title>
+        <meta name="description" content={result ? result.summary : 'Enter a political claim to get an instant, AI-powered fact-check. We use real-time data to verify statements and fight misinformation.'} />
+        <meta property="og:title" content={result ? `Fact Check: ${claim}` : 'FactVerify | AI-Powered Political Fact-Checking'} />
+        <meta property="og:description" content={result ? result.summary : 'Instant, unbiased fact-checking of political claims. Stay informed with verified information and sources.'} />
+        {structuredData && (
+          <script type="application/ld+json">
+            {JSON.stringify(structuredData)}
+          </script>
+        )}
+      </Helmet>
       <a href="#fact-check-form" className="skip-to-content">Skip to fact check form</a>
       
       <section id="fact-check-form-section" aria-labelledby="form-heading">
@@ -149,7 +214,14 @@ const FactCheckPage = () => {
             <strong>Confidence:</strong> <span className={`confidence-${result.confidence.toLowerCase()}`}>{result.confidence}</span>
           </div>
           
-          <ShareResults result={result} claim={claim} />
+          <ShareResults result={result} claim={claim} url={newFactCheckId ? `https://factverify.app/fact-check/${newFactCheckId}` : ''} />
+          {newFactCheckId && (
+            <div className="permalink-container">
+              <Link to={`/fact-check/${newFactCheckId}`} className="permalink">
+                View or share this fact-check
+              </Link>
+            </div>
+          )}
         </section>
       )}
       
