@@ -12,10 +12,8 @@ const FactCheckPage = () => {
   const [recentFactChecks, setRecentFactChecks] = useState([]);
   const [showRecent, setShowRecent] = useState(false);
 
-  // API base URL - use relative URLs when deployed to the same domain
   const API_BASE_URL = process.env.REACT_APP_API_URL || '';
 
-  // Fetch recent fact checks on component mount
   useEffect(() => {
     const fetchRecentFactChecks = async () => {
       try {
@@ -42,11 +40,9 @@ const FactCheckPage = () => {
       const url = `${API_BASE_URL.replace(/\/$/, '')}/api/fact-check`;
       const response = await axios.post(url, { query: claim });
       
-      // The backend now sends a clean JSON object directly.
       if (response.data && response.data.verdict) {
         setResult(response.data);
         
-        // Refresh recent fact checks after a new check
         const recentUrl = `${API_BASE_URL.replace(/\/$/, '')}/api/recent-fact-checks`;
         const recentResponse = await axios.get(recentUrl);
         if (recentResponse.data && recentResponse.data.factChecks) {
@@ -63,16 +59,13 @@ const FactCheckPage = () => {
     }
   };
   
-  // Function to load a previous fact check from the history
   const loadFactCheck = (factCheck) => {
     setClaim(factCheck.query);
     try {
-      // The result from the DB is a stringified JSON object, so we parse it.
       const parsedResult = JSON.parse(factCheck.result);
       setResult(parsedResult);
     } catch (err) {
       console.error('Failed to parse stored fact check result:', err);
-      // If parsing fails, create a fallback error display
       setResult({
         verdict: 'Error',
         summary: 'Could not load this fact check. The stored data may be corrupted.',
@@ -83,43 +76,45 @@ const FactCheckPage = () => {
   };
 
   return (
-    <div className="fact-check-container">
+    <main className="fact-check-container">
       <a href="#fact-check-form" className="skip-to-content">Skip to fact check form</a>
-      <h2>AI Fact-Checking Portal</h2>
-      <p>Enter a political claim, headline, or statement below. Our AI will research and check its accuracy using real-time web search and AI agent capabilities.</p>
       
-      <form onSubmit={handleSubmit} className="fact-check-form" id="fact-check-form">
-        <textarea 
-          value={claim} 
-          onChange={e => setClaim(e.target.value)} 
-          placeholder="Enter a political claim to fact-check..."
-          rows="4"
-          required
-          aria-label="Political claim to fact-check"
-        />
-        <button 
-          type="submit" 
-          disabled={loading || !claim.trim()}
-          aria-busy={loading}
-        >
-          {loading ? 'Checking...' : 'Fact Check'}
-        </button>
-      </form>
+      <section id="fact-check-form-section" aria-labelledby="form-heading">
+        <h2 id="form-heading" className="visually-hidden">AI Fact-Checking Form</h2>
+        <p className="form-description">
+          Enter a political claim, headline, or statement below. Our AI will research and check its accuracy using real-time web search and AI agent capabilities.
+        </p>
+        <form onSubmit={handleSubmit} className="fact-check-form" id="fact-check-form">
+          <textarea 
+            value={claim} 
+            onChange={e => setClaim(e.target.value)} 
+            placeholder="Enter a political claim to fact-check..."
+            rows="4"
+            required
+            aria-label="Political claim to fact-check"
+          />
+          <button 
+            type="submit" 
+            disabled={loading || !claim.trim()}
+            aria-busy={loading}
+          >
+            {loading ? 'Checking...' : 'Fact Check'}
+          </button>
+        </form>
+      </section>
       
-      {error && <div className="error" role="alert">{error}</div>}
       {loading && <LoadingAnimation />}
+      {error && <div className="error" role="alert">{error}</div>}
       
       {result && (
-        <div className="fact-check-result" role="region" aria-label="Fact check result">
-          <h3 className={`verdict-${result.verdict.toLowerCase().replace(/\s+/g, '-')}`}>Verdict: {result.verdict}</h3>
+        <section className="fact-check-result" aria-live="polite" aria-labelledby="result-heading">
+          <h3 id="result-heading" className={`verdict-${result.verdict.toLowerCase().replace(/\s+/g, '-')}`}>Verdict: {result.verdict}</h3>
           <div className="result-explanation">
-            {/* We now use the 'summary' field from our JSON object */}
             {result.summary.split('\n').map((paragraph, idx) => (
               paragraph.trim() ? <p key={idx}>{paragraph}</p> : null
             ))}
           </div>
           
-          {/* Render detailed analysis only if it exists */}
           {result.detailed_analysis && (
             <div className="result-detailed-analysis">
               <h4>Detailed Analysis</h4>
@@ -129,12 +124,10 @@ const FactCheckPage = () => {
             </div>
           )}
           
-          {/* Render sources only if they exist and the array is not empty */}
           {result.sources && result.sources.length > 0 && (
             <div className="result-sources">
               <strong>Sources:</strong>
               <ul>
-                {/* Map over the sources array to create clickable links */}
                 {result.sources.map((src, idx) => (
                   <li key={idx}>
                     <a 
@@ -157,18 +150,17 @@ const FactCheckPage = () => {
           </div>
           
           <ShareResults result={result} claim={claim} />
-        </div>
+        </section>
       )}
       
-      {/* Recent Fact Checks Section */}
-      <div className="recent-fact-checks">
+      <section className="recent-fact-checks">
         <button 
           className="toggle-recent" 
           onClick={() => setShowRecent(!showRecent)}
           aria-expanded={showRecent}
           aria-controls="recent-checks-list"
         >
-          {showRecent ? 'Hide Recent Fact Checks' : 'Show Recent Fact Checks'}
+          {showRecent ? 'Hide Recent Checks' : 'Show Recent Checks'}
         </button>
         
         {showRecent && (
@@ -196,8 +188,8 @@ const FactCheckPage = () => {
             )}
           </div>
         )}
-      </div>
-    </div>
+      </section>
+    </main>
   );
 };
 
