@@ -5,6 +5,9 @@
   justify-content: center;
   padding: 2rem;
   text-align: center;
+  margin: 0 auto;
+  width: 100%;
+  max-width: 600px;
 }
 
 .loading-text {
@@ -62,12 +65,20 @@
 }
 
 /* Responsive adjustments */
-@media (max-width: 768px) {
+@media (max-width: 992px) {
+  .loading-container {
+    margin: 0 auto;
+    width: 100%;
+    max-width: 100%;
+    padding: 1.5rem;
+  }
+
   .loading-text {
     font-size: 1.2rem;
   }
   
   .loading-subtext {
     font-size: 0.8rem;
+    max-width: 250px;
   }
 }
