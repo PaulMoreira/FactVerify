@@ -4,11 +4,12 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="description" content="FactVerify: Your trusted source for fact-checking political claims. Get accurate, nonpartisan verification of statements from politicians and news sources." />
-    <meta name="keywords" content="fact checking, political fact checker, verify claims, misinformation, disinformation, truth verification, political statements, news verification, factverify" />
+    <meta name="keywords" content="fact checking, political fact checker, verify claims, misinformation, disinformation, truth verification, political statements, news verification, factverify, ai fact checker, election fact check" />
+    <link rel="canonical" href="https://factverify.app" />
     <meta property="og:title" content="FactVerify - Political Fact Checking Tool" />
     <meta property="og:description" content="Verify political claims instantly with our AI-powered fact-checking tool. Get accurate, nonpartisan information." />
-    <meta property="og:image" content="https://factverify.vercel.app/og-image.jpg" />
-    <meta property="og:url" content="https://factverify.vercel.app/" />
+    <meta property="og:image" content="https://factverify.app/og-image.jpg" />
+    <meta property="og:url" content="https://factverify.app/" />
     <meta name="twitter:card" content="summary_large_image" />
     <!-- Google tag (gtag.js) -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-V5GLZG5TWW"></script>
@@ -27,17 +28,17 @@
 
     <!-- Open Graph / Facebook -->
     <meta property="og:type" content="website">
-    <meta property="og:url" content="%PUBLIC_URL%/">
+    <meta property="og:url" content="https://factverify.app/">
     <meta property="og:title" content="FactVerify | AI-Powered Political Fact-Checking">
     <meta property="og:description" content="Instant, unbiased fact-checking of political claims. Stay informed with verified information and sources.">
-    <meta property="og:image" content="%PUBLIC_URL%/social-share.svg">
+    <meta property="og:image" content="https://factverify.app/social-share.jpg">
 
     <!-- Twitter -->
     <meta property="twitter:card" content="summary_large_image">
-    <meta property="twitter:url" content="%PUBLIC_URL%/">
+    <meta property="twitter:url" content="https://factverify.app/">
     <meta property="twitter:title" content="FactVerify | AI-Powered Political Fact-Checking">
     <meta property="twitter:description" content="Instant, unbiased fact-checking of political claims. Stay informed with verified information and sources.">
-    <meta property="twitter:image" content="%PUBLIC_URL%/social-share.svg">
+    <meta property="twitter:image" content="https://factverify.app/social-share.jpg">
 
     <!-- Note: For maximum compatibility, especially with older platforms, consider converting social-share.svg to a 1200x630 PNG and updating the og:image and twitter:image URLs. -->
     <!-- Other existing tags -->
@@ -51,7 +52,17 @@
       "@type": "WebSite",
       "name": "FactVerify",
       "description": "AI-powered political fact checking tool for verifying claims and statements.",
-      "url": "https://factverify.vercel.app"
+      "url": "https://factverify.app",
+      "potentialAction": {
+        "@type": "SearchAction",
+        "target": "https://factverify.app/search?q={search_term_string}",
+        "query-input": "required name=search_term_string"
+      },
+      "sameAs": [
+        "https://twitter.com/factverifyapp",
+        "https://facebook.com/factverifyapp"
+      ]
     }
     </script>
+    <link rel="sitemap" type="application/xml" href="/sitemap.xml" />
 </html>
