@@ -21,12 +21,7 @@ const generateSitemap = async () => {
       <changefreq>daily</changefreq>
       <priority>1.0</priority>
     </url>
-    <url>
-      <loc>${baseUrl}/fact-check/recent</loc>
-      <lastmod>${new Date().toISOString().split('T')[0]}</lastmod>
-      <changefreq>daily</changefreq>
-      <priority>0.8</priority>
-    </url>
+
   `;
 
   try {
