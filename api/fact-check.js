@@ -376,7 +376,7 @@ For the "sources" field, use the search results provided. If a source was used t
           },
           {
             role: "user",
-            content: `Fact check this claim: "${query}"
+            content: `Fact check this claim and tell me if it is true or false: "${query}"
 
 Here are some search results to help you:
 
