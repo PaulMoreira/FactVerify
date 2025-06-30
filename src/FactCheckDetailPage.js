@@ -143,23 +143,26 @@ const FactCheckDetailPage = () => {
                 )}
                 
                 {result.sources && result.sources.length > 0 && (
-                    <div className="result-sources">
-                    <strong>Sources:</strong>
-                    <ul>
-                        {result.sources.map((src, idx) => (
-                        <li key={idx}>
-                            <a 
-                            href={src.url} 
-                            target="_blank" 
-                            rel="noopener noreferrer"
-                            aria-label={`Source: ${src.title}`}
-                            >
-                            {src.title}
-                            </a>
-                        </li>
-                        ))}
-                    </ul>
+                  <div className="result-sources">
+                    <h4>Sources:</h4>
+                    <div className="source-cards-container">
+                      {result.sources.map((src, i) => (
+                        <a href={src.url} key={i} className="source-card" target="_blank" rel="noopener noreferrer">
+                          <div className="source-card-image">
+                            <img 
+                              src={src.image || `https://www.google.com/s2/favicons?domain=${new URL(src.url).hostname}&sz=128`}
+                              alt={`${new URL(src.url).hostname} favicon`}
+                              onError={(e) => { e.target.onerror = null; e.target.src='https://factverify.app/favicon.svg'; }}
+                            />
+                          </div>
+                          <div className="source-card-content">
+                            <p className="source-card-title">{src.title}</p>
+                            <p className="source-card-domain">{new URL(src.url).hostname}</p>
+                          </div>
+                        </a>
+                      ))}
                     </div>
+                  </div>
                 )}
                 
                 <div className="confidence-meter">
