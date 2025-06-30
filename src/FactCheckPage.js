@@ -177,8 +177,31 @@ const FactCheckPage = () => {
               )}
               {result.sources && result.sources.length > 0 && (
                 <div className="result-sources">
-                  <strong>Sources:</strong>
-                  <ul>{result.sources.map((src, i) => <li key={i}><a href={src.url} target="_blank" rel="noopener noreferrer" aria-label={`Source: ${src.title}`}>{src.title}</a></li>)}</ul>
+                  <h4>Sources:</h4>
+                  <div className="source-cards-container">
+                    {result.sources.map((src, i) => (
+                      <div className="source-card" key={i}>
+                        <div className="source-card-image">
+                          <img 
+                            src={src.image || `https://www.google.com/s2/favicons?domain=${new URL(src.url).hostname}&sz=128`} 
+                            alt="" 
+                            onError={(e) => {
+                              e.target.onerror = null;
+                              e.target.src = 'https://placehold.co/200x120?text=Source';
+                            }}
+                          />
+                        </div>
+                        <div className="source-card-content">
+                          <h5 className="source-card-title">
+                            <a href={src.url} target="_blank" rel="noopener noreferrer" aria-label={`Source: ${src.title}`}>
+                              {src.title}
+                            </a>
+                          </h5>
+                          <span className="source-card-domain">{new URL(src.url).hostname.replace('www.', '')}</span>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
                 </div>
               )}
               <div className="confidence-meter">
