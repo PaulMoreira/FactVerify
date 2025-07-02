@@ -255,68 +255,60 @@ async def search(request: SearchRequest):
         category = detect_category(request.query)
         logger.info(f"Detected category for query '{request.query}': {category}")
 
+        search_urls = get_search_urls(request.query, category)
         all_results = []
 
+        # Configure the dispatcher for memory-adaptive concurrent crawling
+        dispatcher = MemoryAdaptiveDispatcher(
+            memory_threshold_percent=80.0,  # Pause if memory exceeds 80%
+            max_session_permit=4,          # Max 4 concurrent crawls
+            check_interval=2.0             # Check memory every 2 seconds
+        )
+
+        # Use streaming to process results as they arrive
+        run_config = CrawlerRunConfig(
+            stream=True,
+            word_count_threshold=10,  # Restore original threshold
+            cache_mode=CacheMode.BYPASS
+        )
+
         async with AsyncWebCrawler() as crawler:
-            # Configure the dispatcher for memory-adaptive concurrent crawling
-            # This is created INSIDE the crawler's context to ensure proper cleanup order
-            dispatcher = MemoryAdaptiveDispatcher(
-                memory_threshold_percent=60.0,  # Lowered from 80% for a larger safety buffer
-                max_session_permit=2,          # Reduced from 4 to lower peak memory
-                check_interval=1.0             # Check more frequently to react faster
-            )
-
-            # Use streaming to process results as they arrive
-            run_config = CrawlerRunConfig(
-                stream=True,
-                word_count_threshold=10,
-                cache_mode=CacheMode.BYPASS
-            )
-
-            # Initial search
-            search_urls = get_search_urls(request.query, category)
             async for result in await crawler.arun_many(
                 urls=search_urls,
                 config=run_config,
                 dispatcher=dispatcher
             ):
-                # Only process results if we still need them
-                if len(all_results) < request.max_results and result.success and result.markdown:
+                if result.success and result.markdown:
                     processed_results = await crawl_and_process(result.url, crawler, request.max_results, markdown_content=result.markdown)
                     all_results.extend(processed_results)
-            
-            # If we've already hit the max results, we can exit early.
-            if len(all_results) >= request.max_results:
-                return SearchResponse(results=all_results[:request.max_results], category=category)
+                    if len(all_results) >= request.max_results:
+                        break
 
-            # Fallback to Wikipedia if not enough results
-            if len(all_results) < request.max_results:
-                topic_url = f"https://en.wikipedia.org/wiki/{request.query.replace(' ', '_')}"
-                logger.info(f"Trying direct topic crawl: {topic_url}")
+        # Fallback to Wikipedia if not enough results
+        if len(all_results) < request.max_results:
+            topic_url = f"https://en.wikipedia.org/wiki/{request.query.replace(' ', '_')}"
+            logger.info(f"Trying direct topic crawl: {topic_url}")
+            async with AsyncWebCrawler() as crawler:
                 result = await crawler.arun(url=topic_url, config=run_config)
                 if result and result.markdown:
                     summary = result.markdown[:1000] + "..." if len(result.markdown) > 1000 else result.markdown
                     all_results.append(SearchResult(title=f"Information about {request.query}", url=topic_url, content=summary))
 
-            # If we've already hit the max results, we can exit early.
-            if len(all_results) >= request.max_results:
-                return SearchResponse(results=all_results[:request.max_results], category=category)
-
-            # Fallback to query variations if still not enough results
-            if len(all_results) < 2:
-                variations = generate_query_variations(request.query, category)
-                for variation in variations[:2]:
-                    # Check before starting a new batch of crawls
-                    if len(all_results) >= request.max_results:
-                        break
-                    
-                    variation_urls = get_search_urls(variation, category)[:2]
+        # Fallback to query variations if still not enough results
+        if len(all_results) < 2:
+            variations = generate_query_variations(request.query, category)
+            for variation in variations[:2]:
+                variation_urls = get_search_urls(variation, category)[:2]
+                async with AsyncWebCrawler() as crawler:
                     async for result in await crawler.arun_many(urls=variation_urls, config=run_config, dispatcher=dispatcher):
-                        # Only process results if we still need them
-                        if len(all_results) < request.max_results and result.success and result.markdown:
+                        if result.success and result.markdown:
                             processed_results = await crawl_and_process(result.url, crawler, 1, markdown_content=result.markdown)
                             all_results.extend(processed_results)
-        
+                            if len(all_results) >= request.max_results:
+                                break
+                    if len(all_results) >= request.max_results:
+                        break
+
         if all_results:
             return SearchResponse(results=all_results[:request.max_results], category=category)
         else:
