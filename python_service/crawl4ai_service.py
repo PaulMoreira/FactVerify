@@ -9,6 +9,7 @@ from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 from crawl4ai import AsyncWebCrawler, CrawlerRunConfig
+from crawl4ai.async_dispatcher import MemoryAdaptiveDispatcher
 
 # Configure logging
 logging.basicConfig(
@@ -43,63 +44,41 @@ class SearchResponse(BaseModel):
     error: Optional[str] = None
     category: Optional[str] = None
 
-async def crawl_and_process(url: str, crawler: AsyncWebCrawler, max_results: int) -> List[SearchResult]:
-    """Crawls a single URL and processes the results with robust regex parsing."""
+def _process_markdown_results(markdown: str, max_results: int, existing_count: int) -> List[SearchResult]:
+    """Processes markdown from a crawl result and extracts search findings."""
     local_results = []
-    try:
-        logger.info(f"Crawling: {url}")
-        config = CrawlerRunConfig(word_count_threshold=10, verbose=True)
-        result = await crawler.arun(url=url, config=config)
+    if not markdown:
+        return local_results
 
-        if result and result.markdown:
-            # Regex to find search result blocks with title, URL, and snippet
-            # This looks for a markdown link, followed by a URL, and then a text snippet.
-            pattern = re.compile(
-                r'## \[(.*?)\]\((.*?)\)\n(.*?)(?=\n## |$)',
-                re.DOTALL
-            )
-            matches = pattern.findall(result.markdown)
+    # Regex to find search result blocks with title, URL, and snippet
+    pattern = re.compile(
+        r'## \[(.*?) \]\((.*?)\)\n(.*?)(?=\n## |$)',
+        re.DOTALL
+    )
+    matches = pattern.findall(markdown)
 
-            for match in matches:
-                if len(local_results) >= max_results:
-                    break
+    for match in matches:
+        if existing_count + len(local_results) >= max_results:
+            break
 
-                title = match[0].strip()
-                url_found = match[1].strip()
-                content = match[2].strip()
+        title = match[0].strip()
+        url_found = match[1].strip()
+        content = match[2].strip()
 
-                # Filter out irrelevant search results
-                # Filter out irrelevant search results from search engines themselves
-                if ('msn.com/en-us/news/search' in url_found or 'news.yahoo.com/search' in url_found or
-                    'news.google.com/search' in url_found or 'apnews.com/search' in url_found or
-                    'reuters.com/search' in url_found or 'npr.org/search' in url_found or
-                    'techcrunch.com/search' in url_found or 'theverge.com/search' in url_found or
-                    'wired.com/search' in url_found or 'arstechnica.com/search' in url_found or
-                    'engadget.com/search' in url_found or 'cnet.com/search' in url_found or
-                    'zdnet.com/search' in url_found or 'webmd.com/search' in url_found or
-                    'mayoclinic.org/search' in url_found or 'nih.gov/search' in url_found or
-                    'cdc.gov/search' in url_found or 'healthline.com/search' in url_found or
-                    'scientificamerican.com/search' in url_found or 'nature.com/search' in url_found or
-                    'science.org/action/doSearch' in url_found or 'newscientist.com/search' in url_found or
-                    'phys.org/search' in url_found or 'bloomberg.com/search' in url_found or
-                    'wsj.com/search' in url_found or 'forbes.com/search' in url_found or
-                    'cnbc.com/search' in url_found or 'ft.com/search' in url_found or
-                    'wikipedia.org/w/index.php?search' in url_found):
-                    continue
+        # Filter out irrelevant search results from search engines themselves
+        # A simple check for common search URL patterns
+        if ('/search' in url_found or '/w/index.php?search' in url_found):
+            continue
 
-                # Clean up content
-                content = re.sub(r'\s*\n\s*', ' ', content)  # Replace newlines with spaces
-                content = content.replace('...', '').strip()
+        # Clean up content
+        content = re.sub(r'\s*\n\s*', ' ', content).replace('...', '').strip()
 
-                if title and url_found and content:
-                    local_results.append(SearchResult(
-                        title=title,
-                        url=url_found,
-                        content=content
-                    ))
-    except Exception as e:
-        logger.error(f"Error crawling or parsing {url}: {str(e)}")
-
+        if title and url_found and content:
+            local_results.append(SearchResult(
+                title=title,
+                url=url_found,
+                content=content
+            ))
     return local_results
 
 def detect_category(query: str) -> str:
@@ -266,63 +245,102 @@ async def search(request: SearchRequest):
         
         all_results = []
         
-        # Use AsyncWebCrawler to fetch and process search results concurrently
+        # Configure the dispatcher to manage memory usage
+        dispatcher = MemoryAdaptiveDispatcher(
+            memory_threshold_percent=80.0,  # Pause if memory usage exceeds 80%
+            max_session_permit=5,  # Limit to 5 concurrent sessions
+            check_interval=1.0,  # Check memory every second
+        )
+
+        # Use arun_many with the dispatcher to crawl URLs with memory management
         async with AsyncWebCrawler() as crawler:
-            tasks = [crawl_and_process(url, crawler, request.max_results) for url in search_urls]
-            results_from_all_engines = await asyncio.gather(*tasks)
-            
-            # Flatten the list of lists
-            for res_list in results_from_all_engines:
-                all_results.extend(res_list)
+            # The configuration for each crawl job, passed to arun_many
+            configs = [
+                CrawlerRunConfig(
+                    word_count_threshold=10,
+                    verbose=True
+                ) for _ in search_urls
+            ]
+
+            # arun_many will now use the dispatcher to manage concurrency and memory
+            results_from_all_engines = await crawler.arun_many(
+                urls=search_urls,
+                configs=configs,
+                dispatcher=dispatcher
+            )
+
+            # Process the results from the crawl
+            for result in results_from_all_engines:
+                if len(all_results) >= request.max_results:
+                    break
+                if result and result.markdown:
+                    processed_results = _process_markdown_results(
+                        result.markdown,
+                        request.max_results,
+                        len(all_results)
+                    )
+                    all_results.extend(processed_results)
         
         # If we didn't get any results, try fallback strategies
         if not all_results:
-            # Try Wikipedia as a fallback
+            # Fallback 1: Try a direct crawl on Wikipedia for a summary
             try:
                 topic_url = f"https://en.wikipedia.org/wiki/{request.query.replace(' ', '_')}"
                 logger.info(f"No search results found, trying direct topic crawl: {topic_url}")
-                
                 async with AsyncWebCrawler() as crawler:
                     config = CrawlerRunConfig(
-                        word_count_threshold=10,
+                        word_count_threshold=100, 
                         verbose=True
                     )
-                    
                     result = await crawler.arun(url=topic_url, config=config)
-                    
                     if result and result.markdown:
-                        # Extract a summary from the markdown
-                        summary = result.markdown[:1000] + "..." if len(result.markdown) > 1000 else result.markdown
-                        
+                        summary = result.markdown[:1500].rsplit(' ', 1)[0] + "..."
                         all_results.append(SearchResult(
-                            title=f"Information about {request.query}",
+                            title=f"Summary for {request.query}",
                             url=topic_url,
                             content=summary
                         ))
             except Exception as e:
                 logger.error(f"Error in direct topic crawl: {str(e)}")
-                
-            # If still no results, try query variations
+
+            # Fallback 2: If still no results, try query variations
             if not all_results:
-                logger.info(f"No results found with original query, trying variations")
+                logger.info("No results from direct crawl, trying query variations")
                 variations = generate_query_variations(request.query, category)
-                for variation in variations[:3]:  # Limit to top 3 variations to avoid too many requests
+                for variation in variations[:2]:  # Limit to 2 variations
+                    if len(all_results) >= request.max_results:
+                        break
                     logger.info(f"Trying query variation: {variation}")
                     try:
-                        variation_urls = get_search_urls(variation, category)[:3]  # Limit to top 3 sources
+                        variation_urls = get_search_urls(variation, category)[:2]
+                        if not variation_urls:
+                            continue
+                        
                         async with AsyncWebCrawler() as crawler:
-                            for url in variation_urls:
-                                logger.info(f"Crawling variation URL: {url}")
-                                result_list = await crawl_and_process(url, crawler, 2)  # Limit to top 2 results
-                                all_results.extend(result_list)
-                                if all_results:
-                                    logger.info(f"Found results with variation: {variation}")
+                            variation_configs = [
+                                CrawlerRunConfig(
+                                    word_count_threshold=10, 
+                                    verbose=True
+                                ) for _ in variation_urls
+                            ]
+                            variation_results = await crawler.arun_many(
+                                urls=variation_urls,
+                                configs=variation_configs,
+                                dispatcher=dispatcher  # Reuse the dispatcher
+                            )
+                            
+                            for res in variation_results:
+                                if len(all_results) >= request.max_results:
                                     break
+                                if res and res.markdown:
+                                    processed = _process_markdown_results(
+                                        res.markdown,
+                                        request.max_results,
+                                        len(all_results)
+                                    )
+                                    all_results.extend(processed)
                     except Exception as e:
-                        logger.error(f"Error in variation search: {str(e)}")
-                    
-                    if all_results:
-                        break
+                        logger.error(f"Error in variation search for '{variation}': {str(e)}")
         
         # Return the results
         if all_results:
