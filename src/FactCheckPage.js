@@ -222,14 +222,27 @@ const FactCheckPage = () => {
           <h3>Recent Fact Checks</h3>
           {recentFactChecks.length > 0 ? (
             <ul className="recent-checks-list">
-              {recentFactChecks.map(check => (
-                <li key={check.id} className="recent-check-item">
-                  <button onClick={() => loadFactCheck(check)} className="load-fact-check" aria-label={`Load fact check: ${check.query}`}>
-                    <span className="recent-check-query">{check.query}</span>
-                    <span className="check-date">{new Date(check.created_at).toLocaleDateString()}</span>
-                  </button>
-                </li>
-              ))}
+              {recentFactChecks.map(check => {
+                let verdict = 'unknown';
+                try {
+                  const parsedResult = JSON.parse(check.result);
+                  verdict = parsedResult.verdict.toLowerCase().replace(/\s+/g, '-');
+                } catch (err) {
+                  console.error('Failed to parse verdict for recent fact check:', err);
+                }
+                
+                return (
+                  <li key={check.id} className="recent-check-item">
+                    <button onClick={() => loadFactCheck(check)} className="load-fact-check" aria-label={`Load fact check: ${check.query}`}>
+                      <div className="recent-check-header">
+                        <span className={`fact-check-verdict verdict-${verdict}`}>{verdict.replace(/-/g, ' ')}</span>
+                        <span className="check-date">{new Date(check.created_at).toLocaleDateString()}</span>
+                      </div>
+                      <span className="recent-check-query">{check.query}</span>
+                    </button>
+                  </li>
+                );
+              })}
             </ul>
           ) : (<p>No recent fact checks available.</p>)}
         </section>

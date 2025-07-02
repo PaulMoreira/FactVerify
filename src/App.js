@@ -3,6 +3,7 @@ import { BrowserRouter as Router, Route, Routes, Link } from 'react-router-dom';
 import './App.css';
 import FactCheckPage from './FactCheckPage.js';
 import FactCheckDetailPage from './FactCheckDetailPage.js';
+import AllFactChecksPage from './AllFactChecksPage.js';
 import Logo from './Logo';
 import { Analytics } from "@vercel/analytics/react";
 import { SpeedInsights } from "@vercel/speed-insights/react";
@@ -46,6 +47,9 @@ const App = () => {
             <Link to="/" className="logo-link">
               <Logo />
             </Link>
+            <nav>
+              <Link to="/fact-checks">All Fact Checks</Link>
+            </nav>
             <button 
               className="theme-toggle" 
               onClick={toggleDarkMode}
@@ -57,7 +61,8 @@ const App = () => {
         </header>
         <Routes>
           <Route path="/" element={<FactCheckPage />} />
-          <Route path="/fact-check/:id" element={<FactCheckDetailPage />} />
+                    <Route path="/fact-check/:id" element={<FactCheckDetailPage />} />
+          <Route path="/fact-checks" element={<AllFactChecksPage />} />
         </Routes>
         <footer>
           <p>&copy; 2025 FactVerify. All rights reserved.</p>

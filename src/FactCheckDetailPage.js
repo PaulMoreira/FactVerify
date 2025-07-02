@@ -170,11 +170,15 @@ const FactCheckDetailPage = () => {
                 </div>
 
                 <ShareResults result={result} claim={query} url={`https://factverify.app/fact-check/${id}`} />
+                
+                <div className="action-buttons-container">
+                  <Link to="/" className="action-button check-another-button">
+                    <span className="button-icon">🔍</span>
+                    Check another claim
+                  </Link>
+                </div>
             </div>
         </section>
-        <div className="back-link-container">
-            <Link to="/" className="home-link">Check another claim</Link>
-        </div>
     </main>
   );
 };
