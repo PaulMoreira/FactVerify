@@ -69,8 +69,9 @@ async def crawl_and_process(url: str, crawler: AsyncWebCrawler, max_results: int
 
                 # Filter out irrelevant search results
                 # Filter out irrelevant search results from search engines themselves
-                if ('duckduckgo.com' in url_found or 'msn.com/en-us/news/search' in url_found or
-                    'news.yahoo.com/search' in url_found or 'news.google.com/search' in url_found):
+                if ('msn.com/en-us/news/search' in url_found or 'news.yahoo.com/search' in url_found or
+                    'news.google.com/search' in url_found or 'apnews.com/search' in url_found or
+                    'reuters.com/search' in url_found or 'npr.org/search' in url_found):
                     continue
 
                 # Clean up content
@@ -98,11 +99,13 @@ async def search(request: SearchRequest):
         # and prevents the "no results found" issue for fabricated quotes.
         sanitized_query = request.query.replace('"', '').replace("'", "")
         search_urls = [
-            f"https://duckduckgo.com/?q={sanitized_query.replace(' ', '+')}&t=h_&ia=web",
             f"https://www.bing.com/search?q={sanitized_query.replace(' ', '+')}",
             f"https://www.msn.com/en-us/news/search?q={sanitized_query.replace(' ', '+')}",
             f"https://news.yahoo.com/search?p={sanitized_query.replace(' ', '+')}",
-            f"https://news.google.com/search?q={sanitized_query.replace(' ', '+')}"
+            f"https://news.google.com/search?q={sanitized_query.replace(' ', '+')}",
+            f"https://www.apnews.com/search?q={sanitized_query.replace(' ', '+')}",
+            f"https://www.reuters.com/search/news?blob={sanitized_query.replace(' ', '+')}",
+            f"https://www.npr.org/search?query={sanitized_query.replace(' ', '+')}"
         ]
         
         all_results = []

@@ -181,3 +181,6 @@ debug.log
 *.cert
 
 .vercel
+
+# Utility scripts
+convert-svg-to-jpg.js
