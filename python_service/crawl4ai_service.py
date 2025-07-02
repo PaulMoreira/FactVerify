@@ -261,9 +261,9 @@ async def search(request: SearchRequest):
             # Configure the dispatcher for memory-adaptive concurrent crawling
             # This is created INSIDE the crawler's context to ensure proper cleanup order
             dispatcher = MemoryAdaptiveDispatcher(
-                memory_threshold_percent=80.0,
-                max_session_permit=4,
-                check_interval=2.0
+                memory_threshold_percent=60.0,  # Lowered from 80% for a larger safety buffer
+                max_session_permit=2,          # Reduced from 4 to lower peak memory
+                check_interval=1.0             # Check more frequently to react faster
             )
 
             # Use streaming to process results as they arrive
