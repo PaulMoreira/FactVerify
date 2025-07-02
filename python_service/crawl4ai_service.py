@@ -48,17 +48,21 @@ async def crawl_and_process(url: str, crawler: AsyncWebCrawler, max_results: int
     local_results = []
     try:
         logger.info(f"Crawling: {url}")
-        config = CrawlerRunConfig(word_count_threshold=10, verbose=True)
+        # Use a lower word count threshold and disable verbose mode to reduce memory usage
+        config = CrawlerRunConfig(word_count_threshold=5, verbose=False)
         result = await crawler.arun(url=url, config=config)
 
         if result and result.markdown:
+            # Limit the markdown size before processing to reduce memory usage
+            markdown_content = result.markdown[:10000] if result.markdown else ""
+            
             # Regex to find search result blocks with title, URL, and snippet
             # This looks for a markdown link, followed by a URL, and then a text snippet.
             pattern = re.compile(
                 r'## \[(.*?)\]\((.*?)\)\n(.*?)(?=\n## |$)',
                 re.DOTALL
             )
-            matches = pattern.findall(result.markdown)
+            matches = pattern.findall(markdown_content)
 
             for match in matches:
                 if len(local_results) >= max_results:
@@ -151,10 +155,9 @@ def get_search_urls(query: str, category: str) -> List[str]:
     sanitized_query = query.replace('"', '').replace("'", "")
     query_param = sanitized_query.replace(' ', '+')
     
-    # Common search engines for all categories
+    # Limit to just one common search engine to reduce memory usage
     common_urls = [
-        f"https://www.bing.com/search?q={query_param}",
-        f"https://news.google.com/search?q={query_param}"
+        f"https://www.bing.com/search?q={query_param}"
     ]
     
     # Category-specific sources
@@ -208,7 +211,7 @@ def get_search_urls(query: str, category: str) -> List[str]:
     return common_urls + category_urls.get(category, category_urls["general"])
 
 def generate_query_variations(query: str, category: str) -> List[str]:
-    """Generate variations of the query based on the category."""
+    """Generate variations of the query based on the category, but limit to reduce memory usage."""
     variations = [query]  # Always include the original query
     
     # Add category-specific variations
@@ -261,72 +264,102 @@ async def search(request: SearchRequest):
         category = detect_category(request.query)
         logger.info(f"Detected category for query '{request.query}': {category}")
         
-        # Get category-specific search URLs
-        search_urls = get_search_urls(request.query, category)
+        # Get category-specific search URLs but limit to reduce memory usage
+        all_search_urls = get_search_urls(request.query, category)
+        # Limit to 3 URLs to reduce memory consumption
+        search_urls = all_search_urls[:3]
+        logger.info(f"Limited search to {len(search_urls)} URLs out of {len(all_search_urls)} available")
         
         all_results = []
         
-        # Use AsyncWebCrawler to fetch and process search results concurrently
+        # Process URLs sequentially instead of concurrently to reduce memory usage
         async with AsyncWebCrawler() as crawler:
-            tasks = [crawl_and_process(url, crawler, request.max_results) for url in search_urls]
-            results_from_all_engines = await asyncio.gather(*tasks)
+            # Set a lower word count threshold to reduce memory usage
+            config = CrawlerRunConfig(word_count_threshold=5, verbose=False)
             
-            # Flatten the list of lists
-            for res_list in results_from_all_engines:
-                all_results.extend(res_list)
+            # Process URLs one at a time instead of concurrently
+            for url in search_urls:
+                # Check if we already have enough results
+                if len(all_results) >= request.max_results:
+                    logger.info("Reached maximum results, stopping search")
+                    break
+                    
+                result_list = await crawl_and_process(url, crawler, request.max_results)
+                all_results.extend(result_list)
+                
+                # Early return if we have enough results
+                if len(all_results) >= request.max_results:
+                    logger.info("Reached maximum results, returning early")
+                    return SearchResponse(results=all_results[:request.max_results], category=category)
         
-        # If we didn't get any results, try fallback strategies
-        if not all_results:
-            # Try Wikipedia as a fallback
+        # If we don't have enough results, try Wikipedia as a fallback
+        if len(all_results) < request.max_results:
             try:
                 topic_url = f"https://en.wikipedia.org/wiki/{request.query.replace(' ', '_')}"
-                logger.info(f"No search results found, trying direct topic crawl: {topic_url}")
+                logger.info(f"Need more results, trying direct topic crawl: {topic_url}")
                 
                 async with AsyncWebCrawler() as crawler:
                     config = CrawlerRunConfig(
-                        word_count_threshold=10,
-                        verbose=True
+                        word_count_threshold=5,  # Lower threshold
+                        verbose=False  # Disable verbose logging to reduce overhead
                     )
                     
                     result = await crawler.arun(url=topic_url, config=config)
                     
                     if result and result.markdown:
-                        # Extract a summary from the markdown
-                        summary = result.markdown[:1000] + "..." if len(result.markdown) > 1000 else result.markdown
+                        # Extract a shorter summary to reduce memory usage
+                        summary = result.markdown[:500] + "..." if len(result.markdown) > 500 else result.markdown
                         
                         all_results.append(SearchResult(
                             title=f"Information about {request.query}",
                             url=topic_url,
                             content=summary
                         ))
+                        
+                        # Early return if we have enough results
+                        if len(all_results) >= request.max_results:
+                            logger.info("Reached maximum results after Wikipedia, returning early")
+                            return SearchResponse(results=all_results[:request.max_results], category=category)
             except Exception as e:
                 logger.error(f"Error in direct topic crawl: {str(e)}")
-                
-            # If still no results, try query variations
-            if not all_results:
-                logger.info(f"No results found with original query, trying variations")
-                variations = generate_query_variations(request.query, category)
-                for variation in variations[:3]:  # Limit to top 3 variations to avoid too many requests
-                    logger.info(f"Trying query variation: {variation}")
-                    try:
-                        variation_urls = get_search_urls(variation, category)[:3]  # Limit to top 3 sources
-                        async with AsyncWebCrawler() as crawler:
-                            for url in variation_urls:
-                                logger.info(f"Crawling variation URL: {url}")
-                                result_list = await crawl_and_process(url, crawler, 2)  # Limit to top 2 results
-                                all_results.extend(result_list)
-                                if all_results:
-                                    logger.info(f"Found results with variation: {variation}")
-                                    break
-                    except Exception as e:
-                        logger.error(f"Error in variation search: {str(e)}")
-                    
-                    if all_results:
-                        break
         
-        # Return the results
+        # Only try variations if we have very few results
+        if len(all_results) < 2:
+            logger.info(f"Still need more results, trying query variations")
+            variations = generate_query_variations(request.query, category)[:2]  # Limit to top 2 variations
+            
+            for variation in variations:
+                logger.info(f"Trying query variation: {variation}")
+                try:
+                    # Limit to just 1 source per variation to reduce memory usage
+                    variation_urls = get_search_urls(variation, category)[:1]
+                    
+                    async with AsyncWebCrawler() as crawler:
+                        for url in variation_urls:
+                            logger.info(f"Crawling variation URL: {url}")
+                            config = CrawlerRunConfig(word_count_threshold=5, verbose=False)
+                            result_list = await crawl_and_process(url, crawler, 1)  # Limit to just 1 result
+                            all_results.extend(result_list)
+                            
+                            # Early return if we have enough results
+                            if len(all_results) >= request.max_results:
+                                logger.info("Reached maximum results after variations, returning early")
+                                return SearchResponse(results=all_results[:request.max_results], category=category)
+                            
+                            # Break after first successful result to save resources
+                            if result_list:
+                                logger.info(f"Found results with variation: {variation}")
+                                break
+                except Exception as e:
+                    logger.error(f"Error in variation search: {str(e)}")
+                
+                # Break after first successful variation to save resources
+                if len(all_results) > 0:
+                    break
+        
+        # Return the results, ensuring we don't exceed max_results
         if all_results:
-            return SearchResponse(results=all_results, category=category)
+            return SearchResponse(results=all_results[:request.max_results], category=category)
         else:
             return SearchResponse(
                 results=[],
