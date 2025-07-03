@@ -51,6 +51,7 @@ async def crawl_and_process(url: str, crawler: AsyncWebCrawler, max_results: int
         result = await crawler.arun(url=url, config=config)
 
         if result and result.markdown:
+            logger.info(f"Raw markdown from {url}:\n{result.markdown}")
             # Regex to find search result blocks with title, URL, and snippet
             # This looks for a markdown link, followed by a URL, and then a text snippet.
             pattern = re.compile(
