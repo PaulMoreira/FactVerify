@@ -168,7 +168,7 @@ async def crawl_and_process(url: str, crawler: AsyncWebCrawler, max_results: int
                     
                 # Filter out search engine URLs, navigation links, and other non-content pages
                 # More comprehensive detection of non-source URLs
-                search_engine_patterns = [
+                non_source_patterns = [
                     # Search engines
                     'msn.com/en-us/news/search',
                     'news.google.com/search',
@@ -195,24 +195,41 @@ async def crawl_and_process(url: str, crawler: AsyncWebCrawler, max_results: int
                     
                     # JavaScript links
                     'javascript:void',
+                    'javascript:',
                     
                     # Common navigation elements
                     '/home',
                     '/news',
                     '/health',
-                    '/more'
+                    '/more',
+                    
+                    # Microsoft help/legal/privacy pages
+                    'go.microsoft.com/fwlink',
+                    'support.microsoft.com',
+                    
+                    # Image links
+                    '.jpg', '.jpeg', '.png', '.gif', '.webp',
+                    'images/search',
+                    'th.bing.com/th',
+                    'gstatic.com/favicon',
+                    
+                    # Incomplete or malformed URLs
+                    'US&gl=US&ceid=US',
+                    '&hl=en-US&gl=US',
+                    '![]'
                 ]
                 
-                # Check if this is a search engine results page or navigation link
-                is_non_source_url = any(pattern in url_found for pattern in search_engine_patterns)
+                # Check if this is a non-source URL
+                is_non_source_url = any(pattern in url_found for pattern in non_source_patterns)
                 
-                if is_non_source_url:
+                # Also check for very short URLs or titles which are likely not valid content sources
+                if is_non_source_url or len(url_found) < 15 or len(title) < 5:
                     logger.info(f"Filtering out non-source URL: {url_found}")
                     continue
                 
-                # Additional check to ensure we're not getting intermediate redirects
-                if any(redirect in url_found for redirect in ['bing.com/ck/a', 'google.com/url?', 'click.']):
-                    logger.info(f"Filtering out redirect URL: {url_found}")
+                # Additional check to ensure we're not getting intermediate redirects or incomplete URLs
+                if any(redirect in url_found for redirect in ['bing.com/ck/a', 'google.com/url?', 'click.']) or not url_found.startswith('http'):
+                    logger.info(f"Filtering out redirect or invalid URL: {url_found}")
                     continue
                     
                 # No longer prioritizing specific news sources

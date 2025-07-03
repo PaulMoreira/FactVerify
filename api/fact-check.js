@@ -487,11 +487,43 @@ ${searchResults}`
         } catch (parseError) {
           console.error('Failed to parse JSON from OpenAI response:', parseError);
           console.error('Raw content from OpenAI was:', rawContent);
-          throw new Error('The response from the AI was not valid JSON.');
+          
+          // Try to fix common JSON issues with URLs in sources
+          try {
+            console.log('Attempting to fix malformed JSON response...');
+            
+            // Fix for truncated URLs in sources array by removing problematic characters
+            let fixedJson = rawContent;
+            
+            // Replace any malformed URL strings that might be causing JSON parsing issues
+            fixedJson = fixedJson.replace(/"url":\s*"([^"]*?)\n/g, '"url": "$1"');
+            fixedJson = fixedJson.replace(/"url":\s*"([^"]*)$/g, '"url": "$1"');
+            
+            // Try parsing the fixed JSON
+            factCheckResult = JSON.parse(fixedJson);
+            console.log('Successfully parsed fixed JSON response');
+          } catch (fixError) {
+            console.error('Failed to fix and parse JSON:', fixError);
+            
+            // If all parsing attempts fail, create a structured error object
+            factCheckResult = {
+              verdict: 'Unverifiable',
+              summary: 'Due to a technical error with the AI model, this claim could not be verified. Please try again later.',
+              sources: [],
+              confidence: 'Low'
+            };
+          }
         }
       } else {
         console.error('Invalid response format from OpenAI:', JSON.stringify(completion));
-        throw new Error('Invalid response format from OpenAI');
+        
+        // If the OpenAI response is invalid, create a structured error object
+        factCheckResult = {
+          verdict: 'Unverifiable',
+          summary: 'Due to a technical error with the AI model, this claim could not be verified. Please try again later.',
+          sources: [],
+          confidence: 'Low'
+        };
       }
     } catch (error) {
       console.error('Error with OpenAI API call:');
