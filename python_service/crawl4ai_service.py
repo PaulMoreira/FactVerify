@@ -142,11 +142,10 @@ async def crawl_and_process(url: str, crawler: AsyncWebCrawler, max_results: int
                 if len(title) < 3 or len(url_found) < 10:
                     continue
                     
-                # Filter out search engine URLs and other irrelevant results
+                # Only filter out search engine URLs to avoid recursive search results
                 if any(search_url in url_found for search_url in [
                     'msn.com/en-us/news/search',
                     'news.google.com/search',
-                    'theverge.com/search',
                     'bing.com/search',
                     'search?q=',
                     '/search/',
@@ -155,18 +154,11 @@ async def crawl_and_process(url: str, crawler: AsyncWebCrawler, max_results: int
                     logger.info(f"Filtering out search engine URL: {url_found}")
                     continue
                     
-                # Prioritize news sources
-                is_news_source = any(news_domain in url_found.lower() for news_domain in [
-                    'news', 'nytimes', 'washingtonpost', 'bbc', 'cnn', 'reuters',
-                    'apnews', 'npr', 'theguardian', 'wsj', 'bloomberg', 'cnbc',
-                    'forbes', 'time', 'economist', 'politico', 'vox', 'slate',
-                    'thehill', 'foxnews', 'nbcnews', 'cbsnews', 'abcnews',
-                    'usatoday', 'latimes', 'chicagotribune', 'nypost', 'newsweek',
-                    'theatlantic', 'newyorker', 'huffpost', 'buzzfeed', 'vice'
-                ])
+                # No longer prioritizing specific news sources
+                # All relevant results will be included
                 
                 # Log the URLs we're keeping
-                logger.info(f"Adding result: {title} | {url_found} | News source: {is_news_source}")
+                logger.info(f"Adding result: {title} | {url_found}")
 
                 # Clean up content
                 content = re.sub(r'\s*\n\s*', ' ', content)  # Replace newlines with spaces
