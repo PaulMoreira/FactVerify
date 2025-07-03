@@ -70,8 +70,7 @@ async def crawl_and_process(url: str, crawler: AsyncWebCrawler, max_results: int
                 # Filter out irrelevant search results
                 # Filter out irrelevant search results from search engines themselves
                 if ('msn.com/en-us/news/search' in url_found or
-                    'news.google.com/search' in url_found or 'apnews.com/search' in url_found or
-                    'reuters.com/search' in url_found or 'npr.org/search' in url_found or
+                    'news.google.com/search' in url_found or
                     'theverge.com/search' in url_found):
                     continue
 
@@ -103,9 +102,6 @@ async def search(request: SearchRequest):
             f"https://www.bing.com/search?q={sanitized_query.replace(' ', '+')}",
             f"https://www.msn.com/en-us/news/search?q={sanitized_query.replace(' ', '+')}",
             f"https://news.google.com/search?q={sanitized_query.replace(' ', '+')}",
-            f"https://www.apnews.com/search?q={sanitized_query.replace(' ', '+')}",
-            f"https://www.reuters.com/search/news?blob={sanitized_query.replace(' ', '+')}",
-            f"https://www.npr.org/search?query={sanitized_query.replace(' ', '+')}",
             f"https://www.theverge.com/search?q={sanitized_query.replace(' ', '+')}"
         ]
         
