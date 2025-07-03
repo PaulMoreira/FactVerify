@@ -954,6 +954,11 @@ button#fact-check-submit:disabled {
   height: 100%;
 }
 
+.fact-check-card-link:hover {
+  text-decoration: none;
+  color: inherit;
+}
+
 .fact-check-card-content {
   padding: 20px;
   display: flex;
