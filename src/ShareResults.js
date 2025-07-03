@@ -5,7 +5,7 @@ const ShareResults = ({ result, claim }) => {
   const [copied, setCopied] = useState(false);
   
   // Generate share text
-  const shareText = `Fact Check: "${claim}" - Verdict: ${result.verdict}. Check out the full analysis at AI Fact-Checking Portal.`;
+  const shareText = `Fact Check: "${claim}" - Verdict: ${result.verdict}. Check out the full analysis at AI Fact Verify: https://factverify.app`;
   
   // Copy to clipboard function
   const copyToClipboard = () => {
