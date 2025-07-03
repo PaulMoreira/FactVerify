@@ -141,6 +141,9 @@ const FactCheckPage = () => {
         <meta property="og:description" content={result ? result.summary : 'AI-powered political fact-checking.'} />
         <meta property="og:url" content={newFactCheckId ? `https://factverify.app/fact-check/${newFactCheckId}` : 'https://factverify.app'} />
         <meta property="og:type" content="website" />
+        <meta property="og:image" content="https://factverify.app/social-share.jpg" />
+        <meta property="og:image:width" content="1200" />
+        <meta property="og:image:height" content="630" />
         {structuredData && <script type="application/ld+json">{JSON.stringify(structuredData)}</script>}
       </Helmet>
       <main className="main-content-container">
