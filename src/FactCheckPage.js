@@ -187,7 +187,20 @@ const FactCheckPage = () => {
                             alt="" 
                             onError={(e) => {
                               e.target.onerror = null;
-                              e.target.src = 'https://placehold.co/200x120?text=Source';
+                              // Try a different favicon service if Google's fails
+                              e.target.src = `https://icon.horse/icon/${new URL(src.url).hostname}`;
+                              // If that also fails, use a domain-colored placeholder
+                              e.target.onerror = () => {
+                                const domain = new URL(src.url).hostname;
+                                const colorHash = Math.abs(domain.split('').reduce((acc, char) => {
+                                  return char.charCodeAt(0) + ((acc << 5) - acc);
+                                }, 0));
+                                const hue = colorHash % 360;
+                                const letter = domain.charAt(0).toUpperCase();
+                                e.target.style.display = 'none';
+                                e.target.parentNode.style.backgroundColor = `hsl(${hue}, 70%, 60%)`;
+                                e.target.parentNode.innerHTML = `<div class="source-card-fallback">${letter}</div>`;
+                              };
                             }}
                           />
                         </div>

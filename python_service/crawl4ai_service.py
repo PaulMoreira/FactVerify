@@ -47,18 +47,88 @@ async def crawl_and_process(url: str, crawler: AsyncWebCrawler, max_results: int
     local_results = []
     try:
         logger.info(f"Crawling: {url}")
-        config = CrawlerRunConfig(word_count_threshold=10, verbose=True)
+        config = CrawlerRunConfig(
+            word_count_threshold=10, 
+            verbose=True
+            # Using only supported parameters for your Crawl4AI version
+        )
         result = await crawler.arun(url=url, config=config)
 
-        if result and result.markdown:
-            logger.info(f"Raw markdown from {url}:\n{result.markdown}")
-            # Regex to find search result blocks with title, URL, and snippet
-            # This looks for a markdown link, followed by a URL, and then a text snippet.
-            pattern = re.compile(
-                r'## \[(.*?)\]\((.*?)\)\n(.*?)(?=\n## |$)',
-                re.DOTALL
-            )
-            matches = pattern.findall(result.markdown)
+        if result and result.success:
+            # Extract markdown content based on the type
+            markdown_content = ""
+            if isinstance(result.markdown, str):
+                markdown_content = result.markdown
+                logger.info(f"Raw markdown from {url} (string type)")
+            else:
+                # Use the proper MarkdownGenerationResult structure
+                try:
+                    markdown_content = result.markdown.raw_markdown
+                    logger.info(f"Raw markdown from {url} (MarkdownGenerationResult type)")
+                except AttributeError:
+                    logger.warning(f"Could not extract markdown from {url}, unexpected result structure")
+                    return local_results
+            
+            logger.info(f"Processing markdown content from {url}")
+            
+            # Enhanced regex patterns to find search result blocks with title, URL, and snippet
+            patterns = [
+                # Standard format with ## heading
+                re.compile(r'## \[(.*?)\]\((.*?)\)\n(.*?)(?=\n## |$)', re.DOTALL),
+                
+                # Alternative format with ![]() image prefix
+                re.compile(r'!\[\]\(.*?\)\n\[(.*?)\]\((.*?)\)\n(.*?)(?=!\[\]|$)', re.DOTALL),
+                
+                # Format with title outside of link
+                re.compile(r'\[(.*?)\]\n!\[\]\(.*?\)\n(.*?)\n\[(.*?)\]\((.*?)\)', re.DOTALL),
+                
+                # News article format with heading and link
+                re.compile(r'### \[(.*?)\]\((.*?)\)\n(.*?)(?=\n### |$)', re.DOTALL),
+                
+                # Simple markdown link format
+                re.compile(r'\[(.*?)\]\((.*?)\)[^\(]*?([^\[]*)(?=\[|$)', re.DOTALL),
+                
+                # HTML converted format (common in news sites)
+                re.compile(r'<h[1-3]>(.*?)</h[1-3]>.*?<a href="(.*?)".*?>.*?</a>(.*?)(?=<h[1-3]>|$)', re.DOTALL)
+            ]
+            
+            # Try each pattern and collect all matches
+            all_matches = []
+            for pattern in patterns:
+                matches = pattern.findall(markdown_content)
+                if matches:
+                    logger.info(f"Found {len(matches)} matches with pattern {pattern.pattern}")
+                    all_matches.extend(matches)
+                    
+            # Process the matches based on their format
+            matches = []
+            for match in all_matches:
+                if len(match) == 3:  # Standard format: title, url, content
+                    matches.append(match)
+                elif len(match) == 4:  # Format with title outside link: title, content, _, url
+                    matches.append((match[0], match[3], match[1] + "\n" + match[2]))
+                    
+            logger.info(f"Total matches found: {len(matches)}")
+
+            # If no matches found with regex, try to extract links directly
+            if not matches and result.links:
+                logger.info(f"No regex matches, trying to extract from result.links")
+                try:
+                    # Extract links from the result.links field
+                    for link_type, links in result.links.items():
+                        for link in links:
+                            if len(local_results) >= max_results:
+                                break
+                                
+                            if 'url' in link and 'text' in link:
+                                url_found = link['url']
+                                title = link['text'] or "Link from search results"
+                                content = link.get('context', "")
+                                
+                                # Add to matches for further processing
+                                matches.append((title, url_found, content))
+                except Exception as e:
+                    logger.error(f"Error extracting links from result.links: {str(e)}")
 
             for match in matches:
                 if len(local_results) >= max_results:
@@ -68,12 +138,35 @@ async def crawl_and_process(url: str, crawler: AsyncWebCrawler, max_results: int
                 url_found = match[1].strip()
                 content = match[2].strip()
 
-                # Filter out irrelevant search results
-                # Filter out irrelevant search results from search engines themselves
-                if ('msn.com/en-us/news/search' in url_found or
-                    'news.google.com/search' in url_found or
-                    'theverge.com/search' in url_found):
+                # Skip empty or very short titles/URLs
+                if len(title) < 3 or len(url_found) < 10:
                     continue
+                    
+                # Filter out search engine URLs and other irrelevant results
+                if any(search_url in url_found for search_url in [
+                    'msn.com/en-us/news/search',
+                    'news.google.com/search',
+                    'theverge.com/search',
+                    'bing.com/search',
+                    'search?q=',
+                    '/search/',
+                    'search.html'
+                ]):
+                    logger.info(f"Filtering out search engine URL: {url_found}")
+                    continue
+                    
+                # Prioritize news sources
+                is_news_source = any(news_domain in url_found.lower() for news_domain in [
+                    'news', 'nytimes', 'washingtonpost', 'bbc', 'cnn', 'reuters',
+                    'apnews', 'npr', 'theguardian', 'wsj', 'bloomberg', 'cnbc',
+                    'forbes', 'time', 'economist', 'politico', 'vox', 'slate',
+                    'thehill', 'foxnews', 'nbcnews', 'cbsnews', 'abcnews',
+                    'usatoday', 'latimes', 'chicagotribune', 'nypost', 'newsweek',
+                    'theatlantic', 'newyorker', 'huffpost', 'buzzfeed', 'vice'
+                ])
+                
+                # Log the URLs we're keeping
+                logger.info(f"Adding result: {title} | {url_found} | News source: {is_news_source}")
 
                 # Clean up content
                 content = re.sub(r'\s*\n\s*', ' ', content)  # Replace newlines with spaces
@@ -99,11 +192,12 @@ async def search(request: SearchRequest):
         # Sanitize the query to remove quotes, which allows for a broader search
         # and prevents the "no results found" issue for fabricated quotes.
         sanitized_query = request.query.replace('"', '').replace("'", "")
+        
+        # Simplified search URLs with only Bing and Google
         search_urls = [
             f"https://www.bing.com/search?q={sanitized_query.replace(' ', '+')}",
-            f"https://www.msn.com/en-us/news/search?q={sanitized_query.replace(' ', '+')}",
-            f"https://news.google.com/search?q={sanitized_query.replace(' ', '+')}",
-            f"https://www.theverge.com/search?q={sanitized_query.replace(' ', '+')}"
+            f"https://www.bing.com/news/search?q={sanitized_query.replace(' ', '+')}",
+            f"https://news.google.com/search?q={sanitized_query.replace(' ', '+')}"
         ]
         
         all_results = []
@@ -117,25 +211,68 @@ async def search(request: SearchRequest):
             for res_list in results_from_all_engines:
                 all_results.extend(res_list)
         
-        # If we didn't get any results, try to crawl directly for the query topic
-        if not all_results:
+        # Deduplicate results by URL
+        unique_results = {}
+        for result in all_results:
+            if result.url not in unique_results:
+                unique_results[result.url] = result
+        
+        deduplicated_results = list(unique_results.values())
+        
+        # If we still don't have enough results, try additional sources
+        if len(deduplicated_results) < 2:
             try:
-                topic_url = f"https://en.wikipedia.org/wiki/{request.query.replace(' ', '_')}"
+                # Try a direct search on a news aggregator
+                additional_urls = [
+                    f"https://news.yahoo.com/search?p={sanitized_query.replace(' ', '+')}",
+                    f"https://www.theguardian.com/search?q={sanitized_query.replace(' ', '+')}"
+                ]
+                
+                logger.info(f"Not enough results, trying additional sources: {additional_urls}")
+                
+                async with AsyncWebCrawler() as crawler:
+                    tasks = [crawl_and_process(url, crawler, request.max_results) for url in additional_urls]
+                    additional_results = await asyncio.gather(*tasks)
+                    
+                    # Add new results
+                    for res_list in additional_results:
+                        for result in res_list:
+                            if result.url not in unique_results:
+                                unique_results[result.url] = result
+                
+                deduplicated_results = list(unique_results.values())
+            except Exception as e:
+                logger.error(f"Error in additional sources search: {str(e)}")
+        
+        # If we still don't have results, try Wikipedia as a fallback
+        if not deduplicated_results:
+            try:
+                # Extract key terms for Wikipedia search
+                key_terms = ' '.join([term for term in sanitized_query.split() if len(term) > 3])
+                topic_url = f"https://en.wikipedia.org/wiki/{key_terms.replace(' ', '_')}"
                 logger.info(f"No search results found, trying direct topic crawl: {topic_url}")
                 
                 async with AsyncWebCrawler() as crawler:
                     config = CrawlerRunConfig(
                         word_count_threshold=10,
                         verbose=True
+                        # Using only supported parameters for your Crawl4AI version
                     )
                     
                     result = await crawler.arun(url=topic_url, config=config)
                     
-                    if result and result.markdown:
-                        # Extract a summary from the markdown
-                        summary = result.markdown[:1000] + "..." if len(result.markdown) > 1000 else result.markdown
+                    if result and result.success:
+                        # Extract markdown content
+                        markdown_content = ""
+                        if isinstance(result.markdown, str):
+                            markdown_content = result.markdown
+                        else:
+                            markdown_content = result.markdown.raw_markdown
                         
-                        all_results.append(SearchResult(
+                        # Extract a summary from the markdown
+                        summary = markdown_content[:1000] + "..." if len(markdown_content) > 1000 else markdown_content
+                        
+                        deduplicated_results.append(SearchResult(
                             title=f"Information about {request.query}",
                             url=topic_url,
                             content=summary
@@ -144,9 +281,13 @@ async def search(request: SearchRequest):
                 logger.error(f"Error in direct topic crawl: {str(e)}")
         
         # Return the results
-        if all_results:
-            return SearchResponse(results=all_results)
+        if deduplicated_results:
+            logger.info(f"Returning {len(deduplicated_results)} results to the search API")
+            for i, result in enumerate(deduplicated_results):
+                logger.info(f"Result {i+1}: {result.title} | {result.url}")
+            return SearchResponse(results=deduplicated_results)
         else:
+            logger.info("No results found, returning empty response")
             return SearchResponse(
                 results=[],
                 error="No relevant information found. The query might be too specific or recent."

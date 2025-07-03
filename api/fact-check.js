@@ -198,17 +198,172 @@ async function searchWeb(query) {
       }
       
       if (response.data && response.data.results) {
-        // Format search results
+        // Format search results in a structured way that's easier for the AI to parse
         searchResults = `Search results for "${query}":\n\n`;
-        response.data.results.forEach((result, i) => {
-          searchResults += `${i + 1}. ${result.title}\n`;
-          if (result.url) searchResults += `   Source: ${result.url}\n`;
-          if (result.content) searchResults += `   ${result.content}\n\n`;
+        
+        // Store the raw results for later use in structured format
+        const rawResults = response.data.results;
+        
+        // Format for human-readable and AI-parseable format
+        rawResults.forEach((result, i) => {
+          searchResults += `RESULT ${i + 1}:\n`;
+          searchResults += `TITLE: ${result.title}\n`;
+          if (result.url) searchResults += `URL: ${result.url}\n`;
+          if (result.content) searchResults += `CONTENT: ${result.content}\n\n`;
         });
         
         // Check if these are mock results
         if (response.data.is_mock) {
           searchResults += '\n[Note: These are simulated search results as the search service is currently unavailable]\n';
+        }
+        
+        // Add a structured section specifically for the AI to parse
+        // Using a very clear delimiter and format to ensure reliable extraction
+        searchResults += '\n\n=== STRUCTURED_SOURCES_FOR_AI START ===\n';
+        let structuredSourceCount = 0;
+        
+        // First, categorize results by type to prioritize news sources
+        const newsResults = [];
+        const officialResults = [];
+        const otherResults = [];
+        
+        // Debug logging for URL categorization
+        console.log('Starting URL categorization for search results');
+        
+        // Identify news sources and categorize results
+        rawResults.forEach((result, index) => {
+          if (result.title && result.url) {
+            const url = result.url.toLowerCase();
+            const title = result.title.toLowerCase();
+            
+            // Log the URL being processed
+            console.log(`Processing result ${index + 1}: ${result.url}`);
+            
+            // Enhanced news source detection patterns
+            const isNewsSource = (
+              // URL patterns
+              url.includes('news') || 
+              url.includes('article') || 
+              url.includes('story') ||
+              url.match(/\.(com|org|net)\/\d{4}(\/|-)\d{1,2}/) || // Date pattern in URL
+              url.match(/\/news\//) ||
+              url.match(/\/articles?\//) ||
+              url.includes('press-release') ||
+              url.includes('blog') ||
+              url.includes('magazine') ||
+              url.includes('report') ||
+              
+              // Google News and other aggregator patterns
+              url.includes('news.google.com') ||
+              url.includes('news.yahoo.com') ||
+              url.includes('msn.com/news') ||
+              url.match(/google\.[a-z]+\/url\?.*news/) ||
+              
+              // Title patterns that strongly indicate news content
+              (title.includes('report') && (title.includes('says') || title.includes('claims') || title.includes('announces'))) ||
+              
+              // Known news domains - expanded list
+              ['cnn', 'bbc', 'reuters', 'ap', 'bloomberg', 'nytimes', 'washingtonpost', 
+               'theverge', 'techcrunch', 'engadget', 'wired', 'variety', 'deadline', 
+               'hollywoodreporter', 'guardian', 'wsj', 'usatoday', 'latimes', 'nbcnews',
+               'cbsnews', 'abcnews', 'foxnews', 'cnbc', 'msnbc', 'politico', 'huffpost',
+               'buzzfeed', 'vox', 'vice', 'slate', 'salon', 'thedailybeast', 'thehill',
+               'axios', 'apnews', 'npr', 'time', 'forbes', 'fortune', 'businessinsider',
+               'zdnet', 'cnet', 'gizmodo', 'mashable', 'digitaltrends', 'venturebeat',
+               'protocol', 'fastcompany', 'inc', 'entrepreneur', 'marketwatch', 'barrons',
+               'ft', 'economist', 'telegraph', 'independent', 'mirror', 'express',
+               'dailymail', 'nypost', 'chicagotribune', 'bostonglobe', 'sfchronicle',
+               'denverpost', 'seattletimes', 'dallasnews', 'houstonchronicle',
+               'sacbee', 'mercurynews', 'inquirer', 'startribune', 'azcentral',
+               'dispatch', 'indystar', 'jsonline', 'freep', 'ajc', 'baltimoresun',
+               'orlandosentinel', 'tampabay', 'miamiherald', 'newsobserver',
+               'tennessean', 'statesman', 'reviewjournal', 'suntimes', 'spokesman',
+               'detroitnews', 'stltoday', 'oregonlive', 'pilotonline', 'sandiegouniontribune'
+              ].some(domain => url.includes(domain))
+            );
+            
+            // Enhanced official source detection
+            const isOfficialSource = (
+              url.includes('netflix.com') || 
+              url.includes('nasa.gov') || 
+              url.includes('official') || 
+              url.includes('/about') || 
+              url.includes('/corporate') ||
+              url.includes('/press') ||
+              url.includes('/investor') ||
+              url.includes('.gov') ||
+              url.includes('.edu') ||
+              url.includes('org/statement')
+            );
+            
+            // Log the categorization decision
+            if (isNewsSource) {
+              console.log(`✅ Result ${index + 1} categorized as NEWS SOURCE: ${result.url}`);
+              newsResults.push(result);
+            } else if (isOfficialSource) {
+              console.log(`ℹ️ Result ${index + 1} categorized as OFFICIAL SOURCE: ${result.url}`);
+              officialResults.push(result);
+            } else {
+              console.log(`⚠️ Result ${index + 1} categorized as OTHER SOURCE: ${result.url}`);
+              otherResults.push(result);
+            }
+          } else {
+            console.log(`❌ Result ${index + 1} missing title or URL, skipping categorization`);
+          }
+        });
+        
+        // Combine results with news sources first, then official sources, then others
+        const prioritizedResults = [...newsResults, ...officialResults, ...otherResults];
+        
+        // Add prioritized results to the structured sources section with a clear, consistent format
+        // Format: SOURCE_NUMBER: TITLE | URL
+        // This format is explicitly mentioned in the AI prompt for reliable extraction
+        prioritizedResults.forEach((result, i) => {
+          // Ensure title doesn't contain pipe character to maintain format consistency
+          const safeTitle = result.title.replace('|', '-');
+          searchResults += `SOURCE_${i + 1}: ${safeTitle} | ${result.url}\n`;
+          structuredSourceCount++;
+        });
+        
+        // Add a clear ending delimiter
+        searchResults += '=== STRUCTURED_SOURCES_FOR_AI END ===\n';
+        
+        // Log the categorization summary for debugging
+        console.log(`SUMMARY: Found ${newsResults.length} news sources, ${officialResults.length} official sources, and ${otherResults.length} other sources`);
+        
+        // Log the actual categorized URLs for deeper debugging
+        if (newsResults.length > 0) {
+          console.log('NEWS SOURCES:');
+          newsResults.forEach((result, i) => console.log(`  ${i + 1}. ${result.url}`));
+        }
+        
+        if (officialResults.length > 0) {
+          console.log('OFFICIAL SOURCES:');
+          officialResults.forEach((result, i) => console.log(`  ${i + 1}. ${result.url}`));
+        }
+        
+        if (otherResults.length > 0) {
+          console.log('OTHER SOURCES:');
+          otherResults.forEach((result, i) => console.log(`  ${i + 1}. ${result.url}`));
+        }
+        
+        // Debug logging for structured sources
+        console.log(`Added ${structuredSourceCount} structured sources for AI extraction`);
+        console.log('Structured sources section:');
+        const startDelimiter = '=== STRUCTURED_SOURCES_FOR_AI START ===';
+        const endDelimiter = '=== STRUCTURED_SOURCES_FOR_AI END ===';
+        
+        const startIndex = searchResults.indexOf(startDelimiter);
+        const endIndex = searchResults.indexOf(endDelimiter);
+        
+        if (startIndex !== -1 && endIndex !== -1) {
+          const structuredSection = searchResults.substring(
+            startIndex + startDelimiter.length,
+            endIndex
+          );
+          console.log(structuredSection);
+        } else {
+          console.log('WARNING: Could not find structured sources section delimiters in formatted results');
         }
       }
       
@@ -372,7 +527,14 @@ The JSON object must have the following structure:
   "confidence": "<one of: High, Medium, Low>"
 }
 
-For the "sources" field, use the search results provided. If a source was used to make your conclusion, include it in the array. If no search results are relevant, return an empty array.`
+IMPORTANT: For the "sources" field, you MUST extract sources from the search results provided. Look for the section between "=== STRUCTURED_SOURCES_FOR_AI START ===" and "=== STRUCTURED_SOURCES_FOR_AI END ===" delimiters. This section contains sources in the format "SOURCE_X: Title | URL". Parse these and include ALL relevant sources in your response.
+
+Prioritize news sources when available, as they typically provide the most reliable third-party verification. If a source was used to make your conclusion, include it in the array. Even if you're uncertain about the claim, include any sources that provided context or information. Only return an empty array if absolutely no search results are available or relevant.
+
+Example of how to extract sources:
+1. Find the section between "=== STRUCTURED_SOURCES_FOR_AI START ===" and "=== STRUCTURED_SOURCES_FOR_AI END ==="
+2. For each line starting with "SOURCE_X:", extract the title (before the "|" character) and URL (after the "|" character)
+3. Include these sources in your response`
           },
           {
             role: "user",
@@ -398,6 +560,14 @@ ${searchResults}`
           // The AI should return a JSON string. We need to parse it.
           factCheckResult = JSON.parse(rawContent);
           console.log('Successfully parsed fact check JSON from OpenAI response');
+          
+          // Debug logging for sources extraction
+          console.log('Sources in AI response:', JSON.stringify(factCheckResult.sources, null, 2));
+          if (!factCheckResult.sources || factCheckResult.sources.length === 0) {
+            console.log('WARNING: No sources were extracted by the AI model');
+          } else {
+            console.log(`Found ${factCheckResult.sources.length} sources in AI response`);
+          }
         } catch (parseError) {
           console.error('Failed to parse JSON from OpenAI response:', parseError);
           console.error('Raw content from OpenAI was:', rawContent);
