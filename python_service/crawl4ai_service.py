@@ -43,6 +43,10 @@ class SearchResponse(BaseModel):
     error: Optional[str] = None
 
 async def crawl_and_process(url: str, crawler: AsyncWebCrawler, max_results: int) -> List[SearchResult]:
+    """Crawls a single URL and processes the results with robust regex parsing.
+    
+    This function extracts direct links to source websites, not intermediate search result pages.
+    """
     """Crawls a single URL and processes the results with robust regex parsing."""
     local_results = []
     try:
@@ -63,8 +67,13 @@ async def crawl_and_process(url: str, crawler: AsyncWebCrawler, max_results: int
             else:
                 # Use the proper MarkdownGenerationResult structure
                 try:
-                    markdown_content = result.markdown.raw_markdown
-                    logger.info(f"Raw markdown from {url} (MarkdownGenerationResult type)")
+                    # First try to get references_markdown which often contains direct source links
+                    if hasattr(result.markdown, 'references_markdown') and result.markdown.references_markdown:
+                        markdown_content = result.markdown.references_markdown
+                        logger.info(f"Using references_markdown from {url} (contains direct source links)")
+                    else:
+                        markdown_content = result.markdown.raw_markdown
+                        logger.info(f"Using raw_markdown from {url} (MarkdownGenerationResult type)")
                 except AttributeError:
                     logger.warning(f"Could not extract markdown from {url}, unexpected result structure")
                     return local_results
@@ -89,7 +98,13 @@ async def crawl_and_process(url: str, crawler: AsyncWebCrawler, max_results: int
                 re.compile(r'\[(.*?)\]\((.*?)\)[^\(]*?([^\[]*)(?=\[|$)', re.DOTALL),
                 
                 # HTML converted format (common in news sites)
-                re.compile(r'<h[1-3]>(.*?)</h[1-3]>.*?<a href="(.*?)".*?>.*?</a>(.*?)(?=<h[1-3]>|$)', re.DOTALL)
+                re.compile(r'<h[1-3]>(.*?)</h[1-3]>.*?<a href="(.*?)".*?>.*?</a>(.*?)(?=<h[1-3]>|$)', re.DOTALL),
+                
+                # References format (numbered references)
+                re.compile(r'\[(\d+)\]\s*(.+?)\s*\((.+?)\)', re.DOTALL),
+                
+                # Direct URL with title format (common in references)
+                re.compile(r'\d+\.\s*(.+?)\s*-\s*(.+?)\s*\((.+?)\)', re.DOTALL)
             ]
             
             # Try each pattern and collect all matches
@@ -108,8 +123,17 @@ async def crawl_and_process(url: str, crawler: AsyncWebCrawler, max_results: int
                 elif len(match) == 4:  # Format with title outside link: title, content, _, url
                     matches.append((match[0], match[3], match[1] + "\n" + match[2]))
                     
+            # Log all matches for debugging
+            logger.info(f"Found {len(matches)} potential matches")
+            for i, match in enumerate(matches):
+                if len(match) >= 2:
+                    logger.info(f"Match {i+1}: Title: {match[0][:50]}... URL: {match[1]}")  
+                    
             logger.info(f"Total matches found: {len(matches)}")
 
+            # Log the raw markdown content for debugging
+            logger.debug(f"Raw markdown content: {markdown_content[:500]}...")
+            
             # If no matches found with regex, try to extract links directly
             if not matches and result.links:
                 logger.info(f"No regex matches, trying to extract from result.links")
@@ -142,16 +166,53 @@ async def crawl_and_process(url: str, crawler: AsyncWebCrawler, max_results: int
                 if len(title) < 3 or len(url_found) < 10:
                     continue
                     
-                # Only filter out search engine URLs to avoid recursive search results
-                if any(search_url in url_found for search_url in [
+                # Filter out search engine URLs, navigation links, and other non-content pages
+                # More comprehensive detection of non-source URLs
+                search_engine_patterns = [
+                    # Search engines
                     'msn.com/en-us/news/search',
                     'news.google.com/search',
                     'bing.com/search',
+                    'google.com/search',
+                    'search.yahoo.com',
                     'search?q=',
+                    '/search?',
                     '/search/',
-                    'search.html'
-                ]):
-                    logger.info(f"Filtering out search engine URL: {url_found}")
+                    'search.html',
+                    
+                    # Bing specific navigation/tool links
+                    'bing.com/chat',
+                    'bing.com/maps',
+                    'bing.com/shop',
+                    'bing.com/images',
+                    'bing.com/videos',
+                    
+                    # Google News navigation
+                    'news.google.com/?hl=',
+                    'news.google.com/home',
+                    'news.google.com/topics',
+                    'news.google.com/read',
+                    
+                    # JavaScript links
+                    'javascript:void',
+                    
+                    # Common navigation elements
+                    '/home',
+                    '/news',
+                    '/health',
+                    '/more'
+                ]
+                
+                # Check if this is a search engine results page or navigation link
+                is_non_source_url = any(pattern in url_found for pattern in search_engine_patterns)
+                
+                if is_non_source_url:
+                    logger.info(f"Filtering out non-source URL: {url_found}")
+                    continue
+                
+                # Additional check to ensure we're not getting intermediate redirects
+                if any(redirect in url_found for redirect in ['bing.com/ck/a', 'google.com/url?', 'click.']):
+                    logger.info(f"Filtering out redirect URL: {url_found}")
                     continue
                     
                 # No longer prioritizing specific news sources

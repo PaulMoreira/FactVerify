@@ -222,103 +222,29 @@ async function searchWeb(query) {
         searchResults += '\n\n=== STRUCTURED_SOURCES_FOR_AI START ===\n';
         let structuredSourceCount = 0;
         
-        // First, categorize results by type to prioritize news sources
-        const newsResults = [];
-        const officialResults = [];
-        const otherResults = [];
+        // Debug logging for search results
+        console.log(`Processing ${rawResults.length} search results`);
         
-        // Debug logging for URL categorization
-        console.log('Starting URL categorization for search results');
+        // Store all results in a single array without categorization
+        const allSources = [];
         
-        // Identify news sources and categorize results
+        // Process all results equally
         rawResults.forEach((result, index) => {
           if (result.title && result.url) {
-            const url = result.url.toLowerCase();
-            const title = result.title.toLowerCase();
-            
             // Log the URL being processed
             console.log(`Processing result ${index + 1}: ${result.url}`);
             
-            // Enhanced news source detection patterns
-            const isNewsSource = (
-              // URL patterns
-              url.includes('news') || 
-              url.includes('article') || 
-              url.includes('story') ||
-              url.match(/\.(com|org|net)\/\d{4}(\/|-)\d{1,2}/) || // Date pattern in URL
-              url.match(/\/news\//) ||
-              url.match(/\/articles?\//) ||
-              url.includes('press-release') ||
-              url.includes('blog') ||
-              url.includes('magazine') ||
-              url.includes('report') ||
-              
-              // Google News and other aggregator patterns
-              url.includes('news.google.com') ||
-              url.includes('news.yahoo.com') ||
-              url.includes('msn.com/news') ||
-              url.match(/google\.[a-z]+\/url\?.*news/) ||
-              
-              // Title patterns that strongly indicate news content
-              (title.includes('report') && (title.includes('says') || title.includes('claims') || title.includes('announces'))) ||
-              
-              // Known news domains - expanded list
-              ['cnn', 'bbc', 'reuters', 'ap', 'bloomberg', 'nytimes', 'washingtonpost', 
-               'theverge', 'techcrunch', 'engadget', 'wired', 'variety', 'deadline', 
-               'hollywoodreporter', 'guardian', 'wsj', 'usatoday', 'latimes', 'nbcnews',
-               'cbsnews', 'abcnews', 'foxnews', 'cnbc', 'msnbc', 'politico', 'huffpost',
-               'buzzfeed', 'vox', 'vice', 'slate', 'salon', 'thedailybeast', 'thehill',
-               'axios', 'apnews', 'npr', 'time', 'forbes', 'fortune', 'businessinsider',
-               'zdnet', 'cnet', 'gizmodo', 'mashable', 'digitaltrends', 'venturebeat',
-               'protocol', 'fastcompany', 'inc', 'entrepreneur', 'marketwatch', 'barrons',
-               'ft', 'economist', 'telegraph', 'independent', 'mirror', 'express',
-               'dailymail', 'nypost', 'chicagotribune', 'bostonglobe', 'sfchronicle',
-               'denverpost', 'seattletimes', 'dallasnews', 'houstonchronicle',
-               'sacbee', 'mercurynews', 'inquirer', 'startribune', 'azcentral',
-               'dispatch', 'indystar', 'jsonline', 'freep', 'ajc', 'baltimoresun',
-               'orlandosentinel', 'tampabay', 'miamiherald', 'newsobserver',
-               'tennessean', 'statesman', 'reviewjournal', 'suntimes', 'spokesman',
-               'detroitnews', 'stltoday', 'oregonlive', 'pilotonline', 'sandiegouniontribune'
-              ].some(domain => url.includes(domain))
-            );
-            
-            // Enhanced official source detection
-            const isOfficialSource = (
-              url.includes('netflix.com') || 
-              url.includes('nasa.gov') || 
-              url.includes('official') || 
-              url.includes('/about') || 
-              url.includes('/corporate') ||
-              url.includes('/press') ||
-              url.includes('/investor') ||
-              url.includes('.gov') ||
-              url.includes('.edu') ||
-              url.includes('org/statement')
-            );
-            
-            // Log the categorization decision
-            if (isNewsSource) {
-              console.log(`✅ Result ${index + 1} categorized as NEWS SOURCE: ${result.url}`);
-              newsResults.push(result);
-            } else if (isOfficialSource) {
-              console.log(`ℹ️ Result ${index + 1} categorized as OFFICIAL SOURCE: ${result.url}`);
-              officialResults.push(result);
-            } else {
-              console.log(`⚠️ Result ${index + 1} categorized as OTHER SOURCE: ${result.url}`);
-              otherResults.push(result);
-            }
+            // Add to sources list
+            allSources.push(result);
           } else {
-            console.log(`❌ Result ${index + 1} missing title or URL, skipping categorization`);
+            console.log(`❌ Result ${index + 1} missing title or URL, skipping`);
           }
         });
         
-        // Combine results with news sources first, then official sources, then others
-        const prioritizedResults = [...newsResults, ...officialResults, ...otherResults];
-        
-        // Add prioritized results to the structured sources section with a clear, consistent format
+        // Add all sources to the structured sources section with a clear, consistent format
         // Format: SOURCE_NUMBER: TITLE | URL
         // This format is explicitly mentioned in the AI prompt for reliable extraction
-        prioritizedResults.forEach((result, i) => {
+        allSources.forEach((result, i) => {
           // Ensure title doesn't contain pipe character to maintain format consistency
           const safeTitle = result.title.replace('|', '-');
           searchResults += `SOURCE_${i + 1}: ${safeTitle} | ${result.url}\n`;
@@ -328,23 +254,13 @@ async function searchWeb(query) {
         // Add a clear ending delimiter
         searchResults += '=== STRUCTURED_SOURCES_FOR_AI END ===\n';
         
-        // Log the categorization summary for debugging
-        console.log(`SUMMARY: Found ${newsResults.length} news sources, ${officialResults.length} official sources, and ${otherResults.length} other sources`);
+        // Log the sources summary for debugging
+        console.log(`SUMMARY: Found ${allSources.length} sources`);
         
-        // Log the actual categorized URLs for deeper debugging
-        if (newsResults.length > 0) {
-          console.log('NEWS SOURCES:');
-          newsResults.forEach((result, i) => console.log(`  ${i + 1}. ${result.url}`));
-        }
-        
-        if (officialResults.length > 0) {
-          console.log('OFFICIAL SOURCES:');
-          officialResults.forEach((result, i) => console.log(`  ${i + 1}. ${result.url}`));
-        }
-        
-        if (otherResults.length > 0) {
-          console.log('OTHER SOURCES:');
-          otherResults.forEach((result, i) => console.log(`  ${i + 1}. ${result.url}`));
+        // Log the actual source URLs for deeper debugging
+        if (allSources.length > 0) {
+          console.log('ALL SOURCES:');
+          allSources.forEach((result, i) => console.log(`  ${i + 1}. ${result.url}`));
         }
         
         // Debug logging for structured sources
