@@ -1,9 +1,12 @@
 import React, { useState, useEffect } from 'react';
-import { BrowserRouter as Router, Route, Routes, Link } from 'react-router-dom';
+import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
+import ScrollToTopLink from './components/ScrollToTopLink';
 import './App.css';
 import FactCheckPage from './FactCheckPage.js';
 import FactCheckDetailPage from './FactCheckDetailPage.js';
 import AllFactChecksPage from './AllFactChecksPage.js';
+import AboutPage from './AboutPage.js';
+import DisclaimerPage from './DisclaimerPage.js';
 import Logo from './Logo';
 import { Analytics } from "@vercel/analytics/react";
 import { SpeedInsights } from "@vercel/speed-insights/react";
@@ -44,11 +47,13 @@ const App = () => {
       <div className={`app ${darkMode ? 'dark-mode' : ''}`}>
         <header>
           <div className="header-content">
-            <Link to="/" className="logo-link">
+            <ScrollToTopLink to="/" className="logo-link">
               <Logo />
-            </Link>
+            </ScrollToTopLink>
             <nav>
-              <Link to="/fact-checks">All Fact Checks</Link>
+              <ScrollToTopLink to="/fact-checks">All Fact Checks</ScrollToTopLink>
+              <ScrollToTopLink to="/about">About</ScrollToTopLink>
+              <ScrollToTopLink to="/disclaimer">Disclaimer</ScrollToTopLink>
             </nav>
             <button 
               className="theme-toggle" 
@@ -61,10 +66,17 @@ const App = () => {
         </header>
         <Routes>
           <Route path="/" element={<FactCheckPage />} />
-                    <Route path="/fact-check/:id" element={<FactCheckDetailPage />} />
+          <Route path="/fact-check/:id" element={<FactCheckDetailPage />} />
           <Route path="/fact-checks" element={<AllFactChecksPage />} />
+          <Route path="/about" element={<AboutPage />} />
+          <Route path="/disclaimer" element={<DisclaimerPage />} />
         </Routes>
         <footer>
+          <div className="footer-links">
+            <ScrollToTopLink to="/">Home</ScrollToTopLink>
+            <ScrollToTopLink to="/about">About</ScrollToTopLink>
+            <ScrollToTopLink to="/disclaimer">Disclaimer</ScrollToTopLink>
+          </div>
           <p>&copy; 2025 FactVerify. All rights reserved.</p>
           <p>Powered by OpenAI and real-time web research.</p>
         </footer>
