@@ -1,0 +1,146 @@
+/* SourceCitation.css */
+
+.source-citation {
+  position: relative;
+  display: inline-flex;
+  vertical-align: super;
+  font-size: 0.7em;
+  font-weight: 600;
+  color: #0066cc;
+  cursor: pointer;
+  margin: 0 2px; /* Increased horizontal margin for better spacing */
+  text-decoration: none;
+  line-height: 1;
+  border-radius: 50%;
+  width: 16px;
+  height: 16px;
+  justify-content: center;
+  align-items: center;
+  background-color: rgba(0, 102, 204, 0.1);
+  transition: all 0.2s ease;
+}
+
+.dark-mode .source-citation {
+  color: #388bfd;
+  background-color: rgba(56, 139, 253, 0.15);
+}
+
+.source-citation:hover {
+  background-color: rgba(0, 102, 204, 0.2);
+  color: #0052a3;
+}
+
+.dark-mode .source-citation:hover {
+  background-color: rgba(56, 139, 253, 0.25);
+  color: #58a6ff;
+}
+
+.source-citation:focus {
+  outline: none;
+  box-shadow: 0 0 0 2px rgba(0, 102, 204, 0.3);
+}
+
+.dark-mode .source-citation:focus {
+  box-shadow: 0 0 0 2px rgba(56, 139, 253, 0.4);
+}
+
+/* Tooltip styles */
+.source-tooltip {
+  position: absolute;
+  bottom: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  background-color: #ffffff;
+  color: #2d3748;
+  padding: 8px 12px;
+  border-radius: 6px;
+  box-shadow: 0 3px 12px rgba(0, 0, 0, 0.15);
+  font-size: 0.85rem;
+  font-weight: normal;
+  white-space: nowrap;
+  z-index: 1000;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.2s ease;
+  transform-origin: bottom center;
+  width: max-content;
+  max-width: 250px; /* Reduced from 300px for better fit */
+  border: 1px solid #e2e8f0;
+  margin-bottom: 8px;
+  text-align: left;
+  /* Prevent tooltip text from wrapping */
+  overflow: hidden;
+  text-overflow: ellipsis;
+  /* Ensure tooltip is visible when positioned at bottom */
+  margin-top: 8px;
+}
+
+.dark-mode .source-tooltip {
+  background-color: #1a202c;
+  color: #e2e8f0;
+  border-color: #2d3748;
+}
+
+/* Remove static positioning rules since we're using dynamic JS positioning */
+/* Ensure tooltips are visible when active */
+.source-citation:hover .source-tooltip,
+.source-citation:focus .source-tooltip,
+.source-citation.active .source-tooltip {
+  opacity: 1;
+}
+
+/* Mobile-specific styles */
+@media (max-width: 768px) {
+  .source-tooltip {
+    position: fixed;
+    bottom: auto;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 80%;
+    max-width: 300px;
+    box-sizing: border-box;
+    padding: 12px 16px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+    z-index: 1100;
+    margin: 0;
+  }
+  
+  .source-citation.active .source-tooltip {
+    display: block;
+    pointer-events: auto;
+  }
+  
+  .tooltip-backdrop {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.5);
+    z-index: 1050;
+    display: none;
+  }
+  
+  .tooltip-backdrop.active {
+    display: block;
+  }
+  
+  /* Ensure tooltips are more visible on mobile */
+  .source-citation.active {
+    z-index: 1051; /* Above the backdrop */
+  }
+}
+
+/* Accessibility */
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border-width: 0;
+}
