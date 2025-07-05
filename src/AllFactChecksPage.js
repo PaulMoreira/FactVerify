@@ -4,7 +4,6 @@ import axios from 'axios';
 import { Link } from 'react-router-dom';
 import './FactCheck.css';
 import LoadingAnimation from './LoadingAnimation';
-import ShareResults from './ShareResults';
 
 const AllFactChecksPage = () => {
   const [factChecks, setFactChecks] = useState([]);
