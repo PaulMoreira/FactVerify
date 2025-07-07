@@ -5,7 +5,11 @@ import { Link } from 'react-router-dom';
 import './FactCheck.css';
 import LoadingAnimation from './LoadingAnimation';
 import ShareResults from './ShareResults';
+import TopSearchedList from './TopSearchedList';
+import TopMisinformationList from './TopMisinformationList';
 import './SourceCitation.css';
+import './SidebarStyles.css';
+import Carousel from './Carousel';
 
 const initialClaim = '';
 
@@ -192,13 +196,28 @@ const FactCheckPage = () => {
 
   const API_BASE_URL = process.env.REACT_APP_API_URL || '';
 
+  // Debug the current recentFactChecks state when it changes
+  useEffect(() => {
+    console.log('Current recentFactChecks state:', recentFactChecks);
+  }, [recentFactChecks]);
+
   useEffect(() => {
     const fetchRecentFactChecks = async () => {
       try {
         const url = `${API_BASE_URL.replace(/\/$/, '')}/api/recent-fact-checks`;
+        console.log('Fetching recent fact checks from URL:', url);
         const response = await axios.get(url);
+        console.log('Recent fact checks response:', response.data);
+        
         if (response.data && response.data.factChecks) {
+          console.log('Setting recent fact checks:', response.data.factChecks);
+          // Log the structure of the first item to understand the data format
+          if (response.data.factChecks.length > 0) {
+            console.log('Sample fact check item structure:', JSON.stringify(response.data.factChecks[0], null, 2));
+          }
           setRecentFactChecks(response.data.factChecks);
+        } else {
+          console.warn('No factChecks found in response data:', response.data);
         }
       } catch (err) {
         console.error('Error fetching recent fact checks:', err);
@@ -242,17 +261,19 @@ const FactCheckPage = () => {
     }
   };
   
-  const loadFactCheck = (factCheck) => {
-    setDisplayedClaim(factCheck.query);
+  const loadFactCheck = (check) => {
+    setDisplayedClaim(check.query);
     try {
-      const parsedResult = JSON.parse(factCheck.result);
-      setResult(parsedResult);
-      setNewFactCheckId(factCheck.id);
+      // Handle both string and object result formats
+      const resultObj = typeof check.result === 'string' ? JSON.parse(check.result) : check.result;
+      setResult(resultObj);
+      setNewFactCheckId(check.id);
       setClaim('');
+      setLoading(false);
       setError('');
     } catch (err) {
-      console.error('Failed to parse stored fact check result:', err);
-      setError('Could not load this fact check. The stored data may be corrupted.');
+      console.error('Error parsing result when loading fact check:', err);
+      setError('Error loading fact check result');
       setResult(null);
       setDisplayedClaim('');
     }
@@ -410,35 +431,51 @@ const FactCheckPage = () => {
           </section>
         )}
       </main>
-      <aside className="sidebar-container">
-        <section className="recent-fact-checks">
-          <h3>Recent Fact Checks</h3>
-          {recentFactChecks.length > 0 ? (
-            <ul className="recent-checks-list">
-              {recentFactChecks.map(check => {
-                let verdict = 'unknown';
-                try {
-                  const parsedResult = JSON.parse(check.result);
-                  verdict = parsedResult.verdict.toLowerCase().replace(/\s+/g, '-');
-                } catch (err) {
-                  console.error('Failed to parse verdict for recent fact check:', err);
-                }
-                
-                return (
-                  <li key={check.id} className="recent-check-item">
-                    <button onClick={() => loadFactCheck(check)} className="load-fact-check" aria-label={`Load fact check: ${check.query}`}>
-                      <div className="recent-check-header">
-                        <span className={`fact-check-verdict verdict-${verdict}`}>{verdict.replace(/-/g, ' ')}</span>
-                        <span className="check-date">{new Date(check.created_at).toLocaleDateString()}</span>
-                      </div>
-                      <span className="recent-check-query">{check.query}</span>
-                    </button>
-                  </li>
-                );
-              })}
-            </ul>
-          ) : (<p>No recent fact checks available.</p>)}
-        </section>
+      <aside className="sidebar">
+        <Carousel 
+          title="Fact Check Hub" 
+          description="Recent checks & trending claims"
+          showIndicators={true}
+        >
+          {/* Slide 1: Recent Fact Checks */}
+          <section className="recent-fact-checks">
+            <h3>Recent Fact Checks</h3>
+            {recentFactChecks.length > 0 ? (
+              <ul className="recent-checks-list">
+                {recentFactChecks.map(check => {
+                  let verdict = 'unknown';
+                  try {
+                    // Check if result is already an object or needs to be parsed
+                    const resultObj = typeof check.result === 'string' ? JSON.parse(check.result) : check.result;
+                    
+                    // Extract verdict if available
+                    if (resultObj && resultObj.verdict) {
+                      verdict = resultObj.verdict.toLowerCase().replace(/\s+/g, '-');
+                    }
+                  } catch (err) {
+                    console.error('Failed to parse verdict for recent fact check:', err, check);
+                  }
+                  
+                  return (
+                    <li key={check.id} className="recent-check-item">
+                      <button onClick={() => loadFactCheck(check)} className="load-fact-check" aria-label={`Load fact check: ${check.query}`}>
+                        <div className="recent-check-header">
+                          <span className={`fact-check-verdict verdict-${verdict}`}>{verdict.replace(/-/g, ' ')}</span>
+                          <span className="check-date">{new Date(check.created_at).toLocaleDateString()}</span>
+                        </div>
+                        <span className="recent-check-query">{check.query}</span>
+                      </button>
+                    </li>
+                  );
+                })}
+              </ul>
+            ) : (<p>No recent fact checks available.</p>)}
+          </section>
+          
+          {/* Slide 2: Most Searched Claims */}
+          <TopSearchedList limit={5} onLoadFactCheck={loadFactCheck} recentFactChecks={recentFactChecks} />
+          <TopMisinformationList limit={5} onLoadFactCheck={loadFactCheck} recentFactChecks={recentFactChecks} />
+        </Carousel>
       </aside>
     </div>
   );

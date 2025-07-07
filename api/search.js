@@ -1,5 +1,11 @@
 // Search API endpoint that connects to the Crawl4AI Python service
 const axios = require('axios');
+const { createClient } = require('@supabase/supabase-js');
+
+// Initialize Supabase client
+const supabaseUrl = process.env.SUPABASE_URL;
+const supabaseKey = process.env.SUPABASE_KEY;
+const supabase = createClient(supabaseUrl, supabaseKey);
 
 // Determine if we're running in a Vercel environment
 const IS_VERCEL = process.env.VERCEL === '1' || process.env.VERCEL === 'true';
@@ -100,6 +106,19 @@ module.exports = async (req, res) => {
     }
     
     debugLog(`Searching for: ${query}`);
+    
+    // Track the search query in Supabase
+    try {
+      const { error } = await supabase.rpc('increment_search_count', { search_query: query });
+      if (error) {
+        console.error('Error tracking search query:', error);
+      } else {
+        debugLog(`Successfully tracked search query: ${query}`);
+      }
+    } catch (trackingError) {
+      console.error('Error calling increment_search_count function:', trackingError);
+      // Continue with search even if tracking fails
+    }
     
     // Determine the correct Crawl4AI service URL based on the environment.
     let crawl4aiUrl;

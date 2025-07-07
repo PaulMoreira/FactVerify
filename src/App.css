@@ -328,6 +328,155 @@ footer {
   color: #555;
 }
 
+/* Demo Data Tag */
+.demo-data-tag {
+  background-color: #f0f0f0;
+  color: #666;
+  font-size: 0.7rem;
+  padding: 2px 6px;
+  border-radius: 4px;
+  margin-left: 8px;
+  font-weight: 500;
+  letter-spacing: 0.02em;
+}
+
+.dark-mode .demo-data-tag {
+  background-color: #2d3748;
+  color: #a0aec0;
+}
+
+/* Verdict Styling */
+.verdict-true, .verdict-false, .verdict-mixture, .verdict-unknown {
+  font-size: 0.75rem;
+  padding: 2px 8px;
+  border-radius: 12px;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+}
+
+.verdict-true {
+  background-color: #38a169;
+  color: white;
+}
+
+.verdict-false {
+  background-color: #e53e3e;
+  color: white;
+}
+
+.verdict-mixture {
+  background-color: #dd6b20;
+  color: white;
+}
+
+.verdict-unknown {
+  background-color: #718096;
+  color: white;
+}
+
+/* Search and Misinformation Lists */
+.top-searched-list, .top-misinformation-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.top-searched-item, .top-misinformation-item {
+  display: flex;
+  align-items: center;
+  padding: 10px 0;
+  border-bottom: 1px solid var(--border-color);
+  gap: 12px;
+  transition: all 0.2s ease;
+}
+
+.top-searched-item:last-child, .top-misinformation-item:last-child {
+  border-bottom: none;
+}
+
+.search-rank, .misinformation-rank {
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--text-secondary);
+  min-width: 24px;
+}
+
+.search-content, .misinformation-content {
+  flex: 1;
+  min-width: 0;
+}
+
+.search-query, .misinformation-query {
+  font-size: 0.9rem;
+  color: var(--text-primary);
+  line-height: 1.3;
+  margin-bottom: 4px;
+  font-weight: 500;
+}
+
+.search-meta, .misinformation-meta {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.search-count, .misinformation-count {
+  font-size: 0.75rem;
+  color: var(--text-secondary);
+}
+
+.search-link, .misinformation-link {
+  color: var(--text-secondary);
+  transition: color 0.2s ease;
+}
+
+.search-link:hover, .misinformation-link:hover {
+  color: var(--primary-color);
+}
+
+.section-description {
+  font-size: 0.9rem;
+  color: var(--text-secondary);
+  margin-bottom: 16px;
+}
+
+.misinformation-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 4px;
+}
+
+.danger-indicator {
+  font-size: 1rem;
+}
+
+.misinformation-category {
+  font-size: 0.7rem;
+  padding: 2px 6px;
+  border-radius: 4px;
+  color: white;
+  text-transform: capitalize;
+}
+
+.misinformation-warning {
+  margin-top: 16px;
+  padding: 8px 12px;
+  background-color: #fff5f5;
+  border-left: 3px solid #e53e3e;
+  color: #4a5568;
+  font-size: 0.85rem;
+  border-radius: 4px;
+}
+
+.dark-mode .misinformation-warning {
+  background-color: #2d3748;
+  border-left-color: #e53e3e;
+  color: #a0aec0;
+}
+
 /* Styles for the AI example feature */
 
 .idea button, .candidate-policy button {

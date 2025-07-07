@@ -553,6 +553,37 @@ ${searchResults}`
       if (storedResult) {
         debugLog('Fact check successfully stored in database', storedResult);
         newFactCheckId = storedResult.id;
+        
+        // Track misinformation if the verdict is false
+        if (factCheckResult.verdict && factCheckResult.verdict.toLowerCase() === 'false') {
+          debugLog('Tracking misinformation for false claim');
+          try {
+            // Determine danger level based on confidence
+            let dangerLevel = 'medium';
+            if (factCheckResult.confidence) {
+              if (factCheckResult.confidence.toLowerCase() === 'high') {
+                dangerLevel = 'high';
+              } else if (factCheckResult.confidence.toLowerCase() === 'low') {
+                dangerLevel = 'low';
+              }
+            }
+            
+            // Call the increment_misinformation_count function
+            const { error } = await supabase.rpc('increment_misinformation_count', { 
+              misinformation_query: query,
+              danger: dangerLevel
+            });
+            
+            if (error) {
+              console.error('Error tracking misinformation:', error);
+            } else {
+              debugLog(`Successfully tracked misinformation for query: ${query}`);
+            }
+          } catch (trackingError) {
+            console.error('Error calling increment_misinformation_count function:', trackingError);
+            // Continue even if tracking fails
+          }
+        }
       } else {
         debugLog('Fact check not stored (null result from storeFactCheck)');
       }
