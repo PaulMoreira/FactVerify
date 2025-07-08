@@ -13,7 +13,7 @@ const IS_VERCEL = process.env.VERCEL === '1' || process.env.VERCEL === 'true';
 
 // Brave Search API configuration
 const BRAVE_API_ENABLED = process.env.BRAVE_API_ENABLED === 'true';
-const BRAVE_API_KEY = process.env.BRAVE_API_KEY || 'BSAidgVOn5xLbzmCOBpV9L0bxVbP0fx'; // Default to provided key if not in env
+const BRAVE_API_KEY = process.env.BRAVE_API_KEY; // Must be provided via environment variables
 const BRAVE_API_URL = 'https://api.search.brave.com/res/v1/web/search';
 
 // Debug logging helper
@@ -29,7 +29,7 @@ function debugLog(message) {
 
 // Log Brave API initialization status
 debugLog(`Brave API initialization status: ${BRAVE_API_ENABLED ? 'ENABLED' : 'DISABLED'}`);
-debugLog(`Brave API key ${BRAVE_API_KEY ? 'is configured' : 'is missing'} (using ${process.env.BRAVE_API_KEY ? 'environment variable' : 'default key'})`);
+debugLog(`Brave API key ${BRAVE_API_KEY ? 'is configured' : 'is missing'} (using environment variable)`);
 
 // Search using Brave API
 async function searchWithBraveAPI(query, max_results = 5) {
@@ -37,9 +37,12 @@ async function searchWithBraveAPI(query, max_results = 5) {
   debugLog(`[BRAVE-API] Request URL: ${BRAVE_API_URL}`);
   
   // Only log masked API key in development
-  if (process.env.NODE_ENV !== 'production') {
-    const maskedKey = BRAVE_API_KEY ? `${BRAVE_API_KEY.substring(0, 5)}...${BRAVE_API_KEY.substring(BRAVE_API_KEY.length - 4)}` : 'not configured';
+  if (process.env.NODE_ENV !== 'production' && BRAVE_API_KEY) {
+    const maskedKey = `${BRAVE_API_KEY.substring(0, 5)}...${BRAVE_API_KEY.substring(BRAVE_API_KEY.length - 4)}`;
     debugLog(`[BRAVE-API] Using API key: ${maskedKey}`);
+  } else if (!BRAVE_API_KEY) {
+    debugLog(`[BRAVE-API] Error: API key not configured in environment variables`);
+    throw new Error('Brave API key not configured');
   }
   
   const requestStart = Date.now();
