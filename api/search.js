@@ -1,6 +1,7 @@
-// Search API endpoint that connects to the Crawl4AI Python service
+// Search API endpoint that connects to the Crawl4AI Python service and Brave Search API
 const axios = require('axios');
 const { createClient } = require('@supabase/supabase-js');
+const { simplifyQuery } = require('./utils/query-simplifier');
 
 // Initialize Supabase client
 const supabaseUrl = process.env.SUPABASE_URL;
@@ -10,12 +11,129 @@ const supabase = createClient(supabaseUrl, supabaseKey);
 // Determine if we're running in a Vercel environment
 const IS_VERCEL = process.env.VERCEL === '1' || process.env.VERCEL === 'true';
 
+// Brave Search API configuration
+const BRAVE_API_ENABLED = process.env.BRAVE_API_ENABLED === 'true';
+const BRAVE_API_KEY = process.env.BRAVE_API_KEY || 'BSAidgVOn5xLbzmCOBpV9L0bxVbP0fx'; // Default to provided key if not in env
+const BRAVE_API_URL = 'https://api.search.brave.com/res/v1/web/search';
+
 // Debug logging helper
 function debugLog(message) {
-  console.log(`[SEARCH-API] ${message}`);
+  // Only log in development environment or if DEBUG is explicitly enabled
+  const isDev = process.env.NODE_ENV !== 'production';
+  const isDebugEnabled = process.env.DEBUG_LOGGING === 'true';
+  
+  if (isDev || isDebugEnabled) {
+    console.log(`[SEARCH-API] ${message}`);
+  }
 }
 
-// Generate mock search results when Crawl4AI is unavailable
+// Log Brave API initialization status
+debugLog(`Brave API initialization status: ${BRAVE_API_ENABLED ? 'ENABLED' : 'DISABLED'}`);
+debugLog(`Brave API key ${BRAVE_API_KEY ? 'is configured' : 'is missing'} (using ${process.env.BRAVE_API_KEY ? 'environment variable' : 'default key'})`);
+
+// Search using Brave API
+async function searchWithBraveAPI(query, max_results = 5) {
+  debugLog(`[BRAVE-API] Starting search for query: "${query}" with max_results: ${max_results}`);
+  debugLog(`[BRAVE-API] Request URL: ${BRAVE_API_URL}`);
+  
+  // Only log masked API key in development
+  if (process.env.NODE_ENV !== 'production') {
+    const maskedKey = BRAVE_API_KEY ? `${BRAVE_API_KEY.substring(0, 5)}...${BRAVE_API_KEY.substring(BRAVE_API_KEY.length - 4)}` : 'not configured';
+    debugLog(`[BRAVE-API] Using API key: ${maskedKey}`);
+  }
+  
+  const requestStart = Date.now();
+  
+  try {
+    debugLog(`[BRAVE-API] Sending request to Brave Search API...`);
+    const response = await axios.get(BRAVE_API_URL, {
+      params: {
+        q: query,
+        count: max_results
+      },
+      headers: {
+        'Accept': 'application/json',
+        'Accept-Encoding': 'gzip',
+        'X-Subscription-Token': BRAVE_API_KEY
+      },
+      timeout: 10000 // 10-second timeout
+    });
+    
+    const requestDuration = Date.now() - requestStart;
+    debugLog(`[BRAVE-API] Response received in ${requestDuration}ms with status code: ${response.status}`);
+    
+    if (response.status !== 200) {
+      // Log error response in development only
+      if (process.env.NODE_ENV !== 'production') {
+        debugLog(`[BRAVE-API] Error response: ${JSON.stringify(response.data)}`);
+      } else {
+        debugLog(`[BRAVE-API] Error response received with status code ${response.status}`);
+      }
+      throw new Error(`Brave API request failed with status code ${response.status}`);
+    }
+    
+    // Process Brave API response
+    const braveData = response.data;
+    
+    // Only log response structure in development
+    if (process.env.NODE_ENV !== 'production') {
+      debugLog(`[BRAVE-API] Response data structure: ${Object.keys(braveData).join(', ')}`);
+    }
+    
+    const results = [];
+    
+    // Extract web search results
+    if (braveData.web && braveData.web.results) {
+      debugLog(`[BRAVE-API] Found ${braveData.web.results.length} web results`);
+      braveData.web.results.forEach((item, index) => {
+        results.push({
+          title: item.title || 'No Title',
+          url: item.url || '',
+          content: item.description || ''
+        });
+        
+        // Only log detailed result info in development
+        if (process.env.NODE_ENV !== 'production') {
+          debugLog(`[BRAVE-API] Web result ${index + 1}: ${item.title} (${item.url})`);
+        }
+      });
+    } else {
+      debugLog(`[BRAVE-API] No web results found in response`);
+    }
+    
+    // Extract news results if available and needed to reach max_results
+    if (results.length < max_results && braveData.news && braveData.news.results) {
+      debugLog(`[BRAVE-API] Found ${braveData.news.results.length} news results`);
+      braveData.news.results.forEach((item, index) => {
+        if (results.length < max_results) {
+          results.push({
+            title: item.title || 'No Title',
+            url: item.url || '',
+            content: item.description || ''
+          });
+          
+          // Only log detailed result info in development
+          if (process.env.NODE_ENV !== 'production') {
+            debugLog(`[BRAVE-API] News result ${index + 1}: ${item.title} (${item.url})`);
+          }
+        }
+      });
+    }
+    
+    debugLog(`[BRAVE-API] Search completed successfully with ${results.length} total results`);
+    return {
+      results,
+      search_engine: 'Brave Search API',
+      is_mock: false
+    };
+  } catch (error) {
+    debugLog(`[BRAVE-API] Search failed: ${error.message}`);
+    debugLog(`[BRAVE-API] Error stack: ${error.stack}`);
+    throw error;
+  }
+}
+
+// Generate mock search results when search services are unavailable
 function generateMockSearchResults(query, max_results = 5) {
   const results = [];
   
@@ -62,6 +180,93 @@ function generateMockSearchResults(query, max_results = 5) {
   return results.slice(0, max_results);
 }
 
+// Validate HTTP status codes
+exports.validateStatus = function(status) {
+  // Accept any status code to handle it ourselves
+  return true;
+};
+
+// Combine search results from multiple providers
+async function combinedSearch(query, max_results = 5) {
+  debugLog(`Performing combined search for: ${query}`);
+  const results = [];
+  const uniqueUrls = new Set();
+  let searchEngine = 'Combined Search';
+  let isMock = false;
+  
+  // Try Brave API first
+  if (BRAVE_API_ENABLED) {
+    try {
+      const braveResults = await searchWithBraveAPI(query, Math.ceil(max_results / 2));
+      braveResults.results.forEach(result => {
+        if (!uniqueUrls.has(result.url)) {
+          results.push(result);
+          uniqueUrls.add(result.url);
+        }
+      });
+      searchEngine = `${searchEngine} (Brave API)`;
+    } catch (error) {
+      debugLog(`Brave API failed in combined search: ${error.message}`);
+    }
+  }
+  
+  // Determine the Crawl4AI service URL
+  let crawl4aiUrl;
+  if (IS_VERCEL) {
+    const baseUrl = process.env.CRAWL4AI_SERVICE_URL;
+    if (baseUrl) {
+      crawl4aiUrl = `${baseUrl.replace(/\/$/, '')}/search`;
+    }
+  } else {
+    crawl4aiUrl = 'http://localhost:3002/search';
+  }
+  
+  // Try Crawl4AI if available
+  if (crawl4aiUrl) {
+    try {
+      const remainingResults = max_results - results.length;
+      if (remainingResults > 0) {
+        const response = await axios.post(crawl4aiUrl, { query, max_results: remainingResults }, {
+          timeout: 75000,
+          headers: {
+            'Content-Type': 'application/json',
+            'Accept': 'application/json'
+          },
+          validateStatus: exports.validateStatus
+        });
+        
+        if (response.status === 200) {
+          response.data.results.forEach(result => {
+            if (!uniqueUrls.has(result.url)) {
+              results.push(result);
+              uniqueUrls.add(result.url);
+            }
+          });
+          searchEngine = results.length > 0 ? 
+            `${searchEngine}, Crawl4AI` : 
+            'Crawl4AI';
+        }
+      }
+    } catch (error) {
+      debugLog(`Crawl4AI failed in combined search: ${error.message}`);
+    }
+  }
+  
+  // If we have no results, use mock results
+  if (results.length === 0) {
+    const mockResults = generateMockSearchResults(query, max_results);
+    results.push(...mockResults);
+    searchEngine = 'Mock Search (All services failed)';
+    isMock = true;
+  }
+  
+  return {
+    results: results.slice(0, max_results),
+    search_engine: searchEngine,
+    is_mock: isMock
+  };
+}
+
 module.exports = async (req, res) => {
   // Start timing the request
   const startTime = Date.now();
@@ -88,14 +293,17 @@ module.exports = async (req, res) => {
   }
   
   try {
-    const { query, max_results = 5 } = req.body;
+    const { query, max_results = 5, provider = 'auto' } = req.body;
     
     if (!query) {
       return res.status(400).json({ error: 'Query parameter is required' });
     }
+    
+    // Log the requested provider
+    debugLog(`Search provider requested: ${provider}`);
 
     // Verify the internal API call secret to prevent public access
-        const internalSecret = process.env.INTERNAL_API_SECRET;
+    const internalSecret = process.env.INTERNAL_API_SECRET;
     const authHeader = req.headers.authorization;
     debugLog(`Received Authorization header: ${authHeader}`);
 
@@ -120,6 +328,49 @@ module.exports = async (req, res) => {
       // Continue with search even if tracking fails
     }
     
+    // Handle provider selection
+    if (provider === 'brave' && BRAVE_API_ENABLED) {
+      try {
+        debugLog('Using Brave Search API as requested.');
+        const braveResults = await searchWithBraveAPI(query, max_results);
+        return res.status(200).json(braveResults);
+      } catch (braveError) {
+        debugLog(`Brave API failed: ${braveError.message}. Falling back to auto provider selection.`);
+        // Fall through to auto selection
+      }
+    } else if (provider === 'combined') {
+      try {
+        debugLog('Using combined search as requested.');
+        const combinedResults = await combinedSearch(query, max_results);
+        return res.status(200).json(combinedResults);
+      } catch (combinedError) {
+        debugLog(`Combined search failed: ${combinedError.message}. Falling back to auto provider selection.`);
+        // Fall through to auto selection
+      }
+    }
+    
+    // For 'crawl4ai' provider or 'auto' provider or fallback from errors above
+    
+    // For auto provider or fallbacks, try Brave API first if enabled
+    if (provider !== 'crawl4ai' && BRAVE_API_ENABLED) {
+      try {
+        debugLog('Auto mode: Attempting to use Brave Search API first.');
+        const braveResults = await searchWithBraveAPI(query, max_results);
+        
+        // Check if Brave API returned results
+        if (braveResults.results && braveResults.results.length > 0) {
+          debugLog(`Brave API returned ${braveResults.results.length} results. Using these results.`);
+          return res.status(200).json(braveResults);
+        } else {
+          debugLog('Brave API returned zero results. Falling back to Crawl4AI if available.');
+          // Fall through to try Crawl4AI
+        }
+      } catch (braveError) {
+        debugLog(`Brave API failed: ${braveError.message}. Falling back to Crawl4AI if available.`);
+        // Fall through to try Crawl4AI
+      }
+    }
+    
     // Determine the correct Crawl4AI service URL based on the environment.
     let crawl4aiUrl;
     if (IS_VERCEL) {
@@ -131,67 +382,141 @@ module.exports = async (req, res) => {
       }
     } else {
       // For local development, use the local Python service.
-      // For local development, we point to the Python-based Crawl4AI service, which should be running on port 3002.
       crawl4aiUrl = 'http://localhost:3002/search';
     }
 
-    // If no URL is configured for the environment, fall back to mock results.
-    if (!crawl4aiUrl) {
-      debugLog('CRAWL4AI_SERVICE_URL is not configured for this environment. Using mock results.');
+    // If Crawl4AI is not available and we're using auto provider selection
+    if (!crawl4aiUrl && provider !== 'crawl4ai') {
+      debugLog('CRAWL4AI_SERVICE_URL is not configured for this environment.');
+      
+      // Try with simplified query if original query returned no results
+      if (BRAVE_API_ENABLED) {
+        const simplifiedQueryText = simplifyQuery(query);
+        if (simplifiedQueryText && simplifiedQueryText !== query) {
+          debugLog(`Trying simplified query: "${simplifiedQueryText}"`);
+          
+          try {
+            const simplifiedResults = await searchWithBraveAPI(simplifiedQueryText, max_results);
+            if (simplifiedResults.results && simplifiedResults.results.length > 0) {
+              debugLog(`Simplified query returned ${simplifiedResults.results.length} results`);
+              // Mark these results as coming from a simplified query
+              simplifiedResults.search_engine = `${simplifiedResults.search_engine} (Simplified Query)`;
+              simplifiedResults.used_simplified_query = true;
+              simplifiedResults.original_query = query;
+              simplifiedResults.simplified_query = simplifiedQueryText;
+              return res.status(200).json(simplifiedResults);
+            }
+          } catch (simplifiedError) {
+            debugLog(`Simplified query search failed: ${simplifiedError.message}`);
+          }
+        }
+      }
+      
+      debugLog('All search attempts failed. Using mock results.');
       const mockResults = generateMockSearchResults(query, max_results);
       return res.status(200).json({
         results: mockResults,
-        search_engine: 'Mock Search (Crawl4AI service not configured)',
+        search_engine: 'Mock Search (No search services configured)',
         is_mock: true
       });
     }
 
+    // If we specifically requested Crawl4AI or we're still in the auto flow
     let response = null;
     let lastError = null;
 
-    try {
-      debugLog(`Attempting to connect to Crawl4AI at: ${crawl4aiUrl}`);
-      response = await axios.post(crawl4aiUrl, { query, max_results }, {
-        timeout: 75000, // 75-second timeout to accommodate Render's cold starts
-        headers: {
-          'Content-Type': 'application/json',
-          'Accept': 'application/json'
-        },
-        validateStatus: function (status) {
-          // Accept any status code to handle it ourselves
-          return true;
+    // Only try Crawl4AI if we have a URL or specifically requested it
+    if (crawl4aiUrl || provider === 'crawl4ai') {
+      try {
+        if (!crawl4aiUrl && provider === 'crawl4ai') {
+          throw new Error('CRAWL4AI_SERVICE_URL is not configured but Crawl4AI provider was specifically requested');
         }
-      });
+        
+        debugLog(`Attempting to connect to Crawl4AI at: ${crawl4aiUrl}`);
+        response = await axios.post(crawl4aiUrl, { query, max_results }, {
+          timeout: 75000, // 75-second timeout to accommodate Render's cold starts
+          headers: {
+            'Content-Type': 'application/json',
+            'Accept': 'application/json'
+          },
+          validateStatus: exports.validateStatus
+        });
 
-      // Log the response status
-      debugLog(`Response from ${crawl4aiUrl} - Status: ${response.status}`);
+        // Log the response status
+        debugLog(`Response from ${crawl4aiUrl} - Status: ${response.status}`);
 
-      // If the response is not 200, treat it as a failure.
-      if (response.status !== 200) {
-        lastError = new Error(`Request failed with status code ${response.status}`);
-        debugLog(`Failed to connect to Crawl4AI at: ${crawl4aiUrl} - ${lastError.message}`);
-        response = null; // Set response to null to trigger the fallback logic
-      } else {
-        debugLog(`Successfully connected to Crawl4AI at: ${crawl4aiUrl}`);
+        // If the response is not 200, treat it as a failure.
+        if (response.status !== 200) {
+          lastError = new Error(`Request failed with status code ${response.status}`);
+          debugLog(`Failed to connect to Crawl4AI at: ${crawl4aiUrl} - ${lastError.message}`);
+          response = null; // Set response to null to trigger the fallback logic
+        } else {
+          debugLog(`Successfully connected to Crawl4AI at: ${crawl4aiUrl}`);
+        }
+      } catch (err) {
+        lastError = err;
+        debugLog(`Failed to connect to Crawl4AI at: ${crawl4aiUrl} - ${err.message}`);
+        response = null; // Ensure response is null on error
       }
-    } catch (err) {
-      lastError = err;
-      debugLog(`Failed to connect to Crawl4AI at: ${crawl4aiUrl} - ${err.message}`);
-      response = null; // Ensure response is null on error
+    } else {
+      debugLog('Skipping Crawl4AI attempt as URL is not configured and not specifically requested');
+    }
+    
+    // If both Brave API and Crawl4AI failed or returned no results, try with simplified query
+    if (!response && provider !== 'crawl4ai' && BRAVE_API_ENABLED) {
+      const simplifiedQueryText = simplifyQuery(query);
+      if (simplifiedQueryText && simplifiedQueryText !== query) {
+        debugLog(`Trying simplified query with Brave API: "${simplifiedQueryText}"`);
+        
+        try {
+          const simplifiedResults = await searchWithBraveAPI(simplifiedQueryText, max_results);
+          if (simplifiedResults.results && simplifiedResults.results.length > 0) {
+            debugLog(`Simplified query returned ${simplifiedResults.results.length} results`);
+            // Mark these results as coming from a simplified query
+            simplifiedResults.search_engine = `${simplifiedResults.search_engine} (Simplified Query)`;
+            simplifiedResults.used_simplified_query = true;
+            simplifiedResults.original_query = query;
+            simplifiedResults.simplified_query = simplifiedQueryText;
+            return res.status(200).json(simplifiedResults);
+          }
+        } catch (simplifiedError) {
+          debugLog(`Simplified query search failed: ${simplifiedError.message}`);
+        }
+      }
     }
     
     if (!response) {
-      const errorMessage = lastError ? lastError.message : 'All Crawl4AI endpoints failed';
-      debugLog(`Search failed: ${errorMessage}`);
-      debugLog('Using mock search results as fallback');
+      const errorMessage = lastError ? lastError.message : 'Crawl4AI search failed or was skipped';
+      debugLog(errorMessage);
       
-      // Use mock search results when Crawl4AI is unavailable
+      // If we specifically requested Crawl4AI and it failed, return an error
+      if (provider === 'crawl4ai') {
+        return res.status(503).json({
+          error: 'Crawl4AI service unavailable',
+          message: errorMessage
+        });
+      }
+      
+      // Try Brave API as fallback before using mock results (for auto provider)
+      if (BRAVE_API_ENABLED && provider === 'auto') {
+        try {
+          debugLog('Attempting to use Brave Search API as fallback.');
+          const braveResults = await searchWithBraveAPI(query, max_results);
+          return res.status(200).json(braveResults);
+        } catch (braveError) {
+          debugLog(`Brave API fallback failed: ${braveError.message}. Using mock results.`);
+        }
+      } else if (provider === 'auto') {
+        debugLog('Brave API not enabled. Using mock results as fallback.');
+      }
+      
+      // Use mock search results when all search services are unavailable
       const mockResults = generateMockSearchResults(query, max_results);
       
       // Return with 200 status but indicate it's mock data
       return res.status(200).json({
         results: mockResults,
-        search_engine: 'Mock Search (Crawl4AI unavailable)',
+        search_engine: 'Mock Search (All search services unavailable)',
         is_mock: true
       });
     }
