@@ -79,6 +79,15 @@ header {
   transition: all 0.3s ease;
 }
 
+.theme-toggle.desktop {
+  margin-left: 15px;
+  padding: 6px 12px;
+  font-size: 0.85rem;
+  background-color: var(--primary-color);
+  color: white;
+  border: none;
+}
+
 .theme-toggle:hover {
   background-color: var(--primary-color);
   border-color: var(--primary-color);

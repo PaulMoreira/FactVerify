@@ -91,6 +91,13 @@ const App = () => {
               <ScrollToTopLink to="/fact-checks">All Fact Checks</ScrollToTopLink>
               <ScrollToTopLink to="/about">About</ScrollToTopLink>
               <ScrollToTopLink to="/disclaimer">Disclaimer</ScrollToTopLink>
+              <button 
+                className="theme-toggle desktop" 
+                onClick={toggleDarkMode}
+                aria-label={darkMode ? 'Switch to light mode' : 'Switch to dark mode'}
+              >
+                {darkMode ? '☀️ Light' : '🌙 Dark'}
+              </button>
             </nav>
             
             <div className="header-right">

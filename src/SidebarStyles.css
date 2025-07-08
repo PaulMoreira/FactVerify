@@ -51,6 +51,14 @@
 
 .dark-mode .recent-fact-checks {
   background-color: #161b22;
+  border: 1px solid #30363d;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+}
+
+.dark-mode .sidebar {
+  background-color: #0d1117;
+  border: 1px solid #30363d;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
 }
 
 /* Section headers */
@@ -95,6 +103,17 @@
 .load-fact-check:hover {
   background-color: #e9ecef;
   border-color: #dee2e6;
+}
+
+.dark-mode .load-fact-check {
+  background-color: #21262d;
+  border: 1px solid #30363d;
+  color: #c9d1d9;
+}
+
+.dark-mode .load-fact-check:hover {
+  background-color: #30363d;
+  border-color: #6e7681;
 }
 
 .recent-check-header {
