@@ -505,6 +505,37 @@ button#fact-check-submit:disabled {
   border-color: #2d3748;
 }
 
+.multimedia-sources-container {
+  display: flex;
+  flex-wrap: nowrap; /* Prevent wrapping to keep horizontal */
+  gap: 16px;
+  margin-top: 16px;
+  overflow-x: auto; /* Enable horizontal scrolling */
+  padding-bottom: 12px; /* Space for scrollbar */
+  -webkit-overflow-scrolling: touch; /* Smooth scrolling on iOS */
+  scrollbar-width: thin; /* Firefox */
+  scroll-behavior: smooth; /* Smooth scrolling */
+}
+
+.multimedia-sources-container::-webkit-scrollbar {
+  height: 6px;
+}
+
+.multimedia-sources-container::-webkit-scrollbar-thumb {
+  background-color: rgba(0, 0, 0, 0.2);
+  border-radius: 6px;
+}
+
+.dark-mode .multimedia-sources-container::-webkit-scrollbar-thumb {
+  background-color: rgba(255, 255, 255, 0.2);
+}
+
+.multimedia-sources-container .source-card {
+  flex: 0 0 280px; /* Don't grow, don't shrink, fixed width */
+  min-width: 280px;
+  max-width: 280px;
+}
+
 .source-card:hover {
   transform: translateY(-4px);
   box-shadow: 0 6px 12px rgba(0, 0, 0, 0.12);
@@ -772,6 +803,7 @@ button#fact-check-submit:disabled {
   margin-bottom: 4px;
   display: -webkit-box;
   -webkit-line-clamp: 2;
+  line-clamp: 2;
   -webkit-box-orient: vertical;
   overflow: hidden;
 }
@@ -916,6 +948,7 @@ button#fact-check-submit:disabled {
   margin-bottom: 4px;
   display: -webkit-box;
   -webkit-line-clamp: 2;
+  line-clamp: 2;
   -webkit-box-orient: vertical;
   overflow: hidden;
 }

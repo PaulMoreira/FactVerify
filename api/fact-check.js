@@ -454,7 +454,7 @@ Example of how to extract sources:
           },
           {
             role: "user",
-            content: `Fact check this claim and tell me if it is true or false: "${query}"
+            content: `Fact check this claim and it's context, tell me if it is true or false: "${query}"
 
 Here are some search results to help you:
 

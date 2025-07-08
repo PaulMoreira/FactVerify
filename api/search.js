@@ -31,10 +31,43 @@ function debugLog(message) {
 debugLog(`Brave API initialization status: ${BRAVE_API_ENABLED ? 'ENABLED' : 'DISABLED'}`);
 debugLog(`Brave API key ${BRAVE_API_KEY ? 'is configured' : 'is missing'} (using environment variable)`);
 
+// Track query simplification metrics
+let querySimplificationCount = 0;
+let totalQueriesProcessed = 0;
+
 // Search using Brave API
 async function searchWithBraveAPI(query, max_results = 5) {
+  // Track metrics for all queries
+  totalQueriesProcessed++;
+  
   debugLog(`[BRAVE-API] Starting search for query: "${query}" with max_results: ${max_results}`);
   debugLog(`[BRAVE-API] Request URL: ${BRAVE_API_URL}`);
+  // Count words in query
+  const wordCount = query.trim().split(/\s+/).length;
+  
+  debugLog(`[BRAVE-API] Query length: ${query.length} characters, ${wordCount} words`);
+  
+  // Check if query exceeds Brave API limits and simplify if needed
+  // Brave API limits: max 400 characters and max 50 words
+  const CHAR_LIMIT = 400;
+  const WORD_LIMIT = 50;
+  let searchQuery = query;
+  let originalQuery = null;
+  
+  // Simplify if either limit is exceeded
+  if (query.length > CHAR_LIMIT || wordCount > WORD_LIMIT) {
+    const simplifiedQuery = simplifyQuery(query);
+    if (simplifiedQuery && simplifiedQuery !== query) {
+      originalQuery = query;
+      searchQuery = simplifiedQuery;
+      querySimplificationCount++;
+      
+      // Log detailed information about the simplification
+      debugLog(`[BRAVE-API] Query exceeds limits (${query.length} chars/${wordCount} words). Using simplified query: "${searchQuery}"`);
+      debugLog(`[BRAVE-API] Simplification ratio: ${Math.round((searchQuery.length / query.length) * 100)}% of original length`);
+      debugLog(`[BRAVE-API] Total queries simplified: ${querySimplificationCount}/${totalQueriesProcessed} (${Math.round((querySimplificationCount/totalQueriesProcessed) * 100)}%)`);
+    }
+  }
   
   // Only log masked API key in development
   if (process.env.NODE_ENV !== 'production' && BRAVE_API_KEY) {
@@ -51,7 +84,7 @@ async function searchWithBraveAPI(query, max_results = 5) {
     debugLog(`[BRAVE-API] Sending request to Brave Search API...`);
     const response = await axios.get(BRAVE_API_URL, {
       params: {
-        q: query,
+        q: searchQuery, // Use potentially simplified query
         count: max_results
       },
       headers: {
@@ -124,11 +157,23 @@ async function searchWithBraveAPI(query, max_results = 5) {
     }
     
     debugLog(`[BRAVE-API] Search completed successfully with ${results.length} total results`);
-    return {
+    
+    // Return the structured results with original query info if simplified
+    const responseObject = {
       results,
       search_engine: 'Brave Search API',
       is_mock: false
     };
+    
+    // Add original query info if we used a simplified query
+    if (originalQuery) {
+      responseObject.used_simplified_query = true;
+      responseObject.original_query = originalQuery;
+      responseObject.simplified_query = searchQuery;
+      responseObject.search_engine = 'Brave Search API (Simplified Query)';
+    }
+    
+    return responseObject;
   } catch (error) {
     debugLog(`[BRAVE-API] Search failed: ${error.message}`);
     debugLog(`[BRAVE-API] Error stack: ${error.stack}`);
@@ -358,19 +403,38 @@ module.exports = async (req, res) => {
     if (provider !== 'crawl4ai' && BRAVE_API_ENABLED) {
       try {
         debugLog('Auto mode: Attempting to use Brave Search API first.');
-        const braveResults = await searchWithBraveAPI(query, max_results);
+        let braveResults = await searchWithBraveAPI(query, max_results);
         
-        // Check if Brave API returned results
+        // If Brave API returns no results, try with a simplified query before falling back
+        if (!braveResults.results || braveResults.results.length === 0) {
+          debugLog('Brave API returned zero results on initial query. Trying with simplified query.');
+          const simplifiedQueryText = simplifyQuery(query);
+
+          if (simplifiedQueryText && simplifiedQueryText !== query) {
+            // We can call searchWithBraveAPI again, it has the simplification logic built-in
+            // but we call it with the simplified text directly to ensure it runs.
+            braveResults = await searchWithBraveAPI(simplifiedQueryText, max_results);
+            if (braveResults.results && braveResults.results.length > 0) {
+                // Manually adjust the response to show it came from a simplified query retry
+                braveResults.used_simplified_query = true;
+                braveResults.original_query = query;
+                braveResults.simplified_query = simplifiedQueryText;
+                braveResults.search_engine = 'Brave Search API (Simplified Query)';
+            }
+          } else {
+            debugLog('Query simplification did not produce a different query. Not retrying.');
+          }
+        }
+
+        // Check if Brave API returned results after either attempt
         if (braveResults.results && braveResults.results.length > 0) {
           debugLog(`Brave API returned ${braveResults.results.length} results. Using these results.`);
           return res.status(200).json(braveResults);
         } else {
-          debugLog('Brave API returned zero results. Falling back to Crawl4AI if available.');
-          // Fall through to try Crawl4AI
+          debugLog('Brave API returned zero results after all attempts. Falling back to Crawl4AI if available.');
         }
       } catch (braveError) {
         debugLog(`Brave API failed: ${braveError.message}. Falling back to Crawl4AI if available.`);
-        // Fall through to try Crawl4AI
       }
     }
     
