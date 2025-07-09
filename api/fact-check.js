@@ -438,6 +438,10 @@ Note: For the most accurate fact-checking, please ensure the Crawl4AI Python ser
 
 You will be given a claim and a set of search results. Analyze the search results to determine the veracity of the claim.
 
+IMPORTANT: Focus ONLY on the factual accuracy of the claim's content itself. For example, if the claim is "Person X said Y", your verdict should be based SOLELY on whether Y is factually accurate, not on whether Person X actually said it.
+
+Even if a person did make a statement, if the content of that statement is false, the entire claim should be marked as false. Attribution is irrelevant to the verdict.
+
 You MUST respond with a JSON object. Do not include any other text before or after the JSON object.
 
 The JSON object must have the following structure:
@@ -463,7 +467,9 @@ Example of how to extract sources:
           },
           {
             role: "user",
-            content: `Fact check this claim and it's context, tell me if it is true or false: "${query}"
+            content: `Fact check this claim: "${query}"
+
+IMPORTANT: Evaluate ONLY the factual accuracy of the claim's content itself. If the claim attributes a statement to someone (e.g., "Person X said Y"), focus SOLELY on whether Y is factually accurate. Even if Person X did make the statement, if Y is false, the entire claim should be marked as false.
 
 Here are some search results to help you:
 
