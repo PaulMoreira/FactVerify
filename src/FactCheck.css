@@ -275,7 +275,7 @@
 }
 
 .form-description {
-  margin: 0 0 20px 0;
+  margin: 0 0 12px 0;
   font-size: 1.05rem;
   line-height: 1.5;
   color: #4a5568;
@@ -285,6 +285,25 @@
 
 .dark-mode .form-description {
   color: #cbd5e0;
+}
+
+.form-tip {
+  margin: 0 0 20px 0;
+  font-size: 0.95rem;
+  line-height: 1.4;
+  color: #718096;
+  font-weight: 400;
+  text-align: left;
+  padding: 8px 12px;
+  border-left: 3px solid #4299e1;
+  background-color: #ebf8ff;
+  border-radius: 0 4px 4px 0;
+}
+
+.dark-mode .form-tip {
+  color: #a0aec0;
+  background-color: #2d3748;
+  border-left: 3px solid #63b3ed;
 }
 
 .fact-check-form form {

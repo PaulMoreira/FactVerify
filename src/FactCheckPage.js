@@ -345,7 +345,8 @@ const FactCheckPage = () => {
           <section className="fact-check-form" data-testid="fact-check-form">
             <h2 className="visually-hidden">AI Fact-Checking Portal</h2>
             <div className="form-container">
-              <p className="form-description">Enter any claim below and our AI will verify its accuracy using reliable sources.</p>
+              <p className="form-description">Enter a claim from news articles, social media posts, or conversations to verify its accuracy. For example: "COVID vaccines contain microchips" or "The Earth is getting cooler, not warmer."</p>
+              <p className="form-tip">Tip: Enter specific claims rather than general questions for the best results.</p>
               <form onSubmit={handleSubmit}>
                 <label htmlFor="claim-input" className="visually-hidden">Enter a claim to fact-check</label>
                 <textarea id="claim-input" value={claim} onChange={e => setClaim(e.target.value)} placeholder="Enter a claim to fact-check..." rows="4" required aria-label="Claim to fact-check" />

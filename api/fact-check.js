@@ -3,6 +3,7 @@ const { createClient } = require('@supabase/supabase-js');
 const OpenAI = require('openai');
 const axios = require('axios');
 require('dotenv').config();
+const { findOrCreateRepresentativeClaim, storeClaimEmbedding } = require('./utils/embedding-generator');
 
 // Determine if we're running in a Vercel environment
 const IS_VERCEL = process.env.VERCEL === '1' || process.env.VERCEL === 'true';
@@ -75,6 +76,14 @@ async function storeFactCheck(claim, result) {
     if (!claim || typeof claim !== 'string' || !result || typeof result !== 'string') {
       console.error('Invalid claim or result for storage');
       return null;
+    }
+    
+    try {
+      // Store the claim embedding for future similarity searches
+      await storeClaimEmbedding(supabase, claim);
+    } catch (embeddingError) {
+      console.error('Error storing claim embedding:', embeddingError);
+      // Continue with storing the fact check even if embedding fails
     }
     
     // Use 'query' column name to match the database schema
@@ -568,16 +577,26 @@ ${searchResults}`
               }
             }
             
-            // Call the increment_misinformation_count function
+            // Find or create a representative claim for semantic grouping
+            let representativeClaim;
+            try {
+              representativeClaim = await findOrCreateRepresentativeClaim(supabase, query, 0.8);
+              debugLog(`Using representative claim: "${representativeClaim}" for misinformation tracking`);
+            } catch (embeddingError) {
+              console.error('Error finding representative claim:', embeddingError);
+              representativeClaim = query; // Fall back to original query
+            }
+            
+            // Call the increment_misinformation_count function with the representative claim
             const { error } = await supabase.rpc('increment_misinformation_count', { 
-              misinformation_query: query,
+              misinformation_query: representativeClaim,
               danger: dangerLevel
             });
             
             if (error) {
               console.error('Error tracking misinformation:', error);
             } else {
-              debugLog(`Successfully tracked misinformation for query: ${query}`);
+              debugLog(`Successfully tracked misinformation for representative query: ${representativeClaim}`);
             }
           } catch (trackingError) {
             console.error('Error calling increment_misinformation_count function:', trackingError);

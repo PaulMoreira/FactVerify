@@ -2,6 +2,7 @@
 const axios = require('axios');
 const { createClient } = require('@supabase/supabase-js');
 const { simplifyQuery } = require('./utils/query-simplifier');
+const { findOrCreateRepresentativeClaim, storeClaimEmbedding } = require('./utils/embedding-generator');
 
 // Initialize Supabase client
 const supabaseUrl = process.env.SUPABASE_URL;
@@ -363,13 +364,33 @@ module.exports = async (req, res) => {
     
     debugLog(`Searching for: ${query}`);
     
-    // Track the search query in Supabase
+    // Track the search query in Supabase with semantic similarity grouping
     try {
-      const { error } = await supabase.rpc('increment_search_count', { search_query: query });
+      // First, store the embedding for this query
+      try {
+        await storeClaimEmbedding(supabase, query);
+        debugLog(`Stored embedding for query: ${query}`);
+      } catch (embeddingError) {
+        console.error('Error storing query embedding:', embeddingError);
+        // Continue with search even if embedding storage fails
+      }
+      
+      // Find or create a representative claim for semantic grouping
+      let representativeQuery;
+      try {
+        representativeQuery = await findOrCreateRepresentativeClaim(supabase, query, 0.8);
+        debugLog(`Using representative query: "${representativeQuery}" for search tracking`);
+      } catch (embeddingError) {
+        console.error('Error finding representative query:', embeddingError);
+        representativeQuery = query; // Fall back to original query
+      }
+      
+      // Increment the search count for the representative query
+      const { error } = await supabase.rpc('increment_search_count', { search_query: representativeQuery });
       if (error) {
         console.error('Error tracking search query:', error);
       } else {
-        debugLog(`Successfully tracked search query: ${query}`);
+        debugLog(`Successfully tracked search query using representative query: ${representativeQuery}`);
       }
     } catch (trackingError) {
       console.error('Error calling increment_search_count function:', trackingError);
