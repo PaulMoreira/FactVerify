@@ -86,7 +86,10 @@ async function searchWithBraveAPI(query, max_results = 5) {
     const response = await axios.get(BRAVE_API_URL, {
       params: {
         q: searchQuery, // Use potentially simplified query
-        count: max_results
+        count: max_results,
+        result_filter: 'web,news,discussions',
+        freshness: 'pd',
+        extra_snippets: true,
       },
       headers: {
         'Accept': 'application/json',
