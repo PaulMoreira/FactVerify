@@ -37,11 +37,11 @@ let querySimplificationCount = 0;
 let totalQueriesProcessed = 0;
 
 // Search using Brave API
-async function searchWithBraveAPI(query, max_results = 5) {
+async function searchWithBraveAPI(query, max_results = 10) {
   // Track metrics for all queries
   totalQueriesProcessed++;
   
-  debugLog(`[BRAVE-API] Starting search for query: "${query}" with max_results: ${max_results}`);
+  debugLog(`[BRAVE-API] Starting search for query: "${query}" with max_results: ${max_results} (type: ${typeof max_results})`);
   debugLog(`[BRAVE-API] Request URL: ${BRAVE_API_URL}`);
   // Count words in query
   const wordCount = query.trim().split(/\s+/).length;
@@ -83,14 +83,15 @@ async function searchWithBraveAPI(query, max_results = 5) {
   
   try {
     debugLog(`[BRAVE-API] Sending request to Brave Search API...`);
+    const requestParams = {
+      q: searchQuery,
+      count: max_results,
+      result_filter: 'web, news, discussions, videos',
+      extra_snippets: true,
+    };
+    debugLog(`[BRAVE-API] Request parameters: ${JSON.stringify(requestParams)}`);
     const response = await axios.get(BRAVE_API_URL, {
-      params: {
-        q: searchQuery, // Use potentially simplified query
-        count: max_results,
-        result_filter: 'web,news,discussions',
-        freshness: 'pd',
-        extra_snippets: true,
-      },
+      params: requestParams,
       headers: {
         'Accept': 'application/json',
         'Accept-Encoding': 'gzip',
@@ -186,7 +187,7 @@ async function searchWithBraveAPI(query, max_results = 5) {
 }
 
 // Generate mock search results when search services are unavailable
-function generateMockSearchResults(query, max_results = 5) {
+async function generateMockSearchResults(query, max_results = 10) {
   const results = [];
   
   // Add a disclaimer result
@@ -239,7 +240,7 @@ exports.validateStatus = function(status) {
 };
 
 // Combine search results from multiple providers
-async function combinedSearch(query, max_results = 5) {
+async function combinedSearch(query, max_results = 10) {
   debugLog(`Performing combined search for: ${query}`);
   const results = [];
   const uniqueUrls = new Set();
@@ -345,7 +346,7 @@ module.exports = async (req, res) => {
   }
   
   try {
-    const { query, max_results = 5, provider = 'auto' } = req.body;
+    const { query, max_results = 10, provider = 'auto' } = req.body;
     
     if (!query) {
       return res.status(400).json({ error: 'Query parameter is required' });

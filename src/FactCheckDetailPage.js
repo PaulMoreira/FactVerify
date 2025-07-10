@@ -1,5 +1,5 @@
 // src/FactCheckDetailPage.js
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import axios from 'axios';
 import { Helmet } from 'react-helmet-async';
@@ -7,11 +7,52 @@ import LoadingAnimation from './LoadingAnimation';
 import ShareResults from './ShareResults';
 import './FactCheck.css'; // Reuse the same styles
 
+// Function to format source citations as superscripts with tooltips
+const formatSourceCitations = (text, sources) => {
+  if (!text || !sources) return text;
+  
+  // Replace SOURCE_X patterns with superscript citation HTML
+  const formattedText = text.replace(/\(SOURCE_(\d+)(,\s*SOURCE_(\d+))*\)/g, (match, ...args) => {
+    // Extract all source numbers from the match
+    const sourceNumbers = [];
+    const matches = match.match(/\d+/g);
+    if (matches) {
+      matches.forEach(num => sourceNumbers.push(num));
+    }
+    
+    // Create HTML for each source citation
+    const citationsHtml = sourceNumbers.map(num => {
+      const sourceIndex = parseInt(num) - 1;
+      const source = sources[sourceIndex];
+      if (!source) return '';
+      
+      const domain = source.url ? new URL(source.url).hostname.replace('www.', '') : '';
+      
+      return `<span class="source-citation" 
+                   tabindex="0" 
+                   role="button"
+                   data-citation-id="${num}"
+                   aria-label="Source ${num}: ${source.title || 'Citation'}">
+                ${num}
+                <span class="source-tooltip" role="tooltip">
+                  ${source.title || `Source ${num}`}
+                  ${domain ? `<span style="display: block; font-size: 0.8em; color: #718096;">${domain}</span>` : ''}
+                </span>
+              </span>`;
+    }).join('');
+    
+    return citationsHtml;
+  });
+  
+  return formattedText;
+};
+
 const FactCheckDetailPage = () => {
   const { id } = useParams();
   const [factCheck, setFactCheck] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
+  const resultRef = useRef(null);
 
   useEffect(() => {
     const fetchFactCheck = async () => {
@@ -39,6 +80,137 @@ const FactCheckDetailPage = () => {
 
     fetchFactCheck();
   }, [id]);
+  
+  // Add event listeners for tooltip positioning and interactions
+  useEffect(() => {
+    // Function to position tooltips within viewport
+    const positionTooltips = () => {
+      document.querySelectorAll('.source-citation').forEach(citation => {
+        const tooltip = citation.querySelector('.source-tooltip');
+        if (!tooltip) return;
+        
+        // Reset position to default
+        tooltip.style.left = '50%';
+        tooltip.style.transform = 'translateX(-50%) translateY(-2px)';
+        tooltip.style.bottom = '100%';
+        tooltip.style.top = 'auto';
+        
+        // Get tooltip and citation positions
+        const tooltipRect = tooltip.getBoundingClientRect();
+        const citationRect = citation.getBoundingClientRect();
+        
+        // Check if tooltip goes off the right edge
+        if (tooltipRect.right > window.innerWidth) {
+          tooltip.style.left = 'auto';
+          tooltip.style.right = '0';
+          tooltip.style.transform = 'translateY(-2px)';
+        }
+        
+        // Check if tooltip goes off the left edge
+        if (tooltipRect.left < 0) {
+          tooltip.style.left = '0';
+          tooltip.style.transform = 'translateY(-2px)';
+        }
+        
+        // Check if tooltip goes off the top
+        if (tooltipRect.top < 0 || citationRect.top < tooltipRect.height + 10) {
+          tooltip.style.bottom = 'auto';
+          tooltip.style.top = '100%';
+          tooltip.style.transform = tooltip.style.transform.replace('translateY(-2px)', 'translateY(2px)');
+        }
+      });
+    };
+    
+    const handleCitationClick = (e) => {
+      // Check if the clicked element is a source citation
+      if (e.target.closest('.source-citation')) {
+        const citation = e.target.closest('.source-citation');
+        const isMobile = window.innerWidth <= 768;
+        
+        if (isMobile) {
+          e.preventDefault();
+          
+          // Remove active class from all citations
+          document.querySelectorAll('.source-citation.active').forEach(el => {
+            if (el !== citation) el.classList.remove('active');
+          });
+          
+          // Toggle active class on clicked citation
+          citation.classList.toggle('active');
+          
+          // Position tooltip if active
+          if (citation.classList.contains('active')) {
+            setTimeout(positionTooltips, 0); // Run after render
+          }
+          
+          // Create or remove backdrop
+          let backdrop = document.querySelector('.tooltip-backdrop');
+          if (citation.classList.contains('active')) {
+            if (!backdrop) {
+              backdrop = document.createElement('div');
+              backdrop.className = 'tooltip-backdrop';
+              document.body.appendChild(backdrop);
+              
+              // Add click handler to backdrop
+              backdrop.addEventListener('click', () => {
+                document.querySelectorAll('.source-citation.active').forEach(el => {
+                  el.classList.remove('active');
+                });
+                backdrop.remove();
+              });
+            }
+            backdrop.classList.add('active');
+          } else if (backdrop) {
+            backdrop.remove();
+          }
+        } else {
+          // For desktop, just make sure tooltip is positioned correctly
+          setTimeout(positionTooltips, 0); // Run after render
+        }
+      } else if (!e.target.closest('.source-tooltip')) {
+        // If clicking outside a citation or tooltip, close all tooltips
+        document.querySelectorAll('.source-citation.active').forEach(el => {
+          el.classList.remove('active');
+        });
+        
+        const backdrop = document.querySelector('.tooltip-backdrop');
+        if (backdrop) backdrop.remove();
+      }
+    };
+    
+    // Handler for mouse enter/hover on citations
+    const handleCitationHover = (e) => {
+      if (e.target.closest('.source-citation')) {
+        setTimeout(positionTooltips, 0); // Run after render
+      }
+    };
+    
+    // Store the current ref value in a variable to use in cleanup
+    const currentRef = resultRef.current;
+    
+    // Add event listeners to the result container when it exists
+    if (currentRef) {
+      currentRef.addEventListener('click', handleCitationClick);
+      currentRef.addEventListener('mouseenter', handleCitationHover, true);
+      
+      // Also run positioning on window resize
+      window.addEventListener('resize', positionTooltips);
+    }
+    
+    return () => {
+      // Clean up event listeners
+      if (currentRef) {
+        currentRef.removeEventListener('click', handleCitationClick);
+        currentRef.removeEventListener('mouseenter', handleCitationHover, true);
+      }
+      
+      window.removeEventListener('resize', positionTooltips);
+      
+      // Remove any lingering backdrops
+      const backdrop = document.querySelector('.tooltip-backdrop');
+      if (backdrop) backdrop.remove();
+    };
+  }, [factCheck]);
 
   const generateStructuredData = () => {
     if (!factCheck || !factCheck.result) return null;
@@ -123,7 +295,7 @@ const FactCheckDetailPage = () => {
             )}
         </Helmet>
 
-        <section className="fact-check-result" aria-live="polite" aria-labelledby="result-heading">
+        <section className="fact-check-result" aria-live="polite" aria-labelledby="result-heading" ref={resultRef}>
             <h2 className="claim-reviewed">Claim: "{query}"</h2>
             <h3 id="result-heading" className={`verdict-${result.verdict.toLowerCase().replace(/\s+/g, '-')}`}>Verdict: {result.verdict}</h3>
             <div className="result-content-wrapper">
@@ -137,7 +309,9 @@ const FactCheckDetailPage = () => {
                     <div className="result-detailed-analysis">
                     <h4>Detailed Analysis</h4>
                     {result.detailed_analysis.split('\n').map((paragraph, idx) => (
-                        paragraph.trim() ? <p key={idx}>{paragraph}</p> : null
+                        paragraph.trim() ? 
+                          <p key={idx} dangerouslySetInnerHTML={{ __html: formatSourceCitations(paragraph, result.sources) }}></p> : 
+                          null
                     ))}
                     </div>
                 )}

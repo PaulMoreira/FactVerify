@@ -181,7 +181,7 @@ async function searchWeb(query) {
       debugLog(`Making POST request to: ${searchEndpoint}`);
       const response = await axios.post(searchEndpoint, {
         query: query,
-        max_results: 5
+        max_results: 10
       }, {
         timeout: 55000, // 55-second timeout for Vercel Pro plan
         headers: {
@@ -452,7 +452,7 @@ The JSON object must have the following structure:
   "confidence": "<one of: High, Medium, Low>"
 }
 
-IMPORTANT: For the "sources" field, you MUST extract sources from the search results provided. Look for the section between "=== STRUCTURED_SOURCES_FOR_AI START ===" and "=== STRUCTURED_SOURCES_FOR_AI END ===" delimiters. This section contains sources in the format "SOURCE_X: Title | URL". Parse these and include ALL relevant sources in your response.
+IMPORTANT: For the "sources" field, you MUST extract sources from the search results provided. Look for the section between "=== STRUCTURED_SOURCES_FOR_AI START ===" and "=== STRUCTURED_SOURCES_FOR_AI END ===" delimiters. This section contains sources in the format "SOURCE_X: Title | URL". Parse these and include ALL sources in your response, up to a maximum of 10 sources. Do not limit yourself to only 5 sources.
 
 Prioritize news sources when available, as they typically provide the most reliable third-party verification. If a source was used to make your conclusion, include it in the array. Even if you're uncertain about the claim, include any sources that provided context or information. Only return an empty array if absolutely no search results are available or relevant.
 
@@ -471,7 +471,7 @@ ${searchResults}`
           }
         ],
         temperature: 0.0,
-        max_tokens: 1024,
+        max_tokens: 1536,
         top_p: 1.0,
         frequency_penalty: 0.2,
         presence_penalty: 0.0,
