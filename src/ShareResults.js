@@ -4,14 +4,14 @@ import './ShareResults.css';
 const ShareResults = ({ result, claim }) => {
   const [copied, setCopied] = useState(false);
   
-  // Generate share text with key evidence if available
+  // Generate share text with summary if available
   const generateShareText = () => {
     let text = `Fact Check: "${claim}" - Verdict: ${result.verdict}`;
     
-    // Add key evidence if available, removing any citation markers for clean sharing
-    if (result.key_evidence) {
-      const cleanKeyEvidence = result.key_evidence.replace(/\(SOURCE_\d+(?:,\s*SOURCE_\d+)*\)/g, '').trim();
-      text += `\n\nKey Evidence: ${cleanKeyEvidence}`;
+    // Add summary if available, removing any citation markers for clean sharing
+    if (result.summary) {
+      const cleanSummary = result.summary.replace(/\(SOURCE_\d+(?:,\s*SOURCE_\d+)*\)/g, '').trim();
+      text += `\n\nSummary: ${cleanSummary}`;
     }
     
     text += `\n\nCheck out the full analysis at Fact Verify: https://factverify.app`;
