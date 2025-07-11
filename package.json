@@ -48,6 +48,6 @@
   },
   "devDependencies": {
     "@babel/plugin-proposal-private-property-in-object": "^7.21.11",
-    "vercel": "^44.2.7"
+    "vercel": "^44.4.0"
   }
 }

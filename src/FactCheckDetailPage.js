@@ -7,41 +7,67 @@ import LoadingAnimation from './LoadingAnimation';
 import ShareResults from './ShareResults';
 import './FactCheck.css'; // Reuse the same styles
 
+// Helper function to create citation HTML
+const createCitationHtml = (sourceNumbers, sources) => {
+  const citationsHtml = sourceNumbers.map(num => {
+    const sourceIndex = parseInt(num) - 1;
+    const source = sources[sourceIndex];
+    if (!source) return '';
+    
+    const domain = source.url ? new URL(source.url).hostname.replace('www.', '') : '';
+    
+    return `<span class="source-citation" 
+                 tabindex="0" 
+                 role="button"
+                 data-citation-id="${num}"
+                 aria-label="Source ${num}: ${source.title || 'Citation'}">
+              ${num}
+              <span class="source-tooltip" role="tooltip">
+                ${source.title || `Source ${num}`}
+                ${domain ? `<span style="display: block; font-size: 0.8em; color: #718096;">${domain}</span>` : ''}
+              </span>
+            </span>`;
+  }).join('');
+  
+  return citationsHtml;
+};
+
 // Function to format source citations as superscripts with tooltips
 const formatSourceCitations = (text, sources) => {
   if (!text || !sources) return text;
   
-  // Replace SOURCE_X patterns with superscript citation HTML
-  const formattedText = text.replace(/\(SOURCE_(\d+)(,\s*SOURCE_(\d+))*\)/g, (match, ...args) => {
-    // Extract all source numbers from the match
+  // Handle multiple citation formats that the AI might generate
+  let formattedText = text;
+  
+  // Pattern 1: (SOURCE_X) or (SOURCE_X, SOURCE_Y) format
+  formattedText = formattedText.replace(/\(SOURCE_(\d+)(,\s*SOURCE_(\d+))*\)/g, (match) => {
     const sourceNumbers = [];
     const matches = match.match(/\d+/g);
     if (matches) {
       matches.forEach(num => sourceNumbers.push(num));
     }
-    
-    // Create HTML for each source citation
-    const citationsHtml = sourceNumbers.map(num => {
-      const sourceIndex = parseInt(num) - 1;
-      const source = sources[sourceIndex];
-      if (!source) return '';
-      
-      const domain = source.url ? new URL(source.url).hostname.replace('www.', '') : '';
-      
-      return `<span class="source-citation" 
-                   tabindex="0" 
-                   role="button"
-                   data-citation-id="${num}"
-                   aria-label="Source ${num}: ${source.title || 'Citation'}">
-                ${num}
-                <span class="source-tooltip" role="tooltip">
-                  ${source.title || `Source ${num}`}
-                  ${domain ? `<span style="display: block; font-size: 0.8em; color: #718096;">${domain}</span>` : ''}
-                </span>
-              </span>`;
-    }).join('');
-    
-    return citationsHtml;
+    return createCitationHtml(sourceNumbers, sources);
+  });
+  
+  // Pattern 2: (Source X) or (Sources X, Y, Z) format
+  formattedText = formattedText.replace(/\(Sources?\s+([\d,\s]+)\)/g, (_, numberString) => {
+    const sourceNumbers = numberString.match(/\d+/g) || [];
+    return createCitationHtml(sourceNumbers, sources);
+  });
+  
+  // Pattern 3: [X] format
+  formattedText = formattedText.replace(/\[(\d+)\]/g, (_, num) => {
+    return createCitationHtml([num], sources);
+  });
+  
+  // Pattern 4: (X) format (only if it's a reasonable source number)
+  formattedText = formattedText.replace(/\((\d{1,2})\)/g, (match, num) => {
+    const sourceNum = parseInt(num);
+    // Only convert if it's a valid source number (1-20 range to avoid false positives)
+    if (sourceNum >= 1 && sourceNum <= Math.min(sources.length, 20)) {
+      return createCitationHtml([num], sources);
+    }
+    return match; // Return original if not a valid source
   });
   
   return formattedText;
@@ -299,11 +325,12 @@ const FactCheckDetailPage = () => {
             <h2 className="claim-reviewed">Claim: "{query}"</h2>
             <h3 id="result-heading" className={`verdict-${result.verdict.toLowerCase().replace(/\s+/g, '-')}`}>Verdict: {result.verdict}</h3>
             <div className="result-content-wrapper">
-                <div className="result-explanation">
-                    {result.summary.split('\n').map((paragraph, idx) => (
-                    paragraph.trim() ? <p key={idx}>{paragraph}</p> : null
-                    ))}
-                </div>
+                {result.key_evidence && (
+                    <div className="result-key-evidence">
+                    <h4>Key Evidence</h4>
+                    <p className="key-evidence-text" dangerouslySetInnerHTML={{ __html: formatSourceCitations(result.key_evidence, result.sources) }}></p>
+                    </div>
+                )}
                 
                 {result.detailed_analysis && (
                     <div className="result-detailed-analysis">
@@ -331,7 +358,14 @@ const FactCheckDetailPage = () => {
                           </div>
                           <div className="source-card-content">
                             <p className="source-card-title">{src.title}</p>
-                            <p className="source-card-domain">{new URL(src.url).hostname}</p>
+                            <div className="source-card-meta">
+                              <p className="source-card-domain">{new URL(src.url).hostname}</p>
+                              {src.reliability && (
+                                <span className={`source-reliability reliability-${src.reliability.toLowerCase()}`}>
+                                  {src.reliability} reliability
+                                </span>
+                              )}
+                            </div>
                           </div>
                         </a>
                       ))}
@@ -339,8 +373,15 @@ const FactCheckDetailPage = () => {
                   </div>
                 )}
                 
-                <div className="confidence-meter">
-                    <strong>Confidence:</strong> <span className={`confidence-${result.confidence.toLowerCase()}`}>{result.confidence}</span>
+                <div className="result-metadata">
+                    <div className="confidence-meter">
+                        <strong>Confidence:</strong> <span className={`confidence-${result.confidence.toLowerCase()}`}>{result.confidence}</span>
+                    </div>
+                    {result.limitations && (
+                        <div className="limitations">
+                            <strong>Limitations:</strong> <span className="limitations-text">{result.limitations}</span>
+                        </div>
+                    )}
                 </div>
 
                 <ShareResults result={result} claim={query} url={`https://factverify.app/fact-check/${id}`} />

@@ -4,8 +4,21 @@ import './ShareResults.css';
 const ShareResults = ({ result, claim }) => {
   const [copied, setCopied] = useState(false);
   
-  // Generate share text
-  const shareText = `Fact Check: "${claim}" - Verdict: ${result.verdict}. Check out the full analysis at Fact Verify: https://factverify.app`;
+  // Generate share text with key evidence if available
+  const generateShareText = () => {
+    let text = `Fact Check: "${claim}" - Verdict: ${result.verdict}`;
+    
+    // Add key evidence if available, removing any citation markers for clean sharing
+    if (result.key_evidence) {
+      const cleanKeyEvidence = result.key_evidence.replace(/\(SOURCE_\d+(?:,\s*SOURCE_\d+)*\)/g, '').trim();
+      text += `\n\nKey Evidence: ${cleanKeyEvidence}`;
+    }
+    
+    text += `\n\nCheck out the full analysis at Fact Verify: https://factverify.app`;
+    return text;
+  };
+  
+  const shareText = generateShareText();
   
   // Copy to clipboard function
   const copyToClipboard = () => {

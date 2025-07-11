@@ -691,6 +691,139 @@ button#fact-check-submit:disabled {
   }
 }
 
+/* Key Evidence Section */
+.result-key-evidence {
+  margin: 24px 0;
+  padding: 20px;
+  background: linear-gradient(135deg, #f0f8ff 0%, #e6f3ff 100%);
+  border-left: 4px solid #007bff;
+  border-radius: 8px;
+}
+
+.result-key-evidence h4 {
+  margin: 0 0 12px 0;
+  color: #0056b3;
+  font-size: 1.1em;
+  font-weight: 600;
+}
+
+.key-evidence-text {
+  margin: 0;
+  font-size: 1em;
+  line-height: 1.6;
+  color: #2c3e50;
+  font-style: italic;
+}
+
+/* Source Card Meta Information */
+.source-card-meta {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.source-reliability {
+  font-size: 0.8em;
+  padding: 2px 8px;
+  border-radius: 12px;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.reliability-high {
+  background-color: #d4edda;
+  color: #155724;
+  border: 1px solid #c3e6cb;
+}
+
+.reliability-medium {
+  background-color: #fff3cd;
+  color: #856404;
+  border: 1px solid #ffeaa7;
+}
+
+.reliability-low {
+  background-color: #f8d7da;
+  color: #721c24;
+  border: 1px solid #f5c6cb;
+}
+
+/* Result Metadata Container */
+.result-metadata {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  margin: 24px 0;
+  padding: 20px;
+  background-color: #f8f9fa;
+  border-radius: 8px;
+  border: 1px solid #e9ecef;
+}
+
+.limitations {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.limitations strong {
+  color: #6c757d;
+  font-size: 0.95em;
+}
+
+.limitations-text {
+  color: #495057;
+  font-style: italic;
+  line-height: 1.5;
+  font-size: 0.9em;
+}
+
+/* Dark mode styles for new elements */
+.dark-mode .result-key-evidence {
+  background: linear-gradient(135deg, #1a365d 0%, #2c5282 100%);
+  border-left-color: #63b3ed;
+}
+
+.dark-mode .result-key-evidence h4 {
+  color: #90cdf4;
+}
+
+.dark-mode .key-evidence-text {
+  color: #e2e8f0;
+}
+
+.dark-mode .reliability-high {
+  background-color: #2d3748;
+  color: #68d391;
+  border-color: #4a5568;
+}
+
+.dark-mode .reliability-medium {
+  background-color: #2d3748;
+  color: #f6e05e;
+  border-color: #4a5568;
+}
+
+.dark-mode .reliability-low {
+  background-color: #2d3748;
+  color: #fc8181;
+  border-color: #4a5568;
+}
+
+.dark-mode .result-metadata {
+  background-color: #2d3748;
+  border-color: #4a5568;
+}
+
+.dark-mode .limitations strong {
+  color: #a0aec0;
+}
+
+.dark-mode .limitations-text {
+  color: #cbd5e0;
+}
+
 .confidence-meter {
   margin-top: 24px;
   font-weight: bold;
