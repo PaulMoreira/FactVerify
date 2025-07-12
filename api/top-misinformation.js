@@ -1,42 +1,56 @@
-// Serverless function for top-misinformation endpoint
+// Serverless function for top-misinformation endpoint with embeddings
 const { createClient } = require('@supabase/supabase-js');
+const { findSimilarClaims } = require('./utils/embedding-generator');
 require('dotenv').config();
-// Using local text similarity instead of API-based vector similarity for performance
 
 /**
- * Calculate text similarity between two strings using word overlap
- * This is a simple, fast approximation that doesn't require API calls
- * @param {string} str1 - First string
- * @param {string} str2 - Second string
- * @returns {number} - Similarity score between 0 and 1
+ * Determine danger level based on query content and verdict
+ * @param {string} query - The query text
+ * @param {string} verdict - The fact check verdict
+ * @returns {string} - Danger level: critical, high, medium, low
  */
-function calculateTextSimilarity(str1, str2) {
-  // Convert to lowercase for case-insensitive comparison
-  const s1 = str1.toLowerCase();
-  const s2 = str2.toLowerCase();
+function assessDangerLevel(query, verdict) {
+  const queryLower = query.toLowerCase();
   
-  // Check for exact match
-  if (s1 === s2) return 1.0;
+  // Critical danger keywords (health/safety threats)
+  const criticalKeywords = [
+    'bleach', 'poison', 'toxic', 'deadly', 'kill', 'suicide', 'murder',
+    'drink', 'inject', 'consume', 'cure', 'treatment', 'medicine'
+  ];
   
-  // Check for substring
-  if (s1.includes(s2) || s2.includes(s1)) {
-    const longerLength = Math.max(s1.length, s2.length);
-    const shorterLength = Math.min(s1.length, s2.length);
-    return shorterLength / longerLength * 0.9; // 0.9 as it's not an exact match
+  // High danger keywords (public health, democracy, violence)
+  const highKeywords = [
+    'vaccine', 'covid', 'virus', 'disease', 'election', 'voting', 'vote',
+    'violence', 'riot', 'bomb', 'weapon', 'attack', 'conspiracy'
+  ];
+  
+  // Medium danger keywords (misinformation categories)
+  const mediumKeywords = [
+    'government', 'climate', 'science', 'research', 'study', 'hoax',
+    'fake', 'lies', 'control', 'tracking', 'surveillance'
+  ];
+  
+  // Only false/misleading verdicts are considered misinformation
+  if (!['false', 'mostly false', 'misleading'].includes(verdict)) {
+    return 'low';
   }
   
-  // Count word overlap
-  const words1 = new Set(s1.split(/\s+/).filter(w => w.length > 3));
-  const words2 = new Set(s2.split(/\s+/).filter(w => w.length > 3));
-  
-  if (words1.size === 0 || words2.size === 0) return 0;
-  
-  let overlap = 0;
-  for (const word of words1) {
-    if (words2.has(word)) overlap++;
+  // Check for critical danger
+  if (criticalKeywords.some(keyword => queryLower.includes(keyword))) {
+    return 'critical';
   }
   
-  return overlap / Math.max(words1.size, words2.size);
+  // Check for high danger
+  if (highKeywords.some(keyword => queryLower.includes(keyword))) {
+    return 'high';
+  }
+  
+  // Check for medium danger
+  if (mediumKeywords.some(keyword => queryLower.includes(keyword))) {
+    return 'medium';
+  }
+  
+  return 'low';
 }
 
 // Initialize Supabase client
@@ -66,267 +80,270 @@ module.exports = async (req, res) => {
   }
 
   try {
-    console.log('Attempting to fetch top misinformation from Supabase');
+    console.log('Fetching top misinformation using semantic embeddings clustering');
     
     // Get limit from query params, default to 5
     const limit = parseInt(req.query.limit) || 5;
     
-    // Query Supabase for misinformation occurrence counts first
-    const { data: misinformationCounts, error: countsError } = await supabase
+    // First try misinformation_counts table if it exists
+    const { data: misinformationCounts } = await supabase
       .from('misinformation_counts')
       .select('query, count, danger_level')
       .order('count', { ascending: false })
-      .limit(limit * 5); // Get more to account for grouping similar claims
+      .limit(100);
     
-    if (countsError) {
-      console.error('Error fetching misinformation counts:', countsError);
-      // Fall back to regular fact checks if we can't get misinformation counts
-    }
+    let baseMisinformation = [];
     
-    // If we have misinformation counts, use them; otherwise fall back to recent fact checks
-    let data;
     if (misinformationCounts && misinformationCounts.length > 0) {
-      console.log('Using actual misinformation counts data');
+      console.log('Using misinformation_counts table for clustering');
+      baseMisinformation = misinformationCounts.map(item => ({
+        query: item.query,
+        count: item.count,
+        danger_level: item.danger_level || 'medium',
+        verdict: 'false', // Assumed since it's in misinformation_counts
+        source: 'misinformation_counts'
+      }));
     } else {
-      console.log('No misinformation counts found, falling back to recent fact checks');
+      console.log('No misinformation_counts found, analyzing fact checks for false claims');
       
-      // Query Supabase for recent fact checks as fallback
-      const { data: factCheckData, error } = await supabase
+      // Fallback: get recent false fact checks
+      const sixtyDaysAgo = new Date();
+      sixtyDaysAgo.setDate(sixtyDaysAgo.getDate() - 60);
+      
+      const { data: factChecks, error } = await supabase
         .from('fact_checks')
-        .select('id, query, result')
+        .select('id, query, result, created_at')
+        .gte('created_at', sixtyDaysAgo.toISOString())
         .order('created_at', { ascending: false })
-        .limit(limit * 3); // Fetch more items since we'll filter for false verdicts
+        .limit(300); // Get more to find enough false claims
       
       if (error) {
-        console.error('Supabase returned an error:', error);
+        console.error('Error fetching fact checks:', error);
         throw error;
       }
       
-      data = factCheckData;
-    }
-    
-    // Error handling for the fallback query is already done above
-    
-    // Process data based on whether we have misinformation counts or regular fact checks
-    const misinformationItems = [];
-    
-    if (misinformationCounts && misinformationCounts.length > 0) {
-      console.time('grouping-misinformation');
-      
-      // Group similar queries and combine their counts
-      const groupedCounts = new Map(); // Map of representative query -> total count
-      const groupMembers = new Map(); // Map of representative query -> array of similar queries
-      const groupDangerLevel = new Map(); // Map of representative query -> highest danger level
-      
-      // Extract all queries for batch processing
-      const allQueries = misinformationCounts.map(item => item.query);
-      
-      // First, check if we have pre-computed similarity groups in the database
-      const { data: similarityGroups } = await supabase
-        .from('claim_similarity_groups')
-        .select('representative_query, similar_queries')
-        .contains('similar_queries', allQueries);
-      
-      // If we have pre-computed groups, use them
-      if (similarityGroups && similarityGroups.length > 0) {
-        console.log('Using pre-computed similarity groups for misinformation');
-        
-        // Process each query
-        for (const countItem of misinformationCounts) {
-          let isGrouped = false;
-          
-          // Check if this query belongs to any pre-computed group
-          for (const group of similarityGroups) {
-            if (group.similar_queries.includes(countItem.query)) {
-              const representativeQuery = group.representative_query;
-              
-              // Initialize the group if it doesn't exist
-              if (!groupMembers.has(representativeQuery)) {
-                groupMembers.set(representativeQuery, []);
-                groupedCounts.set(representativeQuery, 0);
-                groupDangerLevel.set(representativeQuery, 'low');
-              }
-              
-              // Add this query to the group
-              groupMembers.get(representativeQuery).push(countItem.query);
-              // Add the count to the group total
-              groupedCounts.set(representativeQuery, groupedCounts.get(representativeQuery) + countItem.count);
-              
-              // Update danger level if this one is higher
-              const currentDangerLevel = groupDangerLevel.get(representativeQuery) || 'low';
-              const dangerLevels = { 'low': 1, 'medium': 2, 'high': 3, 'critical': 4 };
-              if ((dangerLevels[countItem.danger_level] || 0) > (dangerLevels[currentDangerLevel] || 0)) {
-                groupDangerLevel.set(representativeQuery, countItem.danger_level);
-              }
-              
-              isGrouped = true;
-              break;
-            }
-          }
-          
-          // If not grouped with any existing group, create a new group
-          if (!isGrouped) {
-            groupedCounts.set(countItem.query, countItem.count);
-            groupMembers.set(countItem.query, [countItem.query]);
-            groupDangerLevel.set(countItem.query, countItem.danger_level || 'medium');
-          }
-        }
-      } else {
-        // Fall back to on-the-fly grouping with optimizations
-        console.log('No pre-computed groups found, performing on-the-fly grouping for misinformation');
-        
-        // Use a simpler approach for on-the-fly grouping: just check the top N queries
-        // Sort queries by count to prioritize the most frequent ones
-        const sortedQueries = [...misinformationCounts].sort((a, b) => b.count - a.count);
-        const topQueries = sortedQueries.slice(0, Math.min(10, sortedQueries.length));
-        
-        // Create initial groups with the top queries
-        for (const item of topQueries) {
-          groupedCounts.set(item.query, item.count);
-          groupMembers.set(item.query, [item.query]);
-          groupDangerLevel.set(item.query, item.danger_level || 'medium');
-        }
-        
-        // For each remaining query, find the best group
-        for (const item of sortedQueries.slice(Math.min(10, sortedQueries.length))) {
-          let bestGroup = null;
-          let highestSimilarity = 0.7; // Minimum threshold
-          
-          // Only check against the top representative queries
-          for (const representativeQuery of groupMembers.keys()) {
-            try {
-              // Use simple text similarity as a fast approximation
-              const similarity = calculateTextSimilarity(item.query, representativeQuery);
-              
-              if (similarity > highestSimilarity) {
-                highestSimilarity = similarity;
-                bestGroup = representativeQuery;
-              }
-            } catch (error) {
-              console.error('Error calculating similarity:', error);
-            }
-          }
-          
-          if (bestGroup) {
-            // Add to the best matching group
-            groupMembers.get(bestGroup).push(item.query);
-            groupedCounts.set(bestGroup, groupedCounts.get(bestGroup) + item.count);
-            
-            // Update danger level if this one is higher
-            const currentDangerLevel = groupDangerLevel.get(bestGroup) || 'low';
-            const dangerLevels = { 'low': 1, 'medium': 2, 'high': 3, 'critical': 4 };
-            if ((dangerLevels[item.danger_level] || 0) > (dangerLevels[currentDangerLevel] || 0)) {
-              groupDangerLevel.set(bestGroup, item.danger_level);
-            }
-          } else {
-            // Create a new group
-            groupedCounts.set(item.query, item.count);
-            groupMembers.set(item.query, [item.query]);
-            groupDangerLevel.set(item.query, item.danger_level || 'medium');
-          }
-        }
+      if (!factChecks || factChecks.length === 0) {
+        return res.json({ topMisinformation: [] });
       }
       
-      console.timeEnd('grouping-misinformation');
+      // Filter and count misinformation
+      const misinformationClaims = [];
+      const queryFrequency = {};
       
-      console.log(`Grouped ${misinformationCounts.length} misinformation counts into ${groupedCounts.size} semantic groups`);
-      
-      // Convert the grouped counts to an array and sort by count
-      const sortedGroups = Array.from(groupedCounts.entries())
-        .sort((a, b) => b[1] - a[1]) // Sort by count descending
-        .slice(0, limit); // Take only the top groups
-      
-      // Get the representative queries
-      const representativeQueries = sortedGroups.map(([query]) => query);
-      
-      // Get fact checks for these representative queries
-      const { data: factChecks, error: factCheckError } = await supabase
-        .from('fact_checks')
-        .select('id, query, result')
-        .in('query', representativeQueries);
-      
-      if (factCheckError) {
-        console.error('Error fetching fact checks for top misinformation:', factCheckError);
-        throw factCheckError;
-      }
-      
-      // Map grouped misinformation counts to fact checks
-      for (const [query, count] of sortedGroups) {
-        // Find matching fact check
-        const matchingFactCheck = factChecks.find(check => 
-          check.query.toLowerCase() === query.toLowerCase());
-        
-        if (matchingFactCheck) {
-          try {
-            if (matchingFactCheck.result) {
-              const resultObj = typeof matchingFactCheck.result === 'string' 
-                ? JSON.parse(matchingFactCheck.result) 
-                : matchingFactCheck.result;
-              const verdict = resultObj.verdict ? resultObj.verdict.toLowerCase() : '';
-              
-              // Only include false claims as misinformation
-              if (verdict === 'false' || verdict === 'mostly false' || verdict === 'misleading') {
-                // Get the group members for this representative query
-                const members = groupMembers.get(query) || [query];
-                const dangerLevel = groupDangerLevel.get(query) || 'medium';
-                
-                misinformationItems.push({
-                  id: matchingFactCheck.id,
-                  query: matchingFactCheck.query,
-                  verdict: verdict,
-                  danger_level: dangerLevel,
-                  count: count, // Use combined count from group
-                  similar_queries: members.length > 1 ? members : undefined // Include similar queries if there are any
-                });
-                
-                // Stop once we have enough items
-                if (misinformationItems.length >= limit) {
-                  break;
-                }
-              }
-            }
-          } catch (err) {
-            console.error('Error parsing result for item:', matchingFactCheck.id, err);
-          }
-        }
-      }
-    } else {
-      // Fall back to processing regular fact checks
-      for (const item of data) {
+      factChecks.forEach(check => {
         try {
-          if (item.result) {
-            const resultObj = typeof item.result === 'string' ? JSON.parse(item.result) : item.result;
+          if (check.result) {
+            const resultObj = typeof check.result === 'string' 
+              ? JSON.parse(check.result) 
+              : check.result;
             const verdict = resultObj.verdict ? resultObj.verdict.toLowerCase() : '';
             
-            // Only include false claims as misinformation
+            // Only consider false/misleading claims as misinformation
             if (verdict === 'false' || verdict === 'mostly false' || verdict === 'misleading') {
-              // Determine danger level from result or assign a default
-              const danger_level = resultObj.danger_level || 'medium';
+              const normalizedQuery = check.query.toLowerCase().trim();
+              queryFrequency[normalizedQuery] = (queryFrequency[normalizedQuery] || 0) + 1;
               
-              misinformationItems.push({
-                id: item.id,
-                query: item.query,
+              // Assess danger level
+              const dangerLevel = assessDangerLevel(check.query, verdict);
+              
+              misinformationClaims.push({
+                id: check.id,
+                query: check.query,
                 verdict: verdict,
-                danger_level: danger_level,
-                count: 1 // Default count for fallback
+                danger_level: dangerLevel,
+                created_at: check.created_at,
+                count: 1
               });
-              
-              // Stop once we have enough items
-              if (misinformationItems.length >= limit) {
-                break;
-              }
             }
           }
         } catch (err) {
-          console.error('Error parsing result for item:', item.id, err);
+          console.error('Error parsing result:', err);
+        }
+      });
+      
+      if (misinformationClaims.length === 0) {
+        return res.json({ topMisinformation: [] });
+      }
+      
+      // Update counts and remove duplicates
+      const uniqueMisinformation = new Map();
+      misinformationClaims.forEach(claim => {
+        const normalizedQuery = claim.query.toLowerCase().trim();
+        claim.count = queryFrequency[normalizedQuery] || 1;
+        
+        if (!uniqueMisinformation.has(normalizedQuery) || 
+            new Date(claim.created_at) > new Date(uniqueMisinformation.get(normalizedQuery).created_at)) {
+          uniqueMisinformation.set(normalizedQuery, claim);
+        }
+      });
+      
+      baseMisinformation = Array.from(uniqueMisinformation.values())
+        .sort((a, b) => {
+          // Sort by frequency first, then danger level
+          const countDiff = b.count - a.count;
+          if (countDiff !== 0) return countDiff;
+          
+          const dangerLevels = { 'critical': 4, 'high': 3, 'medium': 2, 'low': 1 };
+          return (dangerLevels[b.danger_level] || 0) - (dangerLevels[a.danger_level] || 0);
+        })
+        .slice(0, 50); // Limit for clustering analysis
+    }
+    
+    if (baseMisinformation.length === 0) {
+      return res.json({ topMisinformation: [] });
+    }
+    
+    console.log(`Analyzing ${baseMisinformation.length} misinformation claims for semantic clustering`);
+    
+    // Group misinformation using semantic similarity
+    const clusters = new Map();
+    const processed = new Set();
+    
+    for (const misinfoData of baseMisinformation) {
+      if (processed.has(misinfoData.query)) continue;
+      
+      try {
+        // Find similar misinformation claims using embeddings
+        const similarClaims = await findSimilarClaims(
+          supabase, 
+          misinfoData.query, 
+          0.8, // Higher threshold for misinformation to ensure accuracy
+          8    // Max similar claims to check
+        );
+        
+        // Create or find existing cluster
+        let clusterId = null;
+        let bestMatch = null;
+        
+        // Check if this query should join an existing cluster
+        for (const [existingClusterId, cluster] of clusters.entries()) {
+          const similarity = similarClaims.find(sim => 
+            sim.query.toLowerCase() === cluster.representative.toLowerCase()
+          );
+          
+          if (similarity && similarity.similarity > 0.8) {
+            if (!bestMatch || similarity.similarity > bestMatch.similarity) {
+              bestMatch = { clusterId: existingClusterId, similarity: similarity.similarity };
+            }
+          }
+        }
+        
+        if (bestMatch) {
+          // Add to existing cluster
+          clusterId = bestMatch.clusterId;
+          const cluster = clusters.get(clusterId);
+          cluster.members.push(misinfoData);
+          cluster.totalCount += misinfoData.count;
+          
+          // Update cluster danger level to highest
+          const dangerLevels = { 'critical': 4, 'high': 3, 'medium': 2, 'low': 1 };
+          if ((dangerLevels[misinfoData.danger_level] || 0) > (dangerLevels[cluster.danger_level] || 0)) {
+            cluster.danger_level = misinfoData.danger_level;
+          }
+          
+          // Update representative if this has higher danger or count
+          const currentRepDanger = dangerLevels[cluster.representative_danger] || 0;
+          const newDanger = dangerLevels[misinfoData.danger_level] || 0;
+          
+          if (newDanger > currentRepDanger || 
+              (newDanger === currentRepDanger && misinfoData.count > cluster.representative_count)) {
+            cluster.representative = misinfoData.query;
+            cluster.representative_count = misinfoData.count;
+            cluster.representative_danger = misinfoData.danger_level;
+            cluster.representative_verdict = misinfoData.verdict;
+            cluster.representative_id = misinfoData.id;
+          }
+        } else {
+          // Create new cluster
+          clusterId = misinfoData.query;
+          clusters.set(clusterId, {
+            representative: misinfoData.query,
+            representative_count: misinfoData.count,
+            representative_danger: misinfoData.danger_level,
+            representative_verdict: misinfoData.verdict,
+            representative_id: misinfoData.id,
+            danger_level: misinfoData.danger_level,
+            members: [misinfoData],
+            totalCount: misinfoData.count,
+            similar_queries: similarClaims.map(sc => sc.query)
+          });
+        }
+        
+        // Mark similar queries as processed
+        similarClaims.forEach(similar => {
+          if (similar.similarity > 0.85) {
+            processed.add(similar.query);
+          }
+        });
+        
+        processed.add(misinfoData.query);
+        
+      } catch (error) {
+        console.error(`Error processing misinformation query "${misinfoData.query}":`, error);
+        
+        // Fallback: create individual cluster
+        if (!processed.has(misinfoData.query)) {
+          clusters.set(misinfoData.query, {
+            representative: misinfoData.query,
+            representative_count: misinfoData.count,
+            representative_danger: misinfoData.danger_level,
+            representative_verdict: misinfoData.verdict,
+            representative_id: misinfoData.id,
+            danger_level: misinfoData.danger_level,
+            members: [misinfoData],
+            totalCount: misinfoData.count,
+            similar_queries: []
+          });
+          processed.add(misinfoData.query);
         }
       }
     }
     
-    const topMisinformation = misinformationItems;
+    console.log(`Created ${clusters.size} misinformation clusters from ${baseMisinformation.length} claims`);
     
-    console.log('Successfully fetched top misinformation:', topMisinformation.length);
+    // Sort clusters by search frequency first, then danger level
+    const sortedClusters = Array.from(clusters.values())
+      .sort((a, b) => {
+        // Primary sort: total occurrence count (most searched)
+        const countDiff = b.totalCount - a.totalCount;
+        if (countDiff !== 0) return countDiff;
+        
+        // Secondary sort: danger level (as tie-breaker)
+        const dangerLevels = { 'critical': 4, 'high': 3, 'medium': 2, 'low': 1 };
+        return (dangerLevels[b.danger_level] || 0) - (dangerLevels[a.danger_level] || 0);
+      })
+      .slice(0, limit);
+    
+    // Build final result
+    const topMisinformation = sortedClusters.map(cluster => {
+      const result = {
+        id: cluster.representative_id || `misinfo-cluster-${cluster.representative.slice(0, 10)}`,
+        query: cluster.representative,
+        verdict: cluster.representative_verdict || 'false',
+        danger_level: cluster.danger_level,
+        count: cluster.totalCount
+      };
+      
+      // Include similar queries if there are multiple in the cluster
+      if (cluster.members.length > 1 || cluster.similar_queries.length > 0) {
+        const allSimilar = [
+          ...cluster.members.map(m => m.query),
+          ...cluster.similar_queries
+        ].filter((q, i, arr) => 
+          arr.indexOf(q) === i && q.toLowerCase() !== cluster.representative.toLowerCase()
+        );
+        
+        if (allSimilar.length > 0) {
+          result.similar_queries = allSimilar.slice(0, 5); // Limit for response size
+        }
+      }
+      
+      return result;
+    });
+    
+    console.log(`Successfully generated ${topMisinformation.length} top misinformation clusters`);
     res.json({ topMisinformation });
+    
   } catch (error) {
     console.error('Error fetching top misinformation:', error);
     res.status(500).json({ error: 'Failed to fetch top misinformation' });
